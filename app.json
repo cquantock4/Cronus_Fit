@@ -18,8 +18,9 @@
       "supportsTablet": true
     },
     "android": {
+      "icon": "./assets/images/icon.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.cquantock.cronus_fit"
@@ -31,6 +32,12 @@
       "eas": {
         "projectId": "40c5d756-34c3-4ddb-89de-f2242671e72c"
       }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/40c5d756-34c3-4ddb-89de-f2242671e72c"
     }
   }
 }
