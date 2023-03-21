@@ -3,10 +3,11 @@ import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 
 
 import {useForm} from 'react-hook-form';
-//import { Bubble_Button, Button_Link } from '../../src/components/ui/buttons'
-//import { BubbleTextInput } from '../../src/components/ui/inputs'
+import { Bubble_Button, Button_Link } from '../../../components/ui/buttons'
+import {BubbleTextInput} from "../../../components/ui/inputs"
+//import { BubbleTextInput } from '../../../src/components/ui/inputs'
 
-//import { Amplify, Auth, DataStore } from 'aws-amplify';
+import { Amplify, Auth, DataStore } from 'aws-amplify';
 //import { onScreen } from '../../src/components/constants'
 
 
@@ -17,6 +18,41 @@ const LoginScreen = ( {navigation} ) => {
   //Handle Submit helps validate the fields
   const {control, handleSubmit, formState: {errors}} = useForm();
 
+
+  const onSignInPressed = async data => {
+    if (loading){
+      return;
+    }
+
+    
+    setLoading(true);
+    try{
+      await Auth.signIn(data.username, data.password);
+
+    } catch (e) {
+      Alert.alert('Oops', 'Username and Password are incorrect')
+    }
+    setLoading(false);
+
+    console.log('Signed in')
+    
+
+  }
+
+
+  const onForgotPasswordPressed = () => {
+    onScreen('ForgotPasswordScreen', navigation)()
+    //navigation.navigate('ForgotPasswordScreen')
+    console.log('Forgot Password')
+  }
+
+  const onSignUpPressed = () => {
+    onScreen('CreateAccountScreen', navigation)()
+    //navigation.navigate('CreateAccountScreen')
+    console.log('CreateAccountScreen')
+  }
+
+
   
   return (
     
@@ -26,7 +62,6 @@ const LoginScreen = ( {navigation} ) => {
           <Image style={styles.image} source={require('../../../../assets/images/cronusfit_base.png')} />
         </View>
 
-      {/*}
         <BubbleTextInput
           name='username'
           placeholder='Email'
@@ -41,6 +76,7 @@ const LoginScreen = ( {navigation} ) => {
           vstyle={{borderWidth: 1,borderColor: '#BFBFBF', color:'#363636', paddingTop: 10, paddingBottom: 10}}
           secureTextEntry
         />
+
 
         <Bubble_Button 
           text={loading ? 'Loading...' : "LOGIN"}
@@ -59,7 +95,7 @@ const LoginScreen = ( {navigation} ) => {
           onPress={onSignUpPressed}
         />
 
-       */}
+       
   </View>
 
   );

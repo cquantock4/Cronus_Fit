@@ -12,6 +12,15 @@ import Navigation from "./src/navigation"
 import { Amplify } from 'aws-amplify';
 import awsExports from './src/aws-exports.js';
 
+
+Amplify.configure({
+  ...awsExports,
+  Analytics: {
+   disabled: true,
+  },
+ });
+
+
 export default function App() {
   return (
     <ThemeProvider>
