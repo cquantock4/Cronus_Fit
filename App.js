@@ -7,6 +7,11 @@ import { ThemeProvider } from "./src/components/ThemeContext";
 //Main Navigation Controller
 import Navigation from "./src/navigation"
 
+
+//Amplify imports
+import { Amplify } from 'aws-amplify';
+import awsExports from './src/aws-exports.js';
+
 export default function App() {
   return (
     <ThemeProvider>
