@@ -125,7 +125,15 @@ export default function HomeScreen( props, {navigation } ) {
   */
   
 
+  useEffect(() => {
 
+    console.log('We are loading the home screen')
+    console.log('the theme is: ' + darkMode)
+    console.log('modal visiblbe? ' + modalVisible)
+
+  }, []);
+
+/*
   useEffect(() => {
 
     if (newuser) {
@@ -159,7 +167,7 @@ export default function HomeScreen( props, {navigation } ) {
     }
 
   }
-
+  */
 
   const FirstTimeUserWelcome = () => {
 
