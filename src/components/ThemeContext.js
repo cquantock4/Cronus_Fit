@@ -4,17 +4,13 @@ import { createContext, useReducer } from 'react';
 const ThemeContext = createContext('DARKMODE');
 
 const initialState = { 
-  darkMode: false,
-  userid: ''
+  darkMode: false
 };
 
 
 const themeReducer = (state, action) => {
 
     let temp_theme = ''
-
-    console.log(action.type)
-    let temp_user = {}
 
     if (action.type == "LIGHTMODE") {
       temp_theme = false;
@@ -24,9 +20,7 @@ const themeReducer = (state, action) => {
 
 
     if (action.type == "LIGHTMODE" || action.type == "DARKMODE")
-      return { darkMode: temp_theme, userid: state.userid};
-    else if (action.userid != '')
-      return { darkMode: state.darkMode, userid: action.userid};
+      return { darkMode: temp_theme};
     else
       return state;
 

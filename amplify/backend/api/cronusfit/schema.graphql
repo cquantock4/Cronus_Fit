@@ -1,0 +1,156 @@
+enum Themes {
+  LIGHT
+  DARK
+}
+
+enum Foodcategory {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACKS
+}
+
+type Foodentry @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  date: String
+  category: Foodcategory
+  userID: ID! @index(name: "byUser")
+  desc: String
+  protein: Float
+  carbs: Float
+  fat: Float
+  fiber: Float
+  calories: Float
+}
+
+type Checkin @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  lowestweight: Float
+  somewins: String
+  setbacks: String
+  barriers: String
+  sleepquality: Int
+  appetite: Int
+  energylevel: Int
+  othernotes: String
+  waist: String
+  neck: String
+  userID: ID! @index(name: "byUser")
+}
+
+type Messages @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  message: String
+  sender_userid: String
+  receiver_userid: String
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+type UserInfo @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  type: String
+  i_gender: String
+  i_goals: String
+  i_trainingactivity: String
+  i_lifestyleactivity: String
+  i_height: String
+  i_height_units: String
+  i_weight: String
+  i_weight_units: String
+  i_neck: String
+  i_neck_units: String
+  i_waist: String
+  i_waist_units: String
+  i_hip: String
+  i_hip_units: String
+  i_body_fat_pct: String
+  Users: User @hasOne
+}
+
+type Articles @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  title: String
+  author: String
+  desc: String
+  date: String
+  video_YN: Boolean
+  video_url: String
+}
+
+type Programs @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  title: String
+  desc: String
+  free: Boolean
+  price: Float
+}
+
+type Comments @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  comment: String
+  userid: String
+  Workouts: [Workouts] @manyToMany(relationName: "CommentsWorkouts")
+}
+
+enum Units {
+  KG
+  LBS
+}
+
+enum ResultCategory {
+  TIME
+  SETSREPS
+  WEIGHT
+}
+
+type WorkoutResults @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  value: String
+  SubWorkouts: [SubWorkouts] @manyToMany(relationName: "WorkoutResultsSubWorkouts")
+  userid: ID
+}
+
+type SubWorkouts @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  group: String
+  grouptitle: String
+  workoutss: [Workouts] @manyToMany(relationName: "WorkoutsSubWorkouts")
+  desc: String
+  resultcategory: ResultCategory
+  workoutresultss: [WorkoutResults] @manyToMany(relationName: "WorkoutResultsSubWorkouts")
+  required: Boolean
+  timecap: String
+}
+
+type Workouts @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  title: String
+  desc: String
+  date: String
+  users: [User] @manyToMany(relationName: "UserWorkouts")
+  type: String
+  SubWorkouts: [SubWorkouts] @manyToMany(relationName: "WorkoutsSubWorkouts")
+  commentss: [Comments] @manyToMany(relationName: "CommentsWorkouts")
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  email: String
+  sub: String
+  Workouts: [Workouts] @manyToMany(relationName: "UserWorkouts")
+  units: Units
+  nutrition_info: Boolean
+  nutrition_coaching: Boolean
+  q_experience: String
+  q_medical: String
+  q_calsmacros: String
+  coach_userid: String
+  Checkins: [Checkin] @hasMany(indexName: "byUser", fields: ["id"])
+  Foodentries: [Foodentry] @hasMany(indexName: "byUser", fields: ["id"])
+  theme: Themes
+  image: String
+  image_uri: String
+}
+ 

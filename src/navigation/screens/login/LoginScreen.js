@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, Alert } from 'react-native';
+import React, { useInsertionEffect, useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Image, Alert, Pressable } from 'react-native';
 
 
 import {useForm} from 'react-hook-form';
@@ -8,8 +8,9 @@ import {BubbleTextInput} from "../../../components/ui/inputs"
 //import { BubbleTextInput } from '../../../src/components/ui/inputs'
 
 import { Amplify, Auth, DataStore } from 'aws-amplify';
-//import { onScreen } from '../../src/components/constants'
+import { onScreen } from '../../../components/constants'
 
+import { User } from "../../../models"
 
 
 const LoginScreen = ( {navigation} ) => {
@@ -19,25 +20,29 @@ const LoginScreen = ( {navigation} ) => {
   const {control, handleSubmit, formState: {errors}} = useForm();
 
 
-  const onSignInPressed = async data => {
+  const onSignInPressed = async (data) => {
+
     if (loading){
       return;
     }
 
-    
     setLoading(true);
+
+    
     try{
-      await Auth.signIn(data.username, data.password);
+      const response = await Auth.signIn(data.username, data.password);
+      console.log(response)
 
     } catch (e) {
       Alert.alert('Oops', 'Username and Password are incorrect')
     }
+
+
     setLoading(false);
 
-    console.log('Signed in')
-    
-
   }
+
+  
 
 
   const onForgotPasswordPressed = () => {
@@ -47,13 +52,13 @@ const LoginScreen = ( {navigation} ) => {
   }
 
   const onSignUpPressed = () => {
+    
     onScreen('CreateAccountScreen', navigation)()
     //navigation.navigate('CreateAccountScreen')
     console.log('CreateAccountScreen')
   }
 
 
-  
   return (
     
       <View style={styles.container}>

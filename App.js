@@ -1,3 +1,8 @@
+import 'expo-dev-client';
+
+import 'core-js/full/symbol/async-iterator';
+import '@azure/core-asynciterator-polyfill'; 
+
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -9,7 +14,8 @@ import Navigation from "./src/navigation"
 
 
 //Amplify imports
-import { Amplify } from 'aws-amplify';
+import { ExpoSQLiteAdapter } from '@aws-amplify/datastore-storage-adapter/ExpoSQLiteAdapter';
+import { Amplify, DataStore } from 'aws-amplify';
 import awsExports from './src/aws-exports.js';
 
 
@@ -20,6 +26,10 @@ Amplify.configure({
   },
  });
 
+DataStore.configure({
+  storageAdapter: ExpoSQLiteAdapter
+});
+
 
 export default function App() {
   return (
@@ -29,6 +39,8 @@ export default function App() {
     </ThemeProvider>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
