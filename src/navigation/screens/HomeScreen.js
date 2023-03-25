@@ -73,7 +73,7 @@ export default function HomeScreen( props, {navigation } ) {
   //Modal
   const [modalVisible, setModalVisible] = useState(false);
 
-  /*
+  
   useEffect(() => {
 
     //Amplify.DataStore.clear()
@@ -122,18 +122,11 @@ export default function HomeScreen( props, {navigation } ) {
 
   }, [sub]);
 
-  */
+  
   
 
-  useEffect(() => {
-
-    console.log('We are loading the home screen')
-    console.log('the theme is: ' + darkMode)
-    console.log('modal visiblbe? ' + modalVisible)
-
-  }, []);
-
 /*
+
   useEffect(() => {
 
     if (newuser) {
@@ -203,7 +196,7 @@ export default function HomeScreen( props, {navigation } ) {
   
 
   //Activity loading trigger
-  /*
+  
   if (name === undefined) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -211,7 +204,7 @@ export default function HomeScreen( props, {navigation } ) {
       </View>
     );
   }
-  */
+  
    
   {/*<View style={[styles.container, {backgroundColor: colors[theme].primary}]}>*/}
   {/*<View style={styles.container}></View>*/}

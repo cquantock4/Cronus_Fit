@@ -220,12 +220,11 @@ const Navigation = () => {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerTitle: () => header_label}}>
           {user ? (
-            /*
+            
               <Stack.Screen name="HomeScreenNav" options={{ headerShown: false }}>
                 {(props) => <HomeScreenNav {...props} username={username}/>}
               </Stack.Screen>
-              */
-              <Stack.Screen name="HomeScreen" component={HomeScreen} />
+            
           ) : (
             <>
               <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
