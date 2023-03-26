@@ -26,9 +26,7 @@ Amplify.configure({
   },
  });
 
-DataStore.configure({
-  storageAdapter: ExpoSQLiteAdapter
-});
+
 
 
 export default function App() {

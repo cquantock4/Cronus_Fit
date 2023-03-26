@@ -186,10 +186,10 @@ const Navigation = () => {
 
   };
 
-  //useEffect(() => {
-    //checkUser();
+  useEffect(() => {
+    checkUser();
     
-  //}, []);
+  }, []);
 
   useEffect(() => {
 
@@ -198,6 +198,10 @@ const Navigation = () => {
 
         if (data.payload.event === 'signOut'){
            //DataStore.clear();
+        }
+
+        if (data.payload.event === 'signIn'){
+          DataStore.start();
         }
       
         checkUser();
