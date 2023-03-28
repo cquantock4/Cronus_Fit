@@ -107,20 +107,20 @@ enum ResultCategory {
 type WorkoutResults @model @auth(rules: [{allow: public}]) {
   id: ID!
   value: String
-  SubWorkouts: [SubWorkouts] @manyToMany(relationName: "WorkoutResultsSubWorkouts")
-  userid: ID
+  subworkoutsID: ID! @index(name: "bySubWorkouts")
+  userID: ID! @index(name: "byUser")
 }
 
 type SubWorkouts @model @auth(rules: [{allow: public}]) {
   id: ID!
   group: String
   grouptitle: String
-  workoutss: [Workouts] @manyToMany(relationName: "WorkoutsSubWorkouts")
   desc: String
   resultcategory: ResultCategory
-  workoutresultss: [WorkoutResults] @manyToMany(relationName: "WorkoutResultsSubWorkouts")
+  workoutresultss: [WorkoutResults] @hasMany(indexName: "bySubWorkouts", fields: ["id"])
   required: Boolean
   timecap: String
+  workoutsID: ID! @index(name: "byWorkouts")
 }
 
 type Workouts @model @auth(rules: [{allow: public}]) {
@@ -130,7 +130,7 @@ type Workouts @model @auth(rules: [{allow: public}]) {
   date: String
   users: [User] @manyToMany(relationName: "UserWorkouts")
   type: String
-  SubWorkouts: [SubWorkouts] @manyToMany(relationName: "WorkoutsSubWorkouts")
+  SubWorkouts: [SubWorkouts] @hasMany(indexName: "byWorkouts", fields: ["id"])
   commentss: [Comments] @manyToMany(relationName: "CommentsWorkouts")
 }
 
@@ -152,5 +152,6 @@ type User @model @auth(rules: [{allow: public}]) {
   theme: Themes
   image: String
   image_uri: String
+  WorkoutResults: [WorkoutResults] @hasMany(indexName: "byUser", fields: ["id"])
 }
  

@@ -15,6 +15,9 @@ import ConfirmEmailScreen from "./screens/login/ConfirmEmailScreen";
 import ForgotPasswordScreen from "./screens/login/ForgotPasswordScreen";
 import NewPasswordScreen from "./screens/login/NewPasswordScreen";
 
+//Screen Containers
+import LeaderboardScreenContainer from './screens/LeaderboardScreenContainer'
+
 //Home Screens
 import HomeScreen from './screens/HomeScreen'
 
@@ -55,7 +58,7 @@ const Navigation = () => {
 
     const username = props.username;
   
-    console.log('inside the home screen nav: ' + JSON.stringify(user))
+    //console.log('inside the home screen nav: ' + JSON.stringify(user))
   
     const theme = useContext(ThemeContext)
     const darkMode = theme.state.darkMode;
@@ -143,6 +146,7 @@ const Navigation = () => {
             */}    
   
             <Tab.Screen name={homeName} component={HomeScreen} options={{ headerShown: false }}/>
+            <Tab.Screen name={leaderboardName} component={LeaderboardScreenContainer} options={{ headerShown: false }}/> 
             
         </Tab.Navigator>
       
@@ -152,7 +156,7 @@ const Navigation = () => {
   const checkUser = async () => {
     try {
 
-      console.log('item1: ' + user)
+      //console.log('item1: ' + user)
 
       const authUser = await Auth.currentAuthenticatedUser({bypassCache: true});
       //console.log('THIS: ' + JSON.stringify(authUser))
@@ -173,7 +177,7 @@ const Navigation = () => {
         theme.dispatch({ userid: results[0] });
       }
 
-      console.log('theme result: ' + theme_result)
+      //console.log('theme result: ' + theme_result)
 
       if (theme_result == "DARK")
         theme.dispatch({ type: "DARKMODE" });
@@ -200,9 +204,9 @@ const Navigation = () => {
            //DataStore.clear();
         }
 
-        if (data.payload.event === 'signIn'){
-          DataStore.start();
-        }
+        //if (data.payload.event === 'signIn'){
+          //DataStore.start();
+        //}
       
         checkUser();
 

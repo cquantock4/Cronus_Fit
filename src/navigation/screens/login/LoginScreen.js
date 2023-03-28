@@ -31,7 +31,7 @@ const LoginScreen = ( {navigation} ) => {
     
     try{
       const response = await Auth.signIn(data.username, data.password);
-      console.log(response)
+      //console.log(response)
 
     } catch (e) {
       Alert.alert('Oops', 'Username and Password are incorrect')
