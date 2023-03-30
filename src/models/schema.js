@@ -711,26 +711,19 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "userid": {
-                    "name": "userid",
+                "workoutsID": {
+                    "name": "workoutsID",
                     "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
+                    "type": "ID",
+                    "isRequired": true,
                     "attributes": []
                 },
-                "Workouts": {
-                    "name": "Workouts",
-                    "isArray": true,
-                    "type": {
-                        "model": "CommentsWorkouts"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "comments"
-                    }
+                "userID": {
+                    "name": "userID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -755,6 +748,24 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byWorkouts",
+                        "fields": [
+                            "workoutsID"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byUser",
+                        "fields": [
+                            "userID"
+                        ]
+                    }
                 },
                 {
                     "type": "auth",
@@ -1061,14 +1072,14 @@ export const schema = {
                     "name": "commentss",
                     "isArray": true,
                     "type": {
-                        "model": "CommentsWorkouts"
+                        "model": "Comments"
                     },
                     "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "workouts"
+                        "associatedWith": "workoutsID"
                     }
                 },
                 "createdAt": {
@@ -1274,6 +1285,20 @@ export const schema = {
                         "associatedWith": "userID"
                     }
                 },
+                "Comments": {
+                    "name": "Comments",
+                    "isArray": true,
+                    "type": {
+                        "model": "Comments"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "userID"
+                    }
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1311,86 +1336,6 @@ export const schema = {
                                     "read"
                                 ]
                             }
-                        ]
-                    }
-                }
-            ]
-        },
-        "CommentsWorkouts": {
-            "name": "CommentsWorkouts",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "comments": {
-                    "name": "comments",
-                    "isArray": false,
-                    "type": {
-                        "model": "Comments"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "commentsID"
-                    }
-                },
-                "workouts": {
-                    "name": "workouts",
-                    "isArray": false,
-                    "type": {
-                        "model": "Workouts"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "workoutsID"
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "CommentsWorkouts",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byComments",
-                        "fields": [
-                            "commentsID"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byWorkouts",
-                        "fields": [
-                            "workoutsID"
                         ]
                     }
                 }
@@ -1512,5 +1457,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.3.6",
-    "version": "bb002444e93cae30f1f99ee7b5dba83f"
+    "version": "7a3ac5b86953165f2695b95c0d6218fd"
 };

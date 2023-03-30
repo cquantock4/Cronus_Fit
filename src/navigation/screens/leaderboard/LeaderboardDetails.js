@@ -11,7 +11,7 @@ import {useRoute} from '@react-navigation/native';
 import {useForm} from 'react-hook-form';
 
 import { Amplify, Auth, DataStore, Hub } from 'aws-amplify';
-import { Workouts, User, WorkoutsSubWorkouts, WorkoutResultsSubWorkouts, CommentsWorkouts, Comments } from '../../../models';
+import { Workouts, User, Comments, WorkoutResults, SubWorkouts } from '../../../models';
 
 //Themes
 import ThemeContext from '../../../components/ThemeContext'
@@ -35,6 +35,8 @@ export default function LeaderboardDetails( {navigation} ) {
   const [workoutresults, setWorkoutResults] = useState([]);
   const [users, setUsers] = useState(undefined);
   const [commentsworkouts, setCommentsWorkouts] = useState(undefined);
+
+  const [workoutlist, setWorkoutList] = useState([]);
 
   const [units, setUnits] = useState('lbs');
   const [userid, setUserID] = useState(undefined);
@@ -68,6 +70,280 @@ export default function LeaderboardDetails( {navigation} ) {
 
   //Header
   const [showSearch, setShowSearch] = useState(true);
+
+  const groupAndAdd = (arr) => {
+    const res = [];
+
+    //console.log('Starting group and add')
+
+    //console.log(arr)
+
+    arr.forEach(el => {
+  
+
+      let grouptitle = el.group + '. ' + el.grouptitle
+
+      //Checking to see if group exists
+      //If not exists, add group to array
+      if (!res[grouptitle]) {
+        res.push(grouptitle);
+      }
+
+      let info = {id: el.id, desc: el.desc, resultcat: el.resultcategory}
+
+      if(typeof res[grouptitle] === "undefined") {
+
+
+        res[grouptitle] = {group: grouptitle, info: [info]}
+
+      } else {
+
+        res[grouptitle].info.push(info);
+        //res[grouptitle].id.push(el.subWorkouts.id);
+
+      }
+      
+      
+    }, {});
+
+    //console.log('Here we are: ' + res)
+
+    setSubWorkouts(res);
+
+    //return(res)
+
+
+  }
+
+  /*
+  const buildUserDT = (arr, user_res) => {
+    const res = [];
+
+    function ordinal(n) {
+      var s = ["th", "st", "nd", "rd"];
+      var v = n%100;
+      //return n + (s[(v-20)%10] || s[v] || s[0]);
+      return (s[(v-20)%10] || s[v] || s[0]);
+    }
+    
+    //console.log('starting to build User DT')
+    //Loop over arr
+    //console.log(arr)
+    //console.log(user_res)
+
+    arr.subWorkouts.forEach(el => {
+      //console.log('category: ' + JSON.stringify(subworkouts[category]))
+
+      //console.log(el)
+
+      let userid = el.workoutresults.userID
+      let subworkoutid = el.id
+      let workoutResults =  el.workoutresults.value
+      let calc_workoutResults = el.workoutresults.value
+      let required =  el.required
+      let timecap =  el.timecap
+      let resultcategory = el.resultcategory
+
+
+      //Calculate total scores
+      let score
+
+      if (resultcategory === 'TIME') {
+
+        calc_workoutResults = timecap.replace(':', '').replace(':', '') - parseInt(calc_workoutResults.replace(':', '').replace(':', ''));
+      }
+      
+      if (calc_workoutResults != null && required) {
+        score = calc_workoutResults
+      } else if (calc_workoutResults != null) { 
+        score = calc_workoutResults * 0.25 //Scale to 25%
+      } else {  
+        score = 0
+      }
+
+
+      
+      if (!res[userid]) {
+        res.push(userid);
+      }
+
+      let results = {subWorkoutID: subworkoutid, value: workoutResults}
+
+      //Lookup User info
+
+      if (user_res.length != 0) {
+
+        let user_filtered = user_res.filter(obj => (obj.id == userid));
+
+        let user_name
+        
+        if (user_filtered.length != 0) {
+          user_name = user_filtered[0].name
+        }
+
+
+
+        //console.log('this: ' + workoutssubworkouts[0].workouts.id)
+        
+        if(typeof res[userid] === "undefined") {
+
+          //Create new row
+          //console.log('create new row')
+          res[userid] = {number: 0, ordinal: '', name: user_name, workoutID: arr.id, score: score, results: [results]}
+
+        } else {
+
+          res[userid].results.push(results);
+
+          res[userid].score = parseInt(res[userid].score) + parseInt(score);
+
+        }   
+
+      }
+
+    }, {});
+    
+
+    //Sort the list
+    res.sort((a, b) => (res[a].score < res[b].score) ? 1 : -1)
+
+    let count = 1
+
+    //Add numbering to table
+    res.forEach(el => {
+
+      res[el].ordinal = ordinal(count)
+      res[el].number = count;
+      count++;
+      //console.log(res[el].number)
+
+    }, {});
+
+
+    //console.log('Here it is: ' + JSON.stringify(res))
+
+    setWorkoutResults(res)
+
+  }
+  */
+
+  const buildUserDT = (arr, user_res) => {
+    const res = [];
+
+    function ordinal(n) {
+      var s = ["th", "st", "nd", "rd"];
+      var v = n%100;
+      //return n + (s[(v-20)%10] || s[v] || s[0]);
+      return (s[(v-20)%10] || s[v] || s[0]);
+    }
+    
+    console.log('starting to build User DT')
+    //Loop over arr
+    //console.log('This one this one: ' +JSON.stringify(arr))
+    //console.log(user_res)
+
+    arr.subWorkouts.forEach(el => {
+      //console.log('category: ' + JSON.stringify(subworkouts[category]))
+
+      //console.log(el)
+
+      let subworkoutid = el.id
+      let required =  el.required
+      let timecap =  el.timecap
+      let resultcategory = el.resultcategory
+
+
+      el.workoutresults.forEach(item => {
+
+        let userid = item.userID
+        let workoutResults =  item.value
+        let calc_workoutResults = item.value
+
+         //Calculate total scores
+          let score
+
+          if (resultcategory === 'TIME') {
+
+            calc_workoutResults = timecap.replace(':', '').replace(':', '') - parseInt(calc_workoutResults.replace(':', '').replace(':', ''));
+          }
+          
+          if (calc_workoutResults != null && required) {
+            score = calc_workoutResults
+          } else if (calc_workoutResults != null) { 
+            score = calc_workoutResults * 0.25 //Scale to 25%
+          } else {  
+            score = 0
+          }
+
+
+          if (!res[userid]) {
+            res.push(userid);
+          }
+    
+          let results = {subWorkoutID: subworkoutid, value: workoutResults}
+    
+          //Lookup User info
+          if (user_res.length != 0) {
+
+            let user_filtered = user_res.filter(obj => (obj.id == userid));
+    
+            let user_name
+            
+            if (user_filtered.length != 0) {
+              user_name = user_filtered[0].name
+            }
+    
+    
+    
+            //console.log('this: ' + JSON.stringify(res))
+            
+            if(typeof res[userid] === "undefined") {
+    
+              //Create new row
+              //console.log('create new row')
+              res[userid] = {number: 0, ordinal: '', name: user_name, workoutID: arr.id, score: score, results: [results]}
+    
+            } else {
+    
+              res[userid].results.push(results);
+    
+              res[userid].score = parseInt(res[userid].score) + parseInt(score);
+    
+            }   
+    
+          }
+  
+      })
+
+
+    }, {});
+    
+
+    //Sort the list
+    res.sort((a, b) => (res[a].score < res[b].score) ? 1 : -1)
+
+    let count = 1
+
+    //Add numbering to table
+    res.forEach(el => {
+
+      res[el].ordinal = ordinal(count)
+      res[el].number = count;
+      count++;
+      //console.log(res[el].number)
+
+    }, {});
+
+
+    //console.log(JSON.stringify(res))
+
+    setWorkoutResults(res)
+
+  }
+
+
+  /*
+  //Old
 
   const groupAndAdd = (arr) => {
     const res = [];
@@ -110,25 +386,6 @@ export default function LeaderboardDetails( {navigation} ) {
 
 
   }
-
-  useEffect(() => {
-
-    getUser();
-
-  }, []);
-
-  useEffect(() => {
-
-
-    const subs = DataStore.observeQuery(WorkoutsSubWorkouts).subscribe(() => getLeaderBoardInfo());
-
-  
-    return () => {
-      subs.unsubscribe();
-    };
-
-
-  }, [refreshing, commentrefresh]);
 
   const buildUserDT = (arr, user_res, has_sub_workouts) => {
     const res = [];
@@ -239,17 +496,57 @@ export default function LeaderboardDetails( {navigation} ) {
     
   }
 
+  */
+
+  useEffect(() => {
+
+    getUser();
+
+  }, []);
+
+  useEffect(() => {
+
+
+
+    const subs = DataStore.observeQuery(Comments).subscribe(() => getWorkoutComments());
+
+  
+    return () => {
+      subs.unsubscribe();
+    };
+
+
+    
+  }, [commentrefresh]);
+
+
+  useEffect(() => {
+
+    const today = format(new Date(), 'MM/dd/yyyy');
+
+    const subs = DataStore.observeQuery(WorkoutResults).subscribe(() => getWorkoutAndSubWorkouts(today));
+
+  
+    return () => {
+      subs.unsubscribe();
+    };
+
+
+  }, [refreshing]);
+
+ 
+
   async function getUser(){
 
     try {
       const authUser = await Auth.currentAuthenticatedUser({bypassCache: true});
-      console.log(authUser.attributes.sub)
+      //console.log(authUser.attributes.sub)
       //setAuthSub(authUser.attributes.sub)
 
      
       //Get local User Id for Query
       const user = await DataStore.query(User, sw =>
-        sw.sub('eq', authUser.attributes.sub)
+        sw.sub.eq(authUser.attributes.sub)
       )
     
       //console.log('Here we are: ' + JSON.stringify(user))
@@ -267,6 +564,181 @@ export default function LeaderboardDetails( {navigation} ) {
     } catch (e) {
       console.log('Error: ' + e)
     }
+
+  }
+
+  async function getWorkoutComments() {
+
+
+    //console.log('here we are')
+
+    try {
+
+      const workouts = await DataStore.query(Workouts, (s) =>
+        s.id.eq(currleaderboard)
+      );
+
+      //console.log(workouts)
+
+      const this_workout = workouts[0]
+
+      //Get Comments
+      const comments = await DataStore.query(Comments)
+
+
+      comments.sort((a, b) => (a.createdAt > b.createdAt) ? -1 : 1)
+
+      const dt = {
+        id: this_workout.id,
+        title: this_workout.title,
+        desc: this_workout.desc,
+        date: this_workout.date,
+        type: this_workout.type,
+        comments: comments.map(comments => ({
+          id: comments.id,
+          comment: comments.comment,
+          userID: comments.userID,
+          createdAt: comments.createdAt
+        })),
+      }
+
+      //console.log(dt.comments)
+    
+    
+      //console.log(comments
+      setCommentsWorkouts(dt)
+
+
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async function getWorkoutAndSubWorkouts(date) {
+
+
+    // Find today's workout
+    //const workouts = await DataStore.query(Workouts);
+    const workouts = await DataStore.query(Workouts, (s) =>
+      s.id.eq(currleaderboard)
+    );
+
+    setWorkoutList(workouts)
+    
+
+    if (workouts.length === 0) {
+      console.log('No workout found for today');
+      return null;
+    }
+
+    // Find the subworkouts associated with the workout
+    const subWorkouts = await DataStore.query(SubWorkouts, (s) =>
+      s.workoutsID.eq(workouts[0].id)
+    );
+
+    // Get all the subworkoutIds
+    const subWorkoutIds = subWorkouts.map((sw) => sw.id);
+
+    //Query all WorkoutResults
+    const workoutResults = await DataStore.query(WorkoutResults)
+
+    //var arr = workoutResults.filter(item => subWorkoutIds.indexOf(item.subworkoutsID) == 1);
+    const workoutResults_filtered = workoutResults.filter(({subworkoutsID}) => subWorkoutIds.includes(subworkoutsID));
+
+    const subWorkoutsWithResults = subWorkouts.map(subWorkout => {
+      // Get the workout result for this sub workout from the results table
+      //const workoutResult = workoutResults_filtered.find(result => result.subworkoutsID === subWorkout.id);
+      const workoutResult = workoutResults_filtered.filter(result => result.subworkoutsID === subWorkout.id);
+    
+      // If there is no workout result for this sub workout, return the sub workout object as is
+      if (!workoutResult) {
+        return subWorkout;
+      }
+      
+
+      return {
+        ...subWorkout,
+        workoutresults: workoutResult.map(result => ({
+          id: result.id,
+          value: result.value,
+          userID: result.userID
+        })) 
+      };
+
+
+
+      // If there is a workout result for this sub workout, add it as a property of the sub workout object
+      /*
+      return {
+        ...subWorkout,
+        workoutresults: {
+          id: workoutResult.id,
+          value: workoutResult.value,
+          userID: workoutResult.userID
+        }
+      };
+      */
+    });
+
+    const currentWorkout = workouts[0]
+
+    /*
+    const dt = {
+      id: currentWorkout.id,
+      title: currentWorkout.title,
+      desc: currentWorkout.desc,
+      date: currentWorkout.date,
+      type: currentWorkout.type,
+      subWorkouts: subWorkouts.map(subWorkout => ({
+        id: subWorkout.id,
+        group: subWorkout.group,
+        grouptitle: subWorkout.grouptitle,
+        desc: subWorkout.desc,
+        resultcategory: subWorkout.resultcategory,
+        required: subWorkout.required,
+        timecap: subWorkout.timecap,
+      })),
+    }
+    */
+    
+    //Defining starting data structer for top level workouts
+    const dt = {
+      id: currentWorkout.id,
+      title: currentWorkout.title,
+      desc: currentWorkout.desc,
+      date: currentWorkout.date,
+      type: currentWorkout.type,
+    }
+
+    // Add the subWorkoutsWithResults array to the dt object
+    const dtWithResults = {
+      ...dt,
+      subWorkouts: subWorkoutsWithResults
+    };
+
+    //console.log('Here is the value: ' + JSON.stringify(dtWithResults.subWorkouts))
+    setWorkouts(dtWithResults)
+
+    if (dtWithResults.subWorkouts) {
+      groupAndAdd(dtWithResults.subWorkouts)
+    }
+
+
+    //Get Users
+    const userResults = (await DataStore.query(User))
+
+    setUsers(userResults)
+
+    if (userResults) {
+
+      if (dtWithResults) {
+        
+        buildUserDT(dtWithResults, userResults)
+  
+      } 
+
+    }
+
 
   }
 
@@ -368,61 +840,63 @@ export default function LeaderboardDetails( {navigation} ) {
 
     const [expand, setExpand] = useState(false);
 
-    //Loop over inner results list and create drop down
+    //console.log(workoutresults[props.curr_item])
 
-    //console.log(props)
+    //Loop over inner results list and create drop down
 
     let datadisplayed = workoutresults[props.curr_item].results.map((item, index) => {
 
+      try{
 
-      const subworkouts_filtered = workouts.filter(
-        pe => pe.subWorkouts.id === item.subWorkoutID
-      )
-
-      //console.log('this: ' + JSON.stringify(subworkouts_filtered))
       
-      if (subworkouts_filtered.length != 0){
-        let curr_units = ''
+        const subworkouts_filtered = workouts.subWorkouts.filter(
+          pe => pe.id === item.subWorkoutID
+        )
+      
+        if (subworkouts_filtered.length != 0){
+          let curr_units = ''
 
-        if (subworkouts_filtered[0].subWorkouts.resultcategory === 'TIME') {
+          if (subworkouts_filtered[0].resultcategory === 'TIME') {
 
-          curr_units = <View style={{flexDirection: 'row'}}>
-                          <Text style={{color: activeColors.primary_text}}>{item.value}</Text>
-                      </View>
+            curr_units = <View style={{flexDirection: 'row'}}>
+                            <Text style={{color: activeColors.primary_text}}>{item.value}</Text>
+                        </View>
 
-        } else if (subworkouts_filtered[0].subWorkouts.resultcategory === 'SETSREPS') {
+          } else if (subworkouts_filtered[0].resultcategory === 'SETSREPS') {
 
-          curr_units = <View style={{alignItems: 'flex-end'}}>
-                          <Text style={{color: activeColors.primary_text}}>{item.value}&nbsp;</Text>
-                          <Text style={{color: activeColors.primary_text}}>rounds/sets - reps</Text>
-                      </View>
+            curr_units = <View style={{alignItems: 'flex-end'}}>
+                            <Text style={{color: activeColors.primary_text}}>{item.value}&nbsp;</Text>
+                            <Text style={{color: activeColors.primary_text}}>rounds/sets - reps</Text>
+                        </View>
 
-        } else if (subworkouts_filtered[0].subWorkouts.resultcategory === 'WEIGHT') {
+          } else if (subworkouts_filtered[0].resultcategory === 'WEIGHT') {
 
-          curr_units = <View style={{flexDirection: 'row'}}>
-                          <Text style={{color: activeColors.primary_text}}>{item.value}&nbsp;</Text>
-                          <Text style={{color: activeColors.primary_text}}>{units}</Text>
-                      </View>
+            curr_units = <View style={{flexDirection: 'row'}}>
+                            <Text style={{color: activeColors.primary_text}}>{item.value}&nbsp;</Text>
+                            <Text style={{color: activeColors.primary_text}}>{units}</Text>
+                        </View>
 
-        }
+          }
 
+         
 
-        //Only return rows with a value entered
-        if (item.value != null) {
-          return (
-            <View key={item.subWorkoutID} style={{padding: 30, paddingVertical: 15, justifyContent: 'space-between', flexDirection:'row', borderBottomWidth: 0.25, borderBottomColor: activeColors.primary_text}}>
-              <View style={{maxWidth: 200}}>
-                <Text style={{fontSize: 15, color: activeColors.secondary_text}}>{subworkouts_filtered[0].subWorkouts.desc}</Text>
+          //Only return rows with a value entered
+          if (item.value != null) {
+            return (
+              <View key={item.subWorkoutID} style={{padding: 30, paddingVertical: 15, justifyContent: 'space-between', flexDirection:'row', borderBottomWidth: 0.25, borderBottomColor: activeColors.primary_text}}>
+                <View style={{maxWidth: 200}}>
+                  <Text style={{fontSize: 15, color: activeColors.secondary_text}}>{subworkouts_filtered[0].desc}</Text>
+                </View>
+                {curr_units}
               </View>
-              {curr_units}
-            </View>
-          );
+            );
+          }
         }
+
+      } catch (e) {
+         console.log(e)
       }
-
       
-
-
     })
     
     return(
@@ -449,7 +923,7 @@ export default function LeaderboardDetails( {navigation} ) {
           <View style={styles.rowCounts}>
             <View style={[styles.rowCountsContainer, {backgroundColor: activeColors.inverted_bg}]}>
                 <Text style={{fontSize: 10, color: activeColors.inverted_text, fontWeight: '400'}}>{props.score}</Text>
-              </View>
+            </View>
           </View>
         </View>
       </Pressable>
@@ -471,6 +945,7 @@ export default function LeaderboardDetails( {navigation} ) {
   const Comment = (props) => {
 
     //console.log('this value: ' + props.createdat)
+
 
     let temp_val
     if (!props.createdat) {
@@ -515,37 +990,50 @@ export default function LeaderboardDetails( {navigation} ) {
   }
   
   const CommentSection = (props) => {
+
+
+    //console.log(commentsworkouts)
+
+    let datadisplayed = ''
     
-
-    let datadisplayed
     if (commentsworkouts) {
-      datadisplayed = commentsworkouts.map((item, index) => {
+      
+      datadisplayed =  commentsworkouts.comments.map((item, index) => {
 
-          let comment_id = item.comments.id;
+          let comment_id = item.id;
 
-          //console.log('this: ' + item.comments.userid)
+          //console.log('this: ' + item.userid)
           //console.log(users)
-
-          const user_lookup = users.filter(
-            pe => pe.id === item.comments.userid
-          )
-
           
-          let user_name = ''
-          if (user_lookup != 0) {
-            //console.log('This one: ' + JSON.stringify(user_lookup))
-
-            user_name = user_lookup[0].name;
-
-            return (
-              <Comment key={comment_id} name={user_name} comment={item.comments.comment} createdat={item.comments.createdAt} />
-            );
+          try {
+            const user_lookup = users.filter(
+              pe => pe.id === item.userID
+            )
+  
+            //console.log(user_lookup)
+  
+            
+            let user_name = ''
+            if (user_lookup != 0) {
+              //console.log('This one: ' + JSON.stringify(user_lookup))
+  
+              user_name = user_lookup[0].name;
+  
+              return (
+                <Comment key={comment_id} name={user_name} comment={item.comment} createdat={item.createdAt} />
+              );
+            }
+          } catch (e) {
+            console.log(e)
           }
+          
           
 
           
         })
-  }
+        
+    }
+    
   
     return (
       <View>
@@ -568,20 +1056,22 @@ export default function LeaderboardDetails( {navigation} ) {
         //Insert
         try {
 
-          const comment = await DataStore.save(
+          await DataStore.save(
             new Comments({
               comment: commenttext,
-              userid: userid
+              workoutsID: currleaderboard,
+              userID: userid
             })
           );
 
-
+          /*
           await DataStore.save(
             new CommentsWorkouts({
               comments: comment,
               workouts: currworkout[0]
             })
           );
+          */
 
 
           console.log("Comment saved successfully!");
@@ -616,9 +1106,9 @@ export default function LeaderboardDetails( {navigation} ) {
         />
       );
     })
-      
 
-  
+
+    
     return(
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
 
@@ -646,13 +1136,12 @@ export default function LeaderboardDetails( {navigation} ) {
           <View style={{padding: 5, alignItems: 'center'}}>
             <Text style={{fontSize: 15, fontWeight: '500', color: activeColors.primary_text}}>Comments:</Text>
           </View>
-          
-          
+ 
           <CommentSection />
+            
 
         </ScrollView>
 
-        
         
         <View style={{flexDirection: 'row', padding: 3, backgroundColor: activeColors.primary_bg, position: 'absolute', bottom: 0}}>
           <TextInput 
@@ -735,14 +1224,6 @@ export default function LeaderboardDetails( {navigation} ) {
             
           )
     }
-
-    /*
-     Made this update, not sure if additional changes need to be made. 
-     if (workoutresults.length < 1) {
-    */
-  
-
-    console.log('this: ' +  workoutresults)
   
     return(
       <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
@@ -751,8 +1232,10 @@ export default function LeaderboardDetails( {navigation} ) {
      
         {/* Checking to see if any workout results exist */}
         {/* (workouts.length != 0 ) ? (*/}
-        { (workoutresults.length > 0) ? (
-            <LeaderBoardPreview title={workouts[0].workouts.title} workout_date={workouts[0].workouts.date} />
+        { (workoutresults.length > 0 && workouts) ? (
+
+            <LeaderBoardPreview id={workouts.id} title={workouts.title} workout_date={workouts.date} />
+            
         ) : (
           <>
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeColors.primary_bg}}>

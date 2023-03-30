@@ -67,10 +67,6 @@ type UserMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type CommentsWorkoutsMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
 type UserWorkoutsMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -288,8 +284,8 @@ export declare const Programs: (new (init: ModelInit<Programs, ProgramsMetaData>
 type EagerComments = {
   readonly id: string;
   readonly comment?: string | null;
-  readonly userid?: string | null;
-  readonly Workouts?: (CommentsWorkouts | null)[] | null;
+  readonly workoutsID: string;
+  readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -297,8 +293,8 @@ type EagerComments = {
 type LazyComments = {
   readonly id: string;
   readonly comment?: string | null;
-  readonly userid?: string | null;
-  readonly Workouts: AsyncCollection<CommentsWorkouts>;
+  readonly workoutsID: string;
+  readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -375,7 +371,7 @@ type EagerWorkouts = {
   readonly users?: (UserWorkouts | null)[] | null;
   readonly type?: string | null;
   readonly SubWorkouts?: (SubWorkouts | null)[] | null;
-  readonly commentss?: (CommentsWorkouts | null)[] | null;
+  readonly commentss?: (Comments | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -388,7 +384,7 @@ type LazyWorkouts = {
   readonly users: AsyncCollection<UserWorkouts>;
   readonly type?: string | null;
   readonly SubWorkouts: AsyncCollection<SubWorkouts>;
-  readonly commentss: AsyncCollection<CommentsWorkouts>;
+  readonly commentss: AsyncCollection<Comments>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -418,6 +414,7 @@ type EagerUser = {
   readonly image?: string | null;
   readonly image_uri?: string | null;
   readonly WorkoutResults?: (WorkoutResults | null)[] | null;
+  readonly Comments?: (Comments | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -441,6 +438,7 @@ type LazyUser = {
   readonly image?: string | null;
   readonly image_uri?: string | null;
   readonly WorkoutResults: AsyncCollection<WorkoutResults>;
+  readonly Comments: AsyncCollection<Comments>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -449,28 +447,6 @@ export declare type User = LazyLoading extends LazyLoadingDisabled ? EagerUser :
 
 export declare const User: (new (init: ModelInit<User, UserMetaData>) => User) & {
   copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
-}
-
-type EagerCommentsWorkouts = {
-  readonly id: string;
-  readonly comments: Comments;
-  readonly workouts: Workouts;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyCommentsWorkouts = {
-  readonly id: string;
-  readonly comments: AsyncItem<Comments>;
-  readonly workouts: AsyncItem<Workouts>;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type CommentsWorkouts = LazyLoading extends LazyLoadingDisabled ? EagerCommentsWorkouts : LazyCommentsWorkouts
-
-export declare const CommentsWorkouts: (new (init: ModelInit<CommentsWorkouts, CommentsWorkoutsMetaData>) => CommentsWorkouts) & {
-  copyOf(source: CommentsWorkouts, mutator: (draft: MutableModel<CommentsWorkouts, CommentsWorkoutsMetaData>) => MutableModel<CommentsWorkouts, CommentsWorkoutsMetaData> | void): CommentsWorkouts;
 }
 
 type EagerUserWorkouts = {

@@ -85,7 +85,7 @@ export default function Leaderboard( {navigation} ) {
 
     console.log('Starting group and add')
 
-    //console.log(arr)
+    console.log(arr)
 
     arr.forEach(el => {
   
@@ -136,87 +136,82 @@ export default function Leaderboard( {navigation} ) {
     
     console.log('starting to build User DT')
     //Loop over arr
-    console.log(arr)
+    console.log('This one this one: ' +JSON.stringify(arr))
     console.log(user_res)
 
     arr.subWorkouts.forEach(el => {
       //console.log('category: ' + JSON.stringify(subworkouts[category]))
 
-      //console.log(el)
+      console.log(el)
 
-      let userid = el.workoutresults.userID
       let subworkoutid = el.id
-      let workoutResults =  el.workoutresults.value
-      let calc_workoutResults = el.workoutresults.value
       let required =  el.required
       let timecap =  el.timecap
       let resultcategory = el.resultcategory
 
 
-      console.log(userid)
-      console.log(subworkoutid)
-      console.log(workoutResults)
-      console.log(calc_workoutResults)
-      console.log(required)
-      console.log(timecap)
-      console.log(resultcategory)
+      el.workoutresults.forEach(item => {
+
+        let userid = item.userID
+        let workoutResults =  item.value
+        let calc_workoutResults = item.value
+
+         //Calculate total scores
+          let score
+
+          if (resultcategory === 'TIME') {
+
+            calc_workoutResults = timecap.replace(':', '').replace(':', '') - parseInt(calc_workoutResults.replace(':', '').replace(':', ''));
+          }
+          
+          if (calc_workoutResults != null && required) {
+            score = calc_workoutResults
+          } else if (calc_workoutResults != null) { 
+            score = calc_workoutResults * 0.25 //Scale to 25%
+          } else {  
+            score = 0
+          }
 
 
-      //Calculate total scores
-      let score
+          if (!res[userid]) {
+            res.push(userid);
+          }
+    
+          let results = {subWorkoutID: subworkoutid, value: workoutResults}
+    
+          //Lookup User info
+          if (user_res.length != 0) {
 
-      if (resultcategory === 'TIME') {
+            let user_filtered = user_res.filter(obj => (obj.id == userid));
+    
+            let user_name
+            
+            if (user_filtered.length != 0) {
+              user_name = user_filtered[0].name
+            }
+    
+    
+    
+            console.log('this: ' + JSON.stringify(res))
+            
+            if(typeof res[userid] === "undefined") {
+    
+              //Create new row
+              //console.log('create new row')
+              res[userid] = {number: 0, ordinal: '', name: user_name, workoutID: arr.id, score: score, results: [results]}
+    
+            } else {
+    
+              res[userid].results.push(results);
+    
+              res[userid].score = parseInt(res[userid].score) + parseInt(score);
+    
+            }   
+    
+          }
+  
+      })
 
-        calc_workoutResults = timecap.replace(':', '').replace(':', '') - parseInt(calc_workoutResults.replace(':', '').replace(':', ''));
-      }
-      
-      if (calc_workoutResults != null && required) {
-        score = calc_workoutResults
-      } else if (calc_workoutResults != null) { 
-        score = calc_workoutResults * 0.25 //Scale to 25%
-      } else {  
-        score = 0
-      }
-
-
-      
-      if (!res[userid]) {
-        res.push(userid);
-      }
-
-      let results = {subWorkoutID: subworkoutid, value: workoutResults}
-
-      //Lookup User info
-
-      if (user_res.length != 0) {
-
-        let user_filtered = user_res.filter(obj => (obj.id == userid));
-
-        let user_name
-        
-        if (user_filtered.length != 0) {
-          user_name = user_filtered[0].name
-        }
-
-
-
-        //console.log('this: ' + workoutssubworkouts[0].workouts.id)
-        
-        if(typeof res[userid] === "undefined") {
-
-          //Create new row
-          //console.log('create new row')
-          res[userid] = {number: 0, ordinal: '', name: user_name, workoutID: arr.id, score: score, results: [results]}
-
-        } else {
-
-          res[userid].results.push(results);
-
-          res[userid].score = parseInt(res[userid].score) + parseInt(score);
-
-        }   
-
-      }
 
     }, {});
     
@@ -261,7 +256,26 @@ export default function Leaderboard( {navigation} ) {
 
 
     // Find today's workout
-    const workouts = await DataStore.query(Workouts, (w) => w.date.eq(date));
+    const workouts = await DataStore.query(Workouts);
+
+    //console.log('this: ' + JSON.stringify(workouts))
+
+    //onsole.log(workouts[0].date)
+
+    //Sort the list
+
+    workouts.sort((a, b) => {
+      const [monthA, dayA, yearA] = a.date.split('/');
+      const [monthB, dayB, yearB] = b.date.split('/');
+      const dateA = new Date(yearA, monthA - 1, dayA);
+      const dateB = new Date(yearB, monthB - 1, dayB);
+      return dateB - dateA;
+    });
+
+    setWorkoutList(workouts)
+
+    //const workouts = await DataStore.query(Workouts, (w) => w.date.eq(date));
+    
 
     if (workouts.length === 0) {
       console.log('No workout found for today');
@@ -282,16 +296,35 @@ export default function Leaderboard( {navigation} ) {
     //var arr = workoutResults.filter(item => subWorkoutIds.indexOf(item.subworkoutsID) == 1);
     const workoutResults_filtered = workoutResults.filter(({subworkoutsID}) => subWorkoutIds.includes(subworkoutsID));
 
+    
+
     const subWorkoutsWithResults = subWorkouts.map(subWorkout => {
       // Get the workout result for this sub workout from the results table
-      const workoutResult = workoutResults_filtered.find(result => result.subworkoutsID === subWorkout.id);
+      //const workoutResult = workoutResults_filtered.find(result => result.subworkoutsID === subWorkout.id);
+      const workoutResult = workoutResults_filtered.filter(result => result.subworkoutsID === subWorkout.id);
+
+      console.log(subWorkout.id)
+      console.log('workout Results: ' + JSON.stringify(workoutResult))
     
       // If there is no workout result for this sub workout, return the sub workout object as is
       if (!workoutResult) {
         return subWorkout;
       }
+
     
       // If there is a workout result for this sub workout, add it as a property of the sub workout object
+      
+      return {
+        ...subWorkout,
+        workoutresults: workoutResult.map(result => ({
+          id: result.id,
+          value: result.value,
+          userID: result.userID
+        })) 
+      };
+
+
+      /*
       return {
         ...subWorkout,
         workoutresults: {
@@ -299,7 +332,9 @@ export default function Leaderboard( {navigation} ) {
           value: workoutResult.value,
           userID: workoutResult.userID
         }
-      };
+      };*/
+
+
     });
 
     const currentWorkout = workouts[0]
@@ -332,13 +367,16 @@ export default function Leaderboard( {navigation} ) {
       type: currentWorkout.type,
     }
 
+
+    console.log('this this this: ' + JSON.stringify(subWorkoutsWithResults))
+    
     // Add the subWorkoutsWithResults array to the dt object
     const dtWithResults = {
       ...dt,
       subWorkouts: subWorkoutsWithResults
     };
 
-    console.log('Here is the value: ' + JSON.stringify(dtWithResults.subWorkouts))
+    console.log('Here is the value: ' + JSON.stringify(dtWithResults))
     setWorkouts(dtWithResults)
 
     if (dtWithResults.subWorkouts) {
@@ -453,6 +491,8 @@ export default function Leaderboard( {navigation} ) {
       navigation.navigate('LeaderboardDetails', {value: key})
     }
     
+    console.log('here we are now: ' + JSON.stringify(workoutresults))
+
 
     let datadisplayed = workoutresults.map((category, index) => {
 
@@ -460,7 +500,7 @@ export default function Leaderboard( {navigation} ) {
         <LeaderBoardUserRow 
           name={workoutresults[category].name} 
           userid={category}
-          key={category} 
+          key={workoutresults[category].id} 
           score={workoutresults[category].score}
           number={workoutresults[category].number}
           ordinal={workoutresults[category].ordinal}
@@ -627,7 +667,7 @@ export default function Leaderboard( {navigation} ) {
             
               ( workouts.length != 0 )  ? (
               
-              <LeaderBoardPreview id={workouts.id} title={workouts.title} workout_date={workouts.date} />
+              <LeaderBoardPreview key={workouts.id} id={workouts.id} title={workouts.title} workout_date={workouts.date} />
               ) : (
                 <>
                 </>

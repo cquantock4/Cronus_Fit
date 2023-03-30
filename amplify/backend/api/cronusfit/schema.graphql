@@ -89,8 +89,8 @@ type Programs @model @auth(rules: [{allow: public}]) {
 type Comments @model @auth(rules: [{allow: public}]) {
   id: ID!
   comment: String
-  userid: String
-  Workouts: [Workouts] @manyToMany(relationName: "CommentsWorkouts")
+  workoutsID: ID! @index(name: "byWorkouts")
+  userID: ID! @index(name: "byUser")
 }
 
 enum Units {
@@ -131,7 +131,7 @@ type Workouts @model @auth(rules: [{allow: public}]) {
   users: [User] @manyToMany(relationName: "UserWorkouts")
   type: String
   SubWorkouts: [SubWorkouts] @hasMany(indexName: "byWorkouts", fields: ["id"])
-  commentss: [Comments] @manyToMany(relationName: "CommentsWorkouts")
+  commentss: [Comments] @hasMany(indexName: "byWorkouts", fields: ["id"])
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -153,5 +153,6 @@ type User @model @auth(rules: [{allow: public}]) {
   image: String
   image_uri: String
   WorkoutResults: [WorkoutResults] @hasMany(indexName: "byUser", fields: ["id"])
+  Comments: [Comments] @hasMany(indexName: "byUser", fields: ["id"])
 }
  
