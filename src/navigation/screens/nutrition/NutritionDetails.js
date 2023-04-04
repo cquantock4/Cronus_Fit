@@ -56,11 +56,12 @@ export default function NutritionDetails( {navigation} ) {
   const [experience, setExperience] = useState('Yes - 2+ years of experience');
   const [medical, setMedical] = useState('No');
   const [qualifiedyn, setQualifiedYN] = useState(false);
+  const [firstload, setFirstLoad] = useState(false);
 
   //EditScreen
   //Measurements
   const [i_gender, setGender] = useState('Male');
-  const [goal, setGoal] = useState('Gain Muscle');
+  const [goal, setGoal] = useState('Lose Fat');
   const [exercise, setExercise] = useState('Moderate Exercise');
   const [lifestyle, setLifestyle] = useState('Moderate Activity');
   const [height, setHeight] = useState('');
@@ -207,7 +208,7 @@ export default function NutritionDetails( {navigation} ) {
         const curr_user = await Auth.currentAuthenticatedUser();
         console.log(curr_user.attributes.sub)
 
-        const dbUsers = await DataStore.query(User, c => c.sub("eq", curr_user.attributes.sub));
+        const dbUsers = await DataStore.query(User, c => c.sub.eq(curr_user.attributes.sub));
 
         if (dbUsers.length < 0){
           return;
@@ -227,35 +228,39 @@ export default function NutritionDetails( {navigation} ) {
         //const userinfo_query = await DataStore.query(UserInfo, c => c.Users.User.id("eq", dbUser.id));
         //console.log(userinfo_query)
         
-        const userinfo = (await DataStore.query(UserInfo)).filter(
-          pe => pe.Users.id === dbUser.id
-        )
+        const userinfo_results = (await DataStore.query(UserInfo)).filter(
+          pe => pe.userInfoUsersId === dbUser.id
+        )   
+
+        console.log('this: '+ userinfo_results)
+
+        const userinfo = userinfo_results[0]
 
         //Set Db Values
         console.log('this: '+ userinfo)
 
-        if (userinfo[0]){
-          if (userinfo[0].i_gender == 'Male') {
+        if (userinfo){
+          if (userinfo.i_gender == 'Male') {
             //console.log('male')
             setShowMale(true)
             setShowFemale(false)
-            setGender(userinfo[0].i_gender)
-          } else if (userinfo[0].i_gender == 'Female') {
+            setGender(userinfo.i_gender)
+          } else if (userinfo.i_gender == 'Female') {
             setShowMale(false)
             setShowFemale(true)
-            setGender(userinfo[0].i_gender)
+            setGender(userinfo.i_gender)
           }
 
           setUserInfo(userinfo)
           //console.log(userinfo)
         
-          setGoal(userinfo[0].i_goals)
-          setHeight(userinfo[0].i_height)
-          setWeight(userinfo[0].i_weight)
-          setNeck(userinfo[0].i_neck)
-          setWaist(userinfo[0].i_waist)
-          setHip(userinfo[0].i_hip)
-          setBodyFatPct(userinfo[0].i_body_fat_pct)
+          setGoal(userinfo.i_goals)
+          setHeight(userinfo.i_height)
+          setWeight(userinfo.i_weight)
+          setNeck(userinfo.i_neck)
+          setWaist(userinfo.i_waist)
+          setHip(userinfo.i_hip)
+          setBodyFatPct(userinfo.i_body_fat_pct)
 
 
         }
@@ -283,7 +288,6 @@ export default function NutritionDetails( {navigation} ) {
     }
 
     getCurrentuser();
-
 
   }, [commentrefresh]);
 
@@ -339,10 +343,14 @@ export default function NutritionDetails( {navigation} ) {
     if (user) {
       //const foodentries = await DataStore.query(Foodentry, c => c.userID("eq", user.id));
 
+      console.log(user.id)
+      console.log(format(new Date(date), 'MM/dd/yyyy').toString())
 
       const foodentries = (await DataStore.query(Foodentry)).filter(
         pe => pe.userID === user.id && pe.date === format(new Date(date), 'MM/dd/yyyy').toString()
       )
+
+      console.log(foodentries)
 
       const result_breakfast = foodentries.filter((value, index) => value.category === 'BREAKFAST')
       const result_lunch = foodentries.filter((value, index) => value.category === 'LUNCH')
@@ -479,6 +487,7 @@ export default function NutritionDetails( {navigation} ) {
         //Change Screens
         setShowQuestionaire(false)
         setShowEditWindow(true)
+        setFirstLoad(true)
 
         //Pop up Alert
         setModalVisible(!modalVisible)
@@ -494,7 +503,42 @@ export default function NutritionDetails( {navigation} ) {
            })
     
            DataStore.save(updatedUser)
-         
+
+           //console.log('userid: ' + user.id)
+
+           /*
+           //Create User Info Record
+           const user_info = await DataStore.save(
+                new UserInfo({
+                    "Users": user
+                })
+            );
+            */
+
+        /*
+            i_gender: i_gender,
+              i_goals: goal,
+              i_height: height,
+              i_height_units: '',
+              i_hip: hip,
+              i_hip_units: '',
+              i_lifestyleactivity: lifestyle,
+              i_neck: neck,
+              i_neck_units: 'sd',
+              i_trainingactivity: exercise,
+              i_waist: waist,
+              i_waist_units: '',
+              i_weight: weight,
+              i_weight_units: '',
+              i_body_fat_pct: bodyfatpct,
+        
+              */
+
+
+        //console.log(user_info)
+        //setUserInfo(user_info)
+
+
         }
 
       } else {
@@ -670,10 +714,8 @@ export default function NutritionDetails( {navigation} ) {
         //Update
         console.log('Update');
 
-
-
         //Update the row
-        const updatedinfo = UserInfo.copyOf(userinfo[0], updated => {
+        const updatedinfo = UserInfo.copyOf(userinfo, updated => {
           updated.i_gender = i_gender,
           updated.i_goals = goal,
           updated.i_trainingactivity = exercise,
@@ -684,11 +726,8 @@ export default function NutritionDetails( {navigation} ) {
           updated.i_waist = waist,
           updated.i_hip = hip,
           updated.i_body_fat_pct = bodyfatpct
-
-
         })
 
-        console.log(updatedinfo)
 
         DataStore.save(updatedinfo)
 
@@ -1191,11 +1230,14 @@ export default function NutritionDetails( {navigation} ) {
     //const addFood = (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
     const addFood = async (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
 
-      //console.log(category)
+      console.log(category)
 
-      //console.log(pprotein)
-      if (pfooddesc == null || pprotein == null || pcarbs == null || pfat == null || pfiber == null || pcalories == null) return;
+      console.log(pprotein)
+      //if (pfooddesc == null || pprotein == null || pcarbs == null || pfat == null || pfiber == null || pcalories == null) return;
       
+      if (pfooddesc == null || pcalories == null) return;
+
+
       if (category === 'breakfast') {
         setBreakfastList(breakfastlist => ([...breakfastlist, {
           desc: pfooddesc,
@@ -1328,7 +1370,10 @@ export default function NutritionDetails( {navigation} ) {
 
       console.log(category)
       if (category === 'breakfast') {
+
         setBreakfastList(breakfastlist.filter((value, index) => index != deleteIndex));
+
+
       } else if (category === 'lunch') {
         setLunchList(lunchlist.filter((value, index) => index != deleteIndex));
       } else if (category === 'dinner') {
@@ -1341,6 +1386,8 @@ export default function NutritionDetails( {navigation} ) {
 
     const saveFoodEntries = async () => {
       setAddFood(!addfood)
+
+       navigation.navigate('NutritionScreen')
       //console.log(addfood)
     }
 
@@ -1473,6 +1520,11 @@ export default function NutritionDetails( {navigation} ) {
     return(
       <View style={{width: '100%', height: '100%', alignItems: 'center'}}>
         <DatePickerArrows />
+        <View>
+            <Text>
+                Food Entry Place holder
+            </Text>
+        </View>
         <ScrollView style={{width: '100%'}}>
           <View style={{width: '100%', alignItems: 'center', padding: 10}}>
 
@@ -1569,6 +1621,7 @@ export default function NutritionDetails( {navigation} ) {
               </View>
             </View>
           </View>
+          {/*}
           <View style={{marginTop: 50, width: '100%', marginBottom: 50}}>
             <Bubble_Button 
               text='Save Food Entries'
@@ -1578,6 +1631,7 @@ export default function NutritionDetails( {navigation} ) {
               cstyle={{width: '100%'}}
             />
           </View>
+                */}
           </View>
 
         </ScrollView>
@@ -2050,7 +2104,7 @@ export default function NutritionDetails( {navigation} ) {
             new Messages({
               message: messagetext,
               sender_userid: user.id,
-              receiver_userid: '536f1d0d-9b16-4baf-8b06-53c941f88468',
+              receiver_userid: 'ee8bb6eb-c9bc-47a9-87f4-f7dfe4d92813',
               createdAt: date
             })
           );
@@ -2211,16 +2265,20 @@ export default function NutritionDetails( {navigation} ) {
       //Activity loading trigger
 
       //console.log('this is the user info: ' + JSON.stringify(userinfo))
-  
-      if (userinfo === null) {
-        return (
-          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <ActivityIndicator />
-          </View>
-        );
-      } else {
+        
+      if (userinfo === null && !firstload) {
+
+            return (
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <ActivityIndicator />
+            </View>
+            );
+
+    } else {
         return <EditWindow />;
-      }
+    }
+
+        
 
       
     } else {
