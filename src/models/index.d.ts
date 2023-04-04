@@ -25,6 +25,10 @@ export enum ResultCategory {
   WEIGHT = "WEIGHT"
 }
 
+type SavedWorkoutsMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 type FoodentryMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -67,8 +71,26 @@ type UserMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type UserWorkoutsMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
+type EagerSavedWorkouts = {
+  readonly id: string;
+  readonly userID: string;
+  readonly workoutsID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazySavedWorkouts = {
+  readonly id: string;
+  readonly userID: string;
+  readonly workoutsID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type SavedWorkouts = LazyLoading extends LazyLoadingDisabled ? EagerSavedWorkouts : LazySavedWorkouts
+
+export declare const SavedWorkouts: (new (init: ModelInit<SavedWorkouts, SavedWorkoutsMetaData>) => SavedWorkouts) & {
+  copyOf(source: SavedWorkouts, mutator: (draft: MutableModel<SavedWorkouts, SavedWorkoutsMetaData>) => MutableModel<SavedWorkouts, SavedWorkoutsMetaData> | void): SavedWorkouts;
 }
 
 type EagerFoodentry = {
@@ -368,10 +390,10 @@ type EagerWorkouts = {
   readonly title?: string | null;
   readonly desc?: string | null;
   readonly date?: string | null;
-  readonly users?: (UserWorkouts | null)[] | null;
   readonly type?: string | null;
   readonly SubWorkouts?: (SubWorkouts | null)[] | null;
   readonly commentss?: (Comments | null)[] | null;
+  readonly SavedWorkouts?: (SavedWorkouts | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -381,10 +403,10 @@ type LazyWorkouts = {
   readonly title?: string | null;
   readonly desc?: string | null;
   readonly date?: string | null;
-  readonly users: AsyncCollection<UserWorkouts>;
   readonly type?: string | null;
   readonly SubWorkouts: AsyncCollection<SubWorkouts>;
   readonly commentss: AsyncCollection<Comments>;
+  readonly SavedWorkouts: AsyncCollection<SavedWorkouts>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -400,7 +422,6 @@ type EagerUser = {
   readonly name?: string | null;
   readonly email?: string | null;
   readonly sub?: string | null;
-  readonly Workouts?: (UserWorkouts | null)[] | null;
   readonly units?: Units | keyof typeof Units | null;
   readonly nutrition_info?: boolean | null;
   readonly nutrition_coaching?: boolean | null;
@@ -415,6 +436,7 @@ type EagerUser = {
   readonly image_uri?: string | null;
   readonly WorkoutResults?: (WorkoutResults | null)[] | null;
   readonly Comments?: (Comments | null)[] | null;
+  readonly SavedWorkouts?: (SavedWorkouts | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -424,7 +446,6 @@ type LazyUser = {
   readonly name?: string | null;
   readonly email?: string | null;
   readonly sub?: string | null;
-  readonly Workouts: AsyncCollection<UserWorkouts>;
   readonly units?: Units | keyof typeof Units | null;
   readonly nutrition_info?: boolean | null;
   readonly nutrition_coaching?: boolean | null;
@@ -439,6 +460,7 @@ type LazyUser = {
   readonly image_uri?: string | null;
   readonly WorkoutResults: AsyncCollection<WorkoutResults>;
   readonly Comments: AsyncCollection<Comments>;
+  readonly SavedWorkouts: AsyncCollection<SavedWorkouts>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -447,26 +469,4 @@ export declare type User = LazyLoading extends LazyLoadingDisabled ? EagerUser :
 
 export declare const User: (new (init: ModelInit<User, UserMetaData>) => User) & {
   copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
-}
-
-type EagerUserWorkouts = {
-  readonly id: string;
-  readonly workouts: Workouts;
-  readonly user: User;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyUserWorkouts = {
-  readonly id: string;
-  readonly workouts: AsyncItem<Workouts>;
-  readonly user: AsyncItem<User>;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type UserWorkouts = LazyLoading extends LazyLoadingDisabled ? EagerUserWorkouts : LazyUserWorkouts
-
-export declare const UserWorkouts: (new (init: ModelInit<UserWorkouts, UserWorkoutsMetaData>) => UserWorkouts) & {
-  copyOf(source: UserWorkouts, mutator: (draft: MutableModel<UserWorkouts, UserWorkoutsMetaData>) => MutableModel<UserWorkouts, UserWorkoutsMetaData> | void): UserWorkouts;
 }

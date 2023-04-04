@@ -450,8 +450,6 @@ export default function Leaderboard( {navigation} ) {
 
     
     return(
-      <>
-        <View>
           <View style={[styles.container_userRow, {backgroundColor: activeColors.secondary_bg}]} >
             <View style={{width: '20%'}}>
               <View style={styles.rowNumber}>
@@ -475,9 +473,7 @@ export default function Leaderboard( {navigation} ) {
                 <Text style={{fontSize: 10, color: activeColors.inverted_text, fontWeight: '400'}}>{props.score}</Text>
               </View>
             </View>
-          </View>
-        </View>        
-      </>
+          </View>   
     );
   
   }
@@ -491,16 +487,18 @@ export default function Leaderboard( {navigation} ) {
       navigation.navigate('LeaderboardDetails', {value: key})
     }
     
-    console.log('here we are now: ' + JSON.stringify(workoutresults))
+    //console.log('here we are now: ' + JSON.stringify(workoutresults))
 
 
     let datadisplayed = workoutresults.map((category, index) => {
+
+      console.log('this this :' + JSON.stringify(workoutresults[category]))
 
       return (
         <LeaderBoardUserRow 
           name={workoutresults[category].name} 
           userid={category}
-          key={workoutresults[category].id} 
+          key={category} 
           score={workoutresults[category].score}
           number={workoutresults[category].number}
           ordinal={workoutresults[category].ordinal}
@@ -511,7 +509,7 @@ export default function Leaderboard( {navigation} ) {
     
   
     return(
-      <Pressable onPress={onRowPress} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Pressable key={key} onPress={onRowPress} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
 
         <ScrollView
               style={{marginBottom: 47}}

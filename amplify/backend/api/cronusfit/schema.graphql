@@ -1,3 +1,9 @@
+type SavedWorkouts @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  userID: ID! @index(name: "byUser")
+  workoutsID: ID! @index(name: "byWorkouts")
+}
+
 enum Themes {
   LIGHT
   DARK
@@ -128,10 +134,10 @@ type Workouts @model @auth(rules: [{allow: public}]) {
   title: String
   desc: String
   date: String
-  users: [User] @manyToMany(relationName: "UserWorkouts")
   type: String
   SubWorkouts: [SubWorkouts] @hasMany(indexName: "byWorkouts", fields: ["id"])
   commentss: [Comments] @hasMany(indexName: "byWorkouts", fields: ["id"])
+  SavedWorkouts: [SavedWorkouts] @hasMany(indexName: "byWorkouts", fields: ["id"])
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -139,7 +145,6 @@ type User @model @auth(rules: [{allow: public}]) {
   name: String
   email: String
   sub: String
-  Workouts: [Workouts] @manyToMany(relationName: "UserWorkouts")
   units: Units
   nutrition_info: Boolean
   nutrition_coaching: Boolean
@@ -154,5 +159,6 @@ type User @model @auth(rules: [{allow: public}]) {
   image_uri: String
   WorkoutResults: [WorkoutResults] @hasMany(indexName: "byUser", fields: ["id"])
   Comments: [Comments] @hasMany(indexName: "byUser", fields: ["id"])
+  SavedWorkouts: [SavedWorkouts] @hasMany(indexName: "byUser", fields: ["id"])
 }
  

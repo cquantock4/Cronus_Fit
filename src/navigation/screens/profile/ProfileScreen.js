@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, Image} from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import {Button, Pressable, ActivityIndicator } from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useIsFocused } from '@react-navigation/native';
 
 
 import { Bubble_Button} from '../../../components/ui/buttons'
@@ -24,6 +25,8 @@ import {colors} from '../../../../assets/styles/themes'
 
 
 export default function ProfileScreen( {navigation} ) {
+  
+  const isFocused = useIsFocused();
 
   //Data
   const [userdata, setUserData] = useState();
@@ -62,9 +65,14 @@ export default function ProfileScreen( {navigation} ) {
 
   useEffect(() => {
 
-    getUser();
+    // Call only when screen open or when back on screen 
+    if(isFocused){ 
+        getUser();
+    }
 
-  }, []);
+    //getUser();
+
+  }, [isFocused]);
 
   useEffect(() => {
 
@@ -85,8 +93,10 @@ export default function ProfileScreen( {navigation} ) {
      
       //Get local User Id for Query
       const _user = await DataStore.query(User, sw =>
-        sw.sub('eq', authUser.attributes.sub)
+        sw.sub.eq(authUser.attributes.sub)
       )
+
+      console.log(_user)
     
       //console.log('Here we are: ' + JSON.stringify(user))
       //Query Matrix Table to find list of ids  
@@ -393,7 +403,7 @@ export default function ProfileScreen( {navigation} ) {
                 )
                 
               ) : (
-                <Image style={styles.profile_image} source={require('../../../assets/images/AddProfileImage.png')} />
+                <Image style={styles.profile_image} source={require('../../../../assets/images/AddProfileImage.png')} />
               )}
                 
             </Pressable>

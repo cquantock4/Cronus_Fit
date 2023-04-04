@@ -17,6 +17,9 @@ import NewPasswordScreen from "./screens/login/NewPasswordScreen";
 
 //Screen Containers
 import LeaderboardScreenContainer from './screens/LeaderboardScreenContainer'
+import ProfileScreenContainer from './screens/ProfileScreenContainer'
+import WorkoutScreenContainer from './screens/WorkoutScreenContainer'
+import NutritionScreenContainer from './screens/NutritionScreenContainer'
 
 //Home Screens
 import HomeScreen from './screens/HomeScreen'
@@ -147,6 +150,10 @@ const Navigation = () => {
   
             <Tab.Screen name={homeName} component={HomeScreen} options={{ headerShown: false }}/>
             <Tab.Screen name={leaderboardName} component={LeaderboardScreenContainer} options={{ headerShown: false }}/> 
+            <Tab.Screen name={fitnessName} component={WorkoutScreenContainer} options={{ headerShown: false }}/>
+            <Tab.Screen name={nutritionScreen} component={NutritionScreenContainer} options={{ headerShown: false }}/>
+            <Tab.Screen name={profileName} component={ProfileScreenContainer} options={{ headerShown: false }}/> 
+         
             
         </Tab.Navigator>
       
