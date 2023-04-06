@@ -511,28 +511,37 @@ export default function Leaderboard( {navigation} ) {
     return(
       <Pressable key={key} onPress={onRowPress} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
 
-        <ScrollView
-              style={{marginBottom: 47}}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={onRefresh}
-                />
-              }
-            >
-          <View style={[styles.container_preview, {backgroundColor: activeColors.secondary_bg}]}>
-            <View style={styles.container_header}>
-              <Text style={{fontSize: 20, fontWeight: '600', color: activeColors.secondary_text}}>{props.title}</Text>
-              <Text style={{fontSize: 14, fontWeight: '400', color: activeColors.secondary_text}}>{props.workout_date}</Text>
+        { workoutresults.length > 0 ? (
+          <ScrollView
+                style={{marginBottom: 47}}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              >
+            <View style={[styles.container_preview, {backgroundColor: activeColors.secondary_bg}]}>
+              <View style={styles.container_header}>
+                <Text style={{fontSize: 20, fontWeight: '600', color: activeColors.secondary_text}}>{props.title}</Text>
+                <Text style={{fontSize: 14, fontWeight: '400', color: activeColors.secondary_text}}>{props.workout_date}</Text>
+              </View>
+              
+              <View style={styles.container_userRows}>
+                {datadisplayed}
+              </View>
+              
             </View>
-            
-            <View style={styles.container_userRows}>
-              {datadisplayed}
-            </View>
-            
+
+          </ScrollView>
+        ) : (
+
+          <View>
+            <Text>No Results posted yet</Text>
           </View>
 
-        </ScrollView>
+        )}
+        
         
       </Pressable>
     );
