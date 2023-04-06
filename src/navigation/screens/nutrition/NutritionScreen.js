@@ -80,10 +80,11 @@ export default function NutritionScreen( {navigation} ) {
       )
 
       
-
+     
       //Query Matrix Table to find list of ids  
       if (user[0]) {
         //Set state variable
+        setUser(user[0])
         setUserID(user[0].id)
         //console.log(user[0])
         setNutritionCoaching(user[0].nutrition_coaching)
@@ -239,7 +240,9 @@ export default function NutritionScreen( {navigation} ) {
   
   
     const onGoToNutritionDetails = async (navitem) => {
-      navigation.navigate('NutritionDetails', {value: navitem})
+
+      console.log('passing this value: ' + user)
+      navigation.navigate('NutritionDetails', {value: navitem, user_id: user})
       console.log('Go to Nutrition Details Screen')
     };
   

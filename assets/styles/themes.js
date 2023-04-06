@@ -40,7 +40,7 @@ export const colors = {
     //buttons
     tab_bar_inactive: "#fff",
     button_active: "#1C1C1C",
-    button_inactive_text: '#363636',
+    button_inactive_text: '#C8C8C8',
     button_inactive: "#050605",
   },
 

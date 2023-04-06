@@ -40,7 +40,7 @@ export default function NutritionDetails( {navigation} ) {
   const route = useRoute();
   //const {control, handleSubmit, formState: {errors}} = useForm();
   const tabBarHeight = useBottomTabBarHeight();
-  const[user, setUser] = useState(null);
+  const[user, setUser] = useState(route?.params?.user_id);
   const[userinfo, setUserInfo] = useState(null)
   const [users, setUsers] = useState(undefined);
   const[headertitle, setHeaderTitle] = useState('Nutrition');
@@ -90,9 +90,13 @@ export default function NutritionDetails( {navigation} ) {
   const [messagecoach, setMessageCoach] = useState(false)
   const [currentTitle, setCurrentTitle] = useState('')
   const [nutritionNav, setNutritionNav] = useState(route?.params?.value);
+
   const [showquestionaire, setShowQuestionaire] = useState(false);
   const [showeditwindow, setShowEditWindow] = useState(false);
 
+  //Food
+  const [viewentryscreen, setViewEntryScreen] = useState(false)
+  const [foodentries, setFoodEntries] = useState(false)
   //Breakfast
   const [viewbreakfast, setViewBreakfast] = useState(false)
   const [breakfastlist, setBreakfastList] = useState([]);
@@ -145,9 +149,12 @@ export default function NutritionDetails( {navigation} ) {
   //Refresh
   const [refreshing, setRefreshing] = useState(false);
   const [commentrefresh, setCommentRefresh] = useState(false);
+
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
+
+
   }, []);
   
   
@@ -299,6 +306,8 @@ export default function NutritionDetails( {navigation} ) {
 
   }, [date]);
 
+  
+
   /*
   useEffect(() => {
 
@@ -339,6 +348,11 @@ export default function NutritionDetails( {navigation} ) {
     //console.log(curr_user.attributes.sub)
 
     setBreakfastList([])
+    setLunchList([])
+    setDinnerList([])
+    setSnacksList([])
+
+    console.log('is this running?')
 
     if (user) {
       //const foodentries = await DataStore.query(Foodentry, c => c.userID("eq", user.id));
@@ -350,7 +364,9 @@ export default function NutritionDetails( {navigation} ) {
         pe => pe.userID === user.id && pe.date === format(new Date(date), 'MM/dd/yyyy').toString()
       )
 
-      console.log(foodentries)
+      setFoodEntries(foodentries)
+
+      console.log('here are the entries: ' + JSON.stringify(foodentries))
 
       const result_breakfast = foodentries.filter((value, index) => value.category === 'BREAKFAST')
       const result_lunch = foodentries.filter((value, index) => value.category === 'LUNCH')
@@ -362,6 +378,7 @@ export default function NutritionDetails( {navigation} ) {
         //console.log(item.desc)
 
         setBreakfastList(breakfastlist => ([...breakfastlist, {
+          id: item.id,
           desc: item.desc,
           protein: item.protein,
           carbs: item.carbs,
@@ -378,6 +395,7 @@ export default function NutritionDetails( {navigation} ) {
         //console.log(item.desc)
 
         setLunchList(lunchlist => ([...lunchlist, {
+          id: item.id,
           desc: item.desc,
           protein: item.protein,
           carbs: item.carbs,
@@ -393,6 +411,7 @@ export default function NutritionDetails( {navigation} ) {
         //console.log(item.desc)
 
         setDinnerList(dinnerlist => ([...dinnerlist, {
+          id: item.id,
           desc: item.desc,
           protein: item.protein,
           carbs: item.carbs,
@@ -408,6 +427,7 @@ export default function NutritionDetails( {navigation} ) {
         //console.log(item.desc)
 
         setSnacksList(snacklist => ([...snacklist, {
+          id: item.id,
           desc: item.desc,
           protein: item.protein,
           carbs: item.carbs,
@@ -1366,14 +1386,11 @@ export default function NutritionDetails( {navigation} ) {
       
     }
 
-    const deleteTask = (deleteIndex, category) => {
+    const deleteTask = (deleteIndex, category, item) => {
 
       console.log(category)
       if (category === 'breakfast') {
-
         setBreakfastList(breakfastlist.filter((value, index) => index != deleteIndex));
-
-
       } else if (category === 'lunch') {
         setLunchList(lunchlist.filter((value, index) => index != deleteIndex));
       } else if (category === 'dinner') {
@@ -1381,6 +1398,20 @@ export default function NutritionDetails( {navigation} ) {
       } else if (category === 'snacks') {
         setSnacksList(snackslist.filter((value, index) => index != deleteIndex));
       } 
+
+     
+
+      const item_to_delete = foodentries.filter((value) => value.id === item.id)
+
+      console.log('we need to delete this food item: ' + JSON.stringify(item_to_delete))
+
+      if (item_to_delete[0]) {
+
+        console.log("found it, let''s delete it")
+
+        DataStore.delete(item_to_delete[0]);
+
+      }
       
     }
 
@@ -1462,24 +1493,30 @@ export default function NutritionDetails( {navigation} ) {
               <View style={{padding: 10, width: '100%', flexDirection: 'column', justifyContent: 'space-evenly'}}>
                 <ScrollView>
                   {
-                    //Filter out 0 calorie items and then display the food items
-                    itemList.filter(function(item) {
-                      if (item.calories === 0) {
-                        return false; // skip
-                      }
-                      return true;
-                    }).map((item, index) => {
-                      return (
-                        <View key={index} style={{flex: 1}}>
-                            <FoodItem index={index + 1} item={item} deleteTask={() => deleteTask(index, category)}/>
+                    (itemList.length > 0) ? (
+                        //Filter out 0 calorie items and then display the food items
+                        itemList.filter(function(item) {
+                        if (item.calories === 0) {
+                          return false; // skip
+                        }
+                        return true;
+                      }).map((item, index) => {
+                        return (
+                          <View key={index} style={{flex: 1}}>
+                              <FoodItem index={index + 1} item={item} deleteTask={() => deleteTask(index, category, item)}/>
+                          </View>
+                        );
+                      })
+                    ) : (
+                        <View>
+                            <Text style={{color: activeColors.primary_text}}>No data</Text>
                         </View>
-                      );
-                    })
-                  } 
+                    )} 
                 </ScrollView>
+                {/*
                 <View style={{marginTop: 5}}>
                   <FoodInputField addFood={addFood} category={category}/>
-                </View>
+                </View>*/}
               </View>
           ) : (
             <>
@@ -1488,6 +1525,22 @@ export default function NutritionDetails( {navigation} ) {
           
         );
     };
+
+    const AddFoodItemArea = ({viewTrigger}) => {
+        return (
+            viewTrigger ? (
+                <View style={{padding: 10, width: '100%', flexDirection: 'column', justifyContent: 'space-evenly'}}>
+                  <View style={{marginTop: 5}}>
+                    <FoodInputField addFood={addFood}/>
+                  </View>
+                </View>
+            ) : (
+              <>
+              </>
+            )
+            
+          );
+      };
 
 
     //const testingfoodData = require('../../../assets/testData/testingfooddata.json');
@@ -1520,13 +1573,31 @@ export default function NutritionDetails( {navigation} ) {
     return(
       <View style={{width: '100%', height: '100%', alignItems: 'center'}}>
         <DatePickerArrows />
-        <View>
-            <Text>
-                Food Entry Place holder
-            </Text>
-        </View>
         <ScrollView style={{width: '100%'}}>
-          <View style={{width: '100%', alignItems: 'center', padding: 10}}>
+        <View style={{width: '100%'}}>
+            <Pressable style={{padding: 10, flexDirection: 'row'}} onPress={() => setViewEntryScreen(!viewentryscreen)}>
+                
+                { viewentryscreen ? (
+                        <>
+                            <Text style={{color: activeColors.primary_text}}>Add Food  </Text>
+                            <Ionicons name='remove-outline' color= {activeColors.primary_text} style={{fontSize: 18}}/>
+                        </>
+                    ) : (
+                        <>
+                            <Text style={{color: activeColors.primary_text}}>Add Food  </Text>
+                            <Ionicons name='add-outline' color={activeColors.primary_text} style={{fontSize: 18}}/>
+                        </>
+                    )
+                }
+                
+                
+            </Pressable>
+            <AddFoodItemArea viewTrigger={viewentryscreen} category='breakfast'/>
+        </View>
+        { viewentryscreen ? (
+            <></>
+        ) : (
+            <View style={{width: '100%', alignItems: 'center', padding: 10}}>
 
             {/* Breakfast */}
             <ExpandableSectionButton itemList={breakfastlist} viewTrigger={viewbreakfast} category='breakfast' />
@@ -1543,96 +1614,98 @@ export default function NutritionDetails( {navigation} ) {
             {/* Snacks */}
             <ExpandableSectionButton itemList={snackslist} viewTrigger={viewsnacks} category='snacks' />
             <ExpandableSectionArea itemList={snackslist} viewTrigger={viewsnacks} category='snacks'/>
-          
+            
 
-          <View style={{marginTop: 25, justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{marginTop: 25, justifyContent: 'center', alignItems: 'center'}}>
             <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '50%', marginBottom: 10}}>
-              <Text style={{color: 'white', fontWeight: '300'}}>Total Calories: </Text>
-              <Text style={{color: 'white', fontWeight: '300'}}>
+                <Text style={{color: 'white', fontWeight: '300'}}>Total Calories: </Text>
+                <Text style={{color: 'white', fontWeight: '300'}}>
                 {
-                breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.calories) , 0 )
+                breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
                 + 
-                lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.calories) , 0 )
+                lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
                 + 
-                dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.calories) , 0 )
+                dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
                 + 
-                snackslist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.calories) , 0 )
+                snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
                 } 
-              </Text>
+                </Text>
             </View>
             <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%', marginBottom: 10}}>
-              <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
                 <Text style={{color: 'white', fontWeight: '300'}}>Total Protein: </Text>
                 <Text style={{color: 'white', fontWeight: '300'}}>
-                  {
-                  breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.protein) , 0 )
-                  + 
-                  lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.protein) , 0 )
-                  + 
-                  dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.protein) , 0 )
-                  + 
-                  snackslist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.protein) , 0 )
-                  } g 
+                    {
+                    breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                    + 
+                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                    + 
+                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                    + 
+                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                    } g 
                 </Text>
-              </View>
-              <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                </View>
+                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
                 <Text style={{color: 'white', fontWeight: '300'}}>Total Carbs: </Text>
                 <Text style={{color: 'white', fontWeight: '300'}}>
-                  {
-                  breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.carbs) , 0 )
-                  + 
-                  lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.carbs) , 0 )
-                  + 
-                  dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.carbs) , 0 )
-                  + 
-                  snackslist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.carbs) , 0 )
-                  } g 
+                    {
+                    breakfastlist.reduce((total , currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                    + 
+                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                    + 
+                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                    + 
+                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                    } g 
                 </Text>
-              </View>
+                </View>
             </View>
             <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%'}}>
-              <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
                 <Text style={{color: 'white', fontWeight: '300'}}>Total Fat: </Text>
                 <Text style={{color: 'white', fontWeight: '300'}}>
-                  {
-                  breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.fat) , 0 )
-                  + 
-                  lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.fat) , 0 )
-                  + 
-                  dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.fat) , 0 )
-                  + 
-                  snackslist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.fat) , 0 )
-                  } g 
+                    {
+                    breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                    + 
+                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                    + 
+                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                    + 
+                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                    } g 
                 </Text>
-              </View>
-              <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                </View>
+                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
                 <Text style={{color: 'white', fontWeight: '300'}}>Total Fiber: </Text>
                 <Text style={{color: 'white', fontWeight: '300'}}> 
-                  {
-                  breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.fiber) , 0 )
-                  + 
-                  lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.fiber) , 0 )
-                  + 
-                  dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.fiber) , 0 )
-                  + 
-                  snackslist.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.fiber) , 0 )
-                  } g 
+                    {
+                    breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                    + 
+                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                    + 
+                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                    + 
+                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                    } g 
                 </Text>
-              </View>
+                </View>
             </View>
-          </View>
-          {/*}
-          <View style={{marginTop: 50, width: '100%', marginBottom: 50}}>
+            </View>
+            {/*}
+            <View style={{marginTop: 50, width: '100%', marginBottom: 50}}>
             <Bubble_Button 
-              text='Save Food Entries'
-              onPress={saveFoodEntries}
-              bgColor='#F8BE13'
-              fgColor='#363636'
-              cstyle={{width: '100%'}}
+                text='Save Food Entries'
+                onPress={saveFoodEntries}
+                bgColor='#F8BE13'
+                fgColor='#363636'
+                cstyle={{width: '100%'}}
             />
-          </View>
+            </View>
                 */}
-          </View>
+            </View>
+        )}
+          
 
         </ScrollView>
       </View>
