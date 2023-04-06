@@ -1,10 +1,10 @@
 import React, { useState , useEffect, useContext} from 'react';
-import { StyleSheet, Text, View, Pressable, RefreshControl, ActivityIndicator, ScrollView } from 'react-native';
-import Constants from 'expo-constants'
+import { StyleSheet, Text, View, Pressable, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
+import Constants from 'expo-constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Bubble_Button_Small } from '../../../components/ui/buttons'
 
-import { listWorkoutsSubWorkouts_date,listTestQuery } from '../../../graphql/queries';
+//import { listWorkoutsSubWorkouts_date,listTestQuery } from '../../../graphql/queries';
 
 
 //Amplify DataStore
@@ -49,7 +49,7 @@ export default function Leaderboard( {navigation} ) {
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
+    wait(1000).then(() => setRefreshing(false));
   }, []);
 
   //Toggle
@@ -61,6 +61,7 @@ export default function Leaderboard( {navigation} ) {
   const [workoutlist, setWorkoutList] = useState([]);
   const [savedworkouts, setSavedWorkouts] = useState([]);
   const [sub, setAuthSub] = useState(undefined);
+
 
   const theme = useContext(ThemeContext)
   const darkMode = theme.state.darkMode;
@@ -248,7 +249,7 @@ export default function Leaderboard( {navigation} ) {
       subs.unsubscribe();
     };
 
-  }, []);
+  }, [refreshing]);
 
 
 
@@ -509,7 +510,7 @@ export default function Leaderboard( {navigation} ) {
     
   
     return(
-      <Pressable key={key} onPress={onRowPress} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
 
         { workoutresults.length > 0 ? (
           <ScrollView
@@ -523,9 +524,17 @@ export default function Leaderboard( {navigation} ) {
               >
             <View style={[styles.container_preview, {backgroundColor: activeColors.secondary_bg}]}>
               <View style={styles.container_header}>
-                <Text style={{fontSize: 20, fontWeight: '600', color: activeColors.secondary_text}}>{props.title}</Text>
-                <Text style={{fontSize: 14, fontWeight: '400', color: activeColors.secondary_text}}>{props.workout_date}</Text>
+                <View style={{flex: 1}}>
+                  <Text style={{fontSize: 20, fontWeight: '600', color: activeColors.secondary_text}}>{props.title}</Text>
+                  <Text style={{fontSize: 14, fontWeight: '400', color: activeColors.secondary_text}}>{props.workout_date}</Text>
+                </View>
+                <View>
+                  <Pressable onPress={onRowPress} style={{flex: 1, paddingleft: 10,  justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={{color: activeColors.accent_text}}>View Details</Text>
+                  </Pressable>
+                </View>
               </View>
+              
               
               <View style={styles.container_userRows}>
                 {datadisplayed}
@@ -543,7 +552,7 @@ export default function Leaderboard( {navigation} ) {
         )}
         
         
-      </Pressable>
+      </View>
     );
   
   }
@@ -665,7 +674,6 @@ export default function Leaderboard( {navigation} ) {
 
       
       <ScrollView style={{marginBottom: 50}}>
-
       
         {/* LeaderBoard Page Containers */}
         {showDaily ? (
@@ -787,6 +795,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E8E8E8',
     padding: 15,
+    flexDirection: 'row'
     //paddingLeft: 10
   },
   container_footer: {

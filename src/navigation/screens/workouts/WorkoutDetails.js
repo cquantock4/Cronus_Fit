@@ -176,6 +176,8 @@ export default function WorkoutDetails( {navigation} ) {
         setSearch(text);
 
       }
+
+      
     };
 
     const ItemView = ({ item }) => {
