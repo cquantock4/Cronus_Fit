@@ -148,21 +148,66 @@ export default function WorkoutDetails( {navigation} ) {
 
     }, []);
 
+    function formatDate(dateString, formatString) {
+      const date = new Date(dateString);
+      return format(date, formatString);
+    }
+
 
     const searchFilterFunction = (text) => {
       // Check if searched text is not blank
       if (text) {
         // Inserted text is not blank
         // Filter the masterDataSource and update FilteredDataSource
+
+        console.log(masterDataSource)
+
         const newData = masterDataSource.filter(function (item) {
 
+          console.log(item)
+
           // Applying filter for the inserted text in search bar
-          const itemData = item.title
+          const titleData = item.title
             ? item.title.toUpperCase()
             : ''.toUpperCase();
 
+          const descData = item.desc
+            ? item.desc.toUpperCase()
+            : ''.toUpperCase();
+
+          const dateData = item.date
+            ? item.date.toUpperCase()
+            : ''.toUpperCase();
+
+          const combinedData = titleData + descData + dateData;
+
           const textData = text.toUpperCase();
-          return itemData.indexOf(textData) > -1;
+
+          const dateFormats = [
+            'MM/dd/yyyy',
+            'dd/MM/yyyy',
+            'yyyy-MM-dd'
+          ];
+
+          let dateMatch = false;
+            dateFormats.forEach(format => {
+              if (formatDate(item.date, format).toUpperCase().indexOf(textData) > -1) {
+                dateMatch = true;
+              }
+            });
+
+
+
+          return combinedData.indexOf(textData) > -1 || dateMatch;
+
+          //return combinedData.indexOf(textData) > -1;
+
+          //console.log('here we are: ' + JSON.stringify(itemData))
+
+          //const textData = text.toUpperCase();
+
+
+          //return itemData.indexOf(textData || '%prep%') > -1;
         });
 
         setFilteredDataSource(newData);
