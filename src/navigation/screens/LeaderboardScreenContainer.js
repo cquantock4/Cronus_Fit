@@ -12,15 +12,17 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 const Stack = createNativeStackNavigator();
 
 
+
+
 export default function LeaderboardScreenContainer({navigation}) {
 
 
+
     return(
-      <Stack.Navigator>
-        <Stack.Screen name="LeaderboardScreen" component={LeaderboardScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="LeaderboardDetails" component={LeaderboardDetails} options={{ headerShown: false }}/>
-      </Stack.Navigator>
-                
+        <Stack.Navigator>
+          <Stack.Screen name="LeaderboardScreen" component={LeaderboardScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="LeaderboardDetails" component={LeaderboardDetails} options={{ headerShown: false }}/>
+        </Stack.Navigator>
     );
 }
 

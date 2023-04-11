@@ -1,7 +1,8 @@
-import React, {useEffect, useState, useContext} from 'react';
-import {View, ActivityIndicator, Image, StyleSheet} from 'react-native';
+import React, {useEffect, useState, useContext, useRef} from 'react';
+import {View, ActivityIndicator, Image, StyleSheet, Dimensions, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StatusBar } from 'expo-status-bar';
 
 //Bottom Tab Navigator Items
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -32,9 +33,11 @@ import {colors} from "../../assets/styles/themes"
 import {Auth, Hub, DataStore} from 'aws-amplify';
 import { User } from "../models"
 
-
+// Nav
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+
 
 //Nav Pages
 const homeName = 'Home'
@@ -42,9 +45,6 @@ const fitnessName = 'Fitness'
 const profileName = 'Profile'
 const nutritionScreen = 'Nutrition'
 const leaderboardName = 'LeaderBoard'
-
-
-
 
 
 const Navigation = () => {
@@ -56,6 +56,17 @@ const Navigation = () => {
 
   let theme_result = 'LIGHT'
 
+  const darkMode = theme.state.darkMode;
+
+  let activeColors = ''
+
+  if (darkMode) {
+    activeColors = colors['dark'];
+  } else {
+    activeColors = colors['light'];
+  }
+
+  
 
   function HomeScreenNav(props) {
 
@@ -63,18 +74,10 @@ const Navigation = () => {
   
     //console.log('inside the home screen nav: ' + JSON.stringify(user))
   
-    const theme = useContext(ThemeContext)
-    const darkMode = theme.state.darkMode;
-  
-    let activeColors = ''
-  
-    if (darkMode) {
-      activeColors = colors['dark'];
-    } else {
-      activeColors = colors['light'];
-    }
+    
   
     //const header_label = <Text style={{color: '#252a2e', fontWeight: 'bold', textTransform: 'uppercase'}}>Cronus<Text style={{color: '#fcbd10'}}> Fit</Text></Text>
+  
     const header_label = <Image style={styles.image} source={require('../../assets/images/CronusFit_Logo_Transparent.png')} />
   
     return(
@@ -123,17 +126,14 @@ const Navigation = () => {
                     //"fontSize": 20
                 },
                 "tabBarHideOnKeyboard": true,
-               
-                "tabBarStyle": [
-                    {
-                    "paddingTop": 10,
-                    "display": "flex",
-                    "justifyContent":"center",
-                    "position": "absolute",
-                    "backgroundColor": activeColors.primary_bg
-                    },
-                    null
-                ],
+                
+                "tabBarStyle": {
+                  "paddingTop": 10,
+                  "backgroundColor": activeColors.primary_bg,
+                  "flexDirection": "column-reverse"
+                },
+
+                
                 
                 headerShown: true,
                 //headerLeft: false
@@ -141,11 +141,11 @@ const Navigation = () => {
                 headerLeft: ()=> null
             })}>
   
-              {/*
-            <Tab.Screen name={homeName}
-                options={{ headerShown: false }}>
-                {(props2) => <HomeScreen {...props2} username={username} />}
-            </Tab.Screen>
+            {/*
+              <Tab.Screen name={homeName}
+                  options={{ headerShown: false }}>
+                  {(props2) => <HomeScreen {...props2} username={username} />}
+              </Tab.Screen>
             */}    
   
             <Tab.Screen name={homeName} component={HomeScreen} options={{ headerShown: false }}/>
@@ -231,7 +231,8 @@ const Navigation = () => {
   const header_label = <Image style={styles.image} source={require('../../assets/images/CronusFit_Logo_Transparent.png')} />
 
   return (
-
+    <SafeAreaView style={{flex: 1, backgroundColor: activeColors.primary_bg}}>
+      <StatusBar style={(darkMode) ? "light" : "dark"} />
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerTitle: () => header_label}}>
           {user ? (
@@ -250,7 +251,11 @@ const Navigation = () => {
             </>
           )}
         </Stack.Navigator>
+
+        
       </NavigationContainer>
+
+    </SafeAreaView>
   );
 
  
@@ -259,7 +264,7 @@ const Navigation = () => {
 
 const styles = StyleSheet.create({
   image: {
-    width:100,
+    width: 100,
     height: 20,
   },
   leaderboard_icon: {

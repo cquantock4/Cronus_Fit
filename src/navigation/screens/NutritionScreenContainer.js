@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {StyleSheet} from 'react-native';
 
+import {useRoute} from '@react-navigation/native';
+
 import NutritionArticleDetails from './nutrition/NutritionArticleDetails'
 import NutritionDetails from './nutrition/NutritionDetails'
 import NutritionScreen from './nutrition/NutritionScreen'
@@ -15,7 +17,6 @@ const Stack = createNativeStackNavigator();
 
 
 export default function NutritionScreenContainer({navigation}) {
-
 
     return(
       <Stack.Navigator>

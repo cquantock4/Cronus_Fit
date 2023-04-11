@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Image, Alert, ScrollView } from 'react-native';
-import { TextInput, Pressable, Switch, Input, FlatList} from 'react-native';
+import { TextInput, Pressable, Switch, Input, FlatList, KeyboardAvoidingView} from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Bubble_Button, Bubble_Button_Small, Button_Link } from '../../../components/ui/buttons'
@@ -1064,6 +1064,7 @@ export default function WorkoutDetails( {navigation} ) {
                   <TextInput
                       name='weight'
                       placeholder='ex. 225'
+                      placeholderTextColor={activeColors.primary_text}
                       control={control} 
                       keyboardType='numeric'
                       maxLength={5}
@@ -1099,7 +1100,7 @@ export default function WorkoutDetails( {navigation} ) {
                         console.log(text);
                         console.log(rawText);
                       }}
-                      style={{fontSize: 20, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: activeColors.primary_text, color: activeColors.primary_text}}
+                      style={{width: 100, marginBottom: 10, fontSize: 20, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: activeColors.primary_text, color: activeColors.primary_text}}
                     />
                     <Text style={{color: activeColors.primary_text}}>
                       rounds/sets - reps
@@ -1111,6 +1112,7 @@ export default function WorkoutDetails( {navigation} ) {
                       autoFocus
                       mask="9:99:99"
                       placeholder= "0:00:00"
+                      placeholderTextColor={activeColors.primary_text}
                       name='time'
                       value={props.value}
                       keyboardType='numeric'
@@ -1284,109 +1286,116 @@ export default function WorkoutDetails( {navigation} ) {
             </View>
           </Pressable>
 
+          <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : 0}
+              keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -100}
+              style={{ flex: 1 }}
+            >
 
-          {expand ? (
-
-             
-            
-              subworkouts[category].info.map((item, index) => {
-
-                /*
-                const filteredResults = workoutresults.filter(
-                  pe => pe.subWorkouts.id === item.id
-                )
-                */
-                
-
-                function handleChange(newValue) {
-
-                  //console.log('changed to: ' + newValue)
-          
-                  let newArr = [...values]; // copying the old array's data
-
-                  newArr[index].value = newValue; // replace e.target.value with whatever you want to change it to
-          
-                  setValues(newArr);
-                }
-
-
-                /*
-                if (item.resultcat === 'WEIGHT') {
-                  input = <View style={{alignItems: 'flex-end', marginBottom: 5}}>
-                      <TextInput
-                          name='weight'
-                          placeholder='ex. 225'
-                          //control={control} 
-                          keyboardType='numeric'
-                          maxLength={5}
-                          value={value_1}
-                          style={{fontSize: 20, width: 100, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 0.5, borderBottomColor: '#363636'}}
-                          //onChangeText={onChangeNumber}
-                          //onChange={updateFieldChanged(index)}
-                        />
-                      </View>
-                } else if (item.resultcat === 'SETSREPS')  {
-                  input = <View style={{width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 5}}>
-                            <TextInput
-                              name='sets'
-                              placeholder='Sets'
-                              control={control} 
-                              keyboardType='numeric'
-                              maxLength={3}
-                              value={value_1}
-                              style={{width: '30%', textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: 'black'}}
-                              //onChangeText={onChangeNumber}
-                              //onChange={updateFieldChanged(index)}
-                            />
-                          </View>
-                } else if (item.resultcat === 'TIME')  {
-                  input = <View style={{flexDirection: 'row',}}>
-                    <BubbleTextInput
-                        name='hours'
-                        placeholder='00'
-                        control={control}
-                        maxLength={2}
-                        keyboardType='numeric'
-                        vstyle={[
-                          styles.modalInputBoxTime,
-                          {width: 50, marginRight: 5, }
-                        ]}
-                      />
-                    <Text style={{marginTop: 5, fontWeight: 'bold'}}>:</Text>
-                    <BubbleTextInput
-                        name='minutes'
-                        placeholder='00'
-                        control={control}
-                        maxLength={2}
-                        keyboardType='numeric'
-                        vstyle={[
-                          styles.modalInputBoxTime,
-                          {width: 50, marginRight: 5,  marginLeft: 5}
-                        ]}
-                      />
-                    <Text style={{marginTop: 5, fontWeight: 'bold'}}>:</Text>
-                  </View>
-                }
-                */
-
-                return(
-                  <View key={item.id} style={{padding: 12, flexDirection: "row", borderBottomColor: '#363636', borderBottomWidth: 0.5, justifyContent: 'space-between'}}>
-                    <View style={{alignItems: 'flex-start', justifyContent: 'center', width: '60%'}}>
-                      <Text  style={{fontWeight: '400', fontSize: 15, lineHeight: 25, color: activeColors.primary_text}}>{item.desc}</Text>
-                    </View>
-
-                    <View style={{padding: 0, width: '40%'}}>
-                        <WorkoutItemInput resultcat={item.resultcat} value={values[index].value} onChange={handleChange} />
-                    </View>
-                  </View>
-                )
-
-              })  
+            {expand ? (
 
               
-          ) : (
-            <></>
-          )}
+              
+                subworkouts[category].info.map((item, index) => {
+
+                  /*
+                  const filteredResults = workoutresults.filter(
+                    pe => pe.subWorkouts.id === item.id
+                  )
+                  */
+                  
+
+                  function handleChange(newValue) {
+
+                    //console.log('changed to: ' + newValue)
+            
+                    let newArr = [...values]; // copying the old array's data
+
+                    newArr[index].value = newValue; // replace e.target.value with whatever you want to change it to
+            
+                    setValues(newArr);
+                  }
+
+
+                  /*
+                  if (item.resultcat === 'WEIGHT') {
+                    input = <View style={{alignItems: 'flex-end', marginBottom: 5}}>
+                        <TextInput
+                            name='weight'
+                            placeholder='ex. 225'
+                            //control={control} 
+                            keyboardType='numeric'
+                            maxLength={5}
+                            value={value_1}
+                            style={{fontSize: 20, width: 100, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 0.5, borderBottomColor: '#363636'}}
+                            //onChangeText={onChangeNumber}
+                            //onChange={updateFieldChanged(index)}
+                          />
+                        </View>
+                  } else if (item.resultcat === 'SETSREPS')  {
+                    input = <View style={{width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 5}}>
+                              <TextInput
+                                name='sets'
+                                placeholder='Sets'
+                                control={control} 
+                                keyboardType='numeric'
+                                maxLength={3}
+                                value={value_1}
+                                style={{width: '30%', textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: 'black'}}
+                                //onChangeText={onChangeNumber}
+                                //onChange={updateFieldChanged(index)}
+                              />
+                            </View>
+                  } else if (item.resultcat === 'TIME')  {
+                    input = <View style={{flexDirection: 'row',}}>
+                      <BubbleTextInput
+                          name='hours'
+                          placeholder='00'
+                          control={control}
+                          maxLength={2}
+                          keyboardType='numeric'
+                          vstyle={[
+                            styles.modalInputBoxTime,
+                            {width: 50, marginRight: 5, }
+                          ]}
+                        />
+                      <Text style={{marginTop: 5, fontWeight: 'bold'}}>:</Text>
+                      <BubbleTextInput
+                          name='minutes'
+                          placeholder='00'
+                          control={control}
+                          maxLength={2}
+                          keyboardType='numeric'
+                          vstyle={[
+                            styles.modalInputBoxTime,
+                            {width: 50, marginRight: 5,  marginLeft: 5}
+                          ]}
+                        />
+                      <Text style={{marginTop: 5, fontWeight: 'bold'}}>:</Text>
+                    </View>
+                  }
+                  */
+
+                  return(
+                    <View key={item.id} style={{padding: 12, flexDirection: "row", borderBottomColor: '#363636', borderBottomWidth: 0.5, justifyContent: 'space-between'}}>
+                      <View style={{alignItems: 'flex-start', justifyContent: 'center', width: '60%'}}>
+                        <Text  style={{fontWeight: '400', fontSize: 15, lineHeight: 25, color: activeColors.primary_text}}>{item.desc}</Text>
+                      </View>
+
+                      <View style={{padding: 0, width: '40%'}}>
+                          <WorkoutItemInput resultcat={item.resultcat} value={values[index].value} onChange={handleChange} />
+                      </View>
+                    </View>
+                  )
+
+                })  
+
+                
+            ) : (
+              <></>
+            )}
+
+          </KeyboardAvoidingView>
 
           { expand ? (
             <View style={{alignItems: 'center'}}>

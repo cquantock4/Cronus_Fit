@@ -96,10 +96,6 @@ const WorkoutsCard = ( { navigation }) => {
 
 }
 
-
-
-
-
 export default function WorkoutScreen( {navigation} ) {
 
   const theme = useContext(ThemeContext)
@@ -114,9 +110,9 @@ export default function WorkoutScreen( {navigation} ) {
   }
 
 
-  
     return(
-
+        
+      
         <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
            <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
             <View>

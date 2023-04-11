@@ -21,6 +21,9 @@ export const colors = {
     button_active: "#363636",
     button_inactive_text: '#363636',
     button_inactive: "#fff",
+    
+    //status bar
+    status_bar_bg: '#f3f4f6'
   },
 
   dark: {
@@ -42,6 +45,9 @@ export const colors = {
     button_active: "#1C1C1C",
     button_inactive_text: '#C8C8C8',
     button_inactive: "#050605",
+
+    //status bar
+    status_bar_bg: '#7a7979'
   },
 
   primary_bg: "#f3f4f6",

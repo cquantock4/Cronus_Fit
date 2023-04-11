@@ -3,8 +3,10 @@ import 'expo-dev-client';
 import 'core-js/full/symbol/async-iterator';
 import '@azure/core-asynciterator-polyfill'; 
 
+import React, { useContext } from 'react';
+
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 
 //Themes
 import { ThemeProvider } from "./src/components/ThemeContext";
@@ -13,10 +15,12 @@ import { ThemeProvider } from "./src/components/ThemeContext";
 import Navigation from "./src/navigation"
 
 
+
 //Amplify imports
 import { ExpoSQLiteAdapter } from '@aws-amplify/datastore-storage-adapter/ExpoSQLiteAdapter';
-import { Amplify, DataStore } from 'aws-amplify';
+import { Amplify, DataStore, Auth } from 'aws-amplify';
 import awsExports from './src/aws-exports.js';
+
 
 
 Amplify.configure({
@@ -27,14 +31,13 @@ Amplify.configure({
  });
 
 
-
-
 export default function App() {
+
+
   return (
-    <ThemeProvider>
-      <Navigation />
-      <StatusBar style="auto" />
-    </ThemeProvider>
+      <ThemeProvider>
+          <Navigation />
+      </ThemeProvider>
   );
 }
 

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
-import { TextInput, Pressable, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import { TextInput, Pressable, RefreshControl, Dimensions, SafeAreaView, Platform } from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
+
 
 //Date Formatting
 import { parseISO,  format } from 'date-fns';
@@ -22,6 +24,12 @@ const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
+const windowHeight = Dimensions.get('window').height
+
+const paddingBottom = Platform.OS === 'ios'
+    ? 20 // add 20 padding on iOS
+    : Dimensions.get('window').height * 0.05; // add 5% padding on Android
+
 
 export default function LeaderboardDetails( {navigation} ) {
   const route = useRoute();
@@ -37,6 +45,9 @@ export default function LeaderboardDetails( {navigation} ) {
   const [commentsworkouts, setCommentsWorkouts] = useState(undefined);
 
   const [workoutlist, setWorkoutList] = useState([]);
+
+  const [showcomments, setShowComments] = useState(false);
+  const [commenttext, setCommentText] = useState('');
 
   const [units, setUnits] = useState('lbs');
   const [userid, setUserID] = useState(undefined);
@@ -339,6 +350,46 @@ export default function LeaderboardDetails( {navigation} ) {
 
     setWorkoutResults(res)
 
+  }
+
+  const postComment = async () => {
+
+    if (commenttext != '') {
+      //Insert
+      try {
+
+        await DataStore.save(
+          new Comments({
+            comment: commenttext,
+            workoutsID: currleaderboard,
+            userID: userid
+          })
+        );
+
+        /*
+        await DataStore.save(
+          new CommentsWorkouts({
+            comments: comment,
+            workouts: currworkout[0]
+          })
+        );
+        */
+
+
+        console.log("Comment saved successfully!");
+      } catch (error) {
+        console.log("Error saving post", error);
+      }
+
+      
+      //Refresh page
+      setCommentRefresh(!commentrefresh)
+
+      //Clear textbox
+      setCommentText('')
+    }
+    
+    
   }
 
 
@@ -900,7 +951,7 @@ export default function LeaderboardDetails( {navigation} ) {
     })
     
     return(
-      <>
+      <View>
       <Pressable onPress={() => setExpand(!expand)}>
         <View style={styles.container_userRow}>
           <View style={{width: '20%'}}>
@@ -928,6 +979,8 @@ export default function LeaderboardDetails( {navigation} ) {
         </View>
       </Pressable>
 
+      
+
         { expand ? (
           <View>
               {datadisplayed}
@@ -936,9 +989,11 @@ export default function LeaderboardDetails( {navigation} ) {
           <>
           </>
         )}
-        
-      </>
+
+      </View>
+      
     );
+    
   
   }
   
@@ -997,7 +1052,7 @@ export default function LeaderboardDetails( {navigation} ) {
     let datadisplayed = ''
     
     if (commentsworkouts) {
-      
+
       datadisplayed =  commentsworkouts.comments.map((item, index) => {
 
           let comment_id = item.id;
@@ -1036,10 +1091,11 @@ export default function LeaderboardDetails( {navigation} ) {
     
   
     return (
-      <View>
-        <View>
-          {datadisplayed}
-        </View>
+      <View style={{ paddingTop: 10}}>
+
+        
+        {datadisplayed}
+      
       </View>
     )
       
@@ -1047,48 +1103,14 @@ export default function LeaderboardDetails( {navigation} ) {
     
   const LeaderBoardPreview = (props) => {
     const [link, setLink] = useState('');
-    const [commenttext, setCommentText] = useState('');
+    
+
+    const viewComments = () => {
+      setShowComments(true)
+    }
 
   
-    const postComment = async () => {
-
-      if (commenttext != '') {
-        //Insert
-        try {
-
-          await DataStore.save(
-            new Comments({
-              comment: commenttext,
-              workoutsID: currleaderboard,
-              userID: userid
-            })
-          );
-
-          /*
-          await DataStore.save(
-            new CommentsWorkouts({
-              comments: comment,
-              workouts: currworkout[0]
-            })
-          );
-          */
-
-
-          console.log("Comment saved successfully!");
-        } catch (error) {
-          console.log("Error saving post", error);
-        }
-
-        
-        //Refresh page
-        setCommentRefresh(!commentrefresh)
-
-        //Clear textbox
-        setCommentText('')
-      }
-      
-      
-    }
+    
 
     //console.log('Workout Results this one: ' + JSON.stringify(workoutresults["42a4f8ed-5853-4804-b3c2-025f3880b77b"]))
       
@@ -1110,9 +1132,48 @@ export default function LeaderboardDetails( {navigation} ) {
 
     
     return(
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{justifyContent: 'flex-end'}}>
 
-        <ScrollView
+
+          {/*
+          {showcomments ? (
+            <>
+
+              <ScrollView
+                  style={{marginBottom: 47}}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }
+                >
+
+                <CommentSection />
+
+              </ScrollView>
+
+              <View style={{flexDirection: 'row', padding: 3, backgroundColor: activeColors.primary_bg, position: 'absolute', bottom: 0}}>
+                
+                  <TextInput 
+                    multiline 
+                    value={commenttext} 
+                    onChangeText={setCommentText}
+                    placeholder={'Write a comment'} 
+                    placeholderTextColor={activeColors.primary_text} 
+                    style={{flex: 1, borderRadius: 5,marginRight: 5, padding: 5, backgroundColor: activeColors.primary_bg, color: activeColors.secondary_text}}
+                  />
+                  <View style={{ justifyContent: 'flex-end'}}>
+                    <Pressable onPress={postComment} style={{height: 40, borderRadius: 5, padding: 10, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', backgroundColor: '#E1AB09'}}>
+                      <Text>Post</Text>
+                    </Pressable>
+                  </View>
+                
+                  
+              </View>
+            </>
+          ) : (
+            <ScrollView
               style={{marginBottom: 47}}
               refreshControl={
                 <RefreshControl
@@ -1121,28 +1182,48 @@ export default function LeaderboardDetails( {navigation} ) {
                 />
               }
             >
-          <View style={styles.container_preview}>
-            <View style={styles.container_header}>
-              <Text style={{fontSize: 20, fontWeight: '600', color: activeColors.primary_text}}>{props.title}</Text>
-              <Text style={{fontSize: 14, fontWeight: '400',  color: activeColors.primary_text}}>{props.workout_date}</Text>
-            </View>
+              <View style={styles.container_preview}>
+                <View style={styles.container_header}>
+                    <View style={{flex: 1}}>
+                      <Text style={{fontSize: 20, fontWeight: '600', color: activeColors.secondary_text}}>{props.title}</Text>
+                      <Text style={{fontSize: 14, fontWeight: '400', color: activeColors.secondary_text}}>{props.workout_date}</Text>
+                    </View>
+                    <Pressable onPress={viewComments} style={{flex: 1,  paddingleft: 10,  justifyContent: 'center', alignItems: 'flex-end'}}>
+                      <Text style={{color: activeColors.accent_text}}>View Comments</Text>
+                    </Pressable>
+                  </View>
+                
+                <View style={styles.container_userRows}>
+                  {datadisplayed}
+                </View>
+                
+              </View>
             
-            <View style={styles.container_userRows}>
-              {datadisplayed}
-            </View>
-            
-          </View>
+              
+            </ScrollView>
+
+            )
+          }
+          */}
+
         
-          <View style={{padding: 5, alignItems: 'center'}}>
-            <Text style={{fontSize: 15, fontWeight: '500', color: activeColors.primary_text}}>Comments:</Text>
-          </View>
- 
+      {showcomments ? (
+        <>
+          <ScrollView
+            style={{marginBottom: 100, paddingBottom: 50}}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
+          >
+
           <CommentSection />
-            
 
         </ScrollView>
 
-        
+        {/*
         <View style={{flexDirection: 'row', padding: 3, backgroundColor: activeColors.primary_bg, position: 'absolute', bottom: 0}}>
           <TextInput 
             multiline 
@@ -1157,9 +1238,38 @@ export default function LeaderboardDetails( {navigation} ) {
               <Text>Post</Text>
             </Pressable>
           </View>
-          
-        </View>
         
+        </View>
+        */}
+        </>
+      ) : (
+        <ScrollView 
+          refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />}
+          >
+          <View style={styles.container_preview}>
+            <View style={styles.container_header}>
+                <View style={{flex: 1}}>
+                  <Text style={{fontSize: 20, fontWeight: '600', color: activeColors.secondary_text}}>{props.title}</Text>
+                  <Text style={{fontSize: 14, fontWeight: '400', color: activeColors.secondary_text}}>{props.workout_date}</Text>
+                </View>
+                <Pressable onPress={viewComments} style={{flex: 1,  paddingleft: 10,  justifyContent: 'center', alignItems: 'flex-end'}}>
+                  <Text style={{color: activeColors.accent_text}}>View Comments</Text>
+                </Pressable>
+              </View>
+            
+            <View style={styles.container_userRows}>
+              {datadisplayed}
+            
+            </View>
+            
+          </View>
+        </ScrollView>
+      )}
+
       </View>
     );
   
@@ -1170,8 +1280,13 @@ export default function LeaderboardDetails( {navigation} ) {
   */
 
     const goBackPress = async () => {
+
+      if (showcomments){
+        setShowComments(false)
+      } else {
         navigation.navigate('LeaderboardScreen')
-        //console.log('Go to Profile Screen')
+      }
+       
     }
 
     const onSearchPress = async () => {
@@ -1199,7 +1314,13 @@ export default function LeaderboardDetails( {navigation} ) {
                         <Ionicons name='chevron-back-outline' style={{fontSize: 30, color: activeColors.primary_text}}/>
                     </Pressable>
                     <View>
+                      {showcomments ? (
+                        <Text style={[styles.header_text, {color: activeColors.primary_text}]}>Comments</Text>
+                      ) : (
                         <Text style={[styles.header_text, {color: activeColors.primary_text}]}>Leaderboards</Text>
+                      )}
+
+                        
                     </View>
                     {props.hidebuttons ? (
                           <View style={{flexDirection: 'row'}}>
@@ -1224,14 +1345,13 @@ export default function LeaderboardDetails( {navigation} ) {
             
           )
     }
-  
-    return(
+    
+
+    {/*
       <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
 
         <Header />
      
-        {/* Checking to see if any workout results exist */}
-        {/* (workouts.length != 0 ) ? (*/}
         { (workoutresults.length > 0 && workouts) ? (
 
             <LeaderBoardPreview id={workouts.id} title={workouts.title} workout_date={workouts.date} />
@@ -1239,16 +1359,80 @@ export default function LeaderboardDetails( {navigation} ) {
         ) : (
           <>
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeColors.primary_bg}}>
-              {/*<ActivityIndicator />*/}
 
               <Text style={{color: activeColors.primary_text}}>No results to display</Text>
             </View>
           </>
         )}
 
-            
-            
+            <SafeAreaView style={[styles.container_new, {backgroundColor: activeColors.primary_bg, paddingBottom}]}>
+            <View style={styles.content_new}>
+
+          <Header />
+
+          { (workoutresults.length > 0 && workouts) ? (
+
+            <LeaderBoardPreview id={workouts.id} title={workouts.title} workout_date={workouts.date} />
+
+          ) : (
+            <>
+              <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: activeColors.primary_bg}}>
+
+                <Text style={{color: activeColors.primary_text}}>No results to display</Text>
+              </View>
+            </>
+          )}
+
+        </View>
+             </SafeAreaView>
       </View>
+        */}
+
+    return(
+
+      <KeyboardAvoidingView style={{ flex: 1,  backgroundColor: activeColors.primary_bg, paddingTop: 50}}>
+        <Header />
+        { (workoutresults.length > 0 && workouts) ? (
+
+          <LeaderBoardPreview id={workouts.id} title={workouts.title} workout_date={workouts.date} />
+
+          ) : (
+          <>
+            <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: activeColors.primary_bg}}>
+
+              <Text style={{color: activeColors.primary_text}}>No results to display</Text>
+            </View>
+          </>
+        )}
+
+
+        { showcomments ? (
+          <View style={{flexDirection: 'row', padding: 3, backgroundColor: activeColors.primary_bg, position: 'absolute', bottom: 0}}>
+                <TextInput 
+                multiline 
+                value={commenttext} 
+                onChangeText={setCommentText}
+                placeholder={'Write a comment'} 
+                placeholderTextColor={activeColors.primary_text} 
+                style={{flex: 1, borderRadius: 5,marginRight: 5, padding: 5, backgroundColor: activeColors.primary_bg, color: activeColors.secondary_text}}
+              />
+            <View style={{ justifyContent: 'flex-end'}}>
+              <Pressable onPress={postComment} style={{height: 40, borderRadius: 5, padding: 10, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', backgroundColor: '#E1AB09'}}>
+                <Text>Post</Text>
+              </Pressable>
+            </View>
+        
+          </View>
+        ) : (
+          <></>
+        )}
+        
+      </KeyboardAvoidingView>
+
+        
+     
+
+      
     );
 }
 
@@ -1262,31 +1446,27 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     marginTop: statusBarHeight,
     backgroundColor: '#EFEFEF',
-    marginBottom: 50
+    marginBottom: 48
     //alignItems: 'center'
   },
+
+  container_new: {
+    flex: 1,
+    //paddingTop: statusBarHeight,
+    //backgroundColor: '#fff',
+    //paddingBottom: 50, // add padding to the bottom of the screen
+  },
+  content_new: {
+    flex: 1,
+    //alignItems: 'center',
+    //justifyContent: 'center',
+  },
+
   marginBottom50: {
     marginBottom: 50
   },
   marginBottomNone: {
     marginBottom: 0
-  },
-  header: {
-
-    flexDirection: 'row',
-    //padding: 10,
-    paddingRight: 10,
-    paddingLeft: 10,
-    //backgroundColor: 'white',
-    borderBottomColor: '#DCDCDC',
-    borderBottomWidth: 1,
-    justifyContent: 'space-between'
-  },
-  header_text: {
-    fontSize: 18,
-    fontWeight: '500',
-    marginLeft: 10,
-    color:'#363636',
   },
   datePicker: {
     justifyContent: 'space-between',
@@ -1373,6 +1553,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E8E8E8',
     padding: 15,
+    flexDirection: 'row'
     //paddingLeft: 10
   },
   container_footer: {
@@ -1414,6 +1595,27 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     padding: 5, 
     borderRadius: 3
+  },
+
+  inputContainer_comments: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+  },
+  input_comments: {
+    flex: 1,
+    marginRight: 10,
+    fontSize: 16,
+    lineHeight: 20,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
+    paddingHorizontal: 10,
   },
   
 });

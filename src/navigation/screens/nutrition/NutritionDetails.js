@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl} from 'react-native';
-import { TextInput, Pressable, Modal, Dimensions,ActivityIndicator} from 'react-native';
+import { TextInput, Pressable, Modal, Dimensions,ActivityIndicator, KeyboardAvoidingView} from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Bubble_Button} from '../../../components/ui/buttons'
@@ -2069,6 +2069,24 @@ export default function NutritionDetails( {navigation} ) {
 
       const userMessage = props.usermessage;
 
+      let temp_val
+      if (!props.time) {
+        temp_val = '2022-12-07T04:40:23.156Z'
+      } else {
+        temp_val = props.time
+      }
+
+      const today = format(new Date(), 'MM/dd/yyyy');
+      let created_at = format(new Date(temp_val), 'MM/dd/yyyy')
+
+      let created_at_formatted
+
+      if (today === created_at) {
+        created_at_formatted = 'Today ' + format(new Date(temp_val), 'h:mmaaa')
+      } else {
+        created_at_formatted = format(new Date(temp_val), 'MM/dd h:mmaaa')
+    }
+
       return (
 
         userMessage ? (
@@ -2083,11 +2101,11 @@ export default function NutritionDetails( {navigation} ) {
                     <Text style={{fontWeight: '500', flexShrink: 1, fontSize: 13}}>{props.username}</Text>
                 </View>
                 <View style={{flexDirection: 'row', padding: 5, paddingTop: 0, justifyContent: 'space-between'}}>
-                  <View style={{flex: 1}}>
+                  <View style={{flex: 1, paddingBottom: 5}}>
                     <Text style={{fontSize: 13, fontWeight: '300'}}>{props.message}</Text>
                   </View>
                   <View style={{justifyContent: 'flex-end'}}>
-                    <Text style={{fontSize: 12, color: 'grey'}}>{props.time}</Text>
+                    <Text style={{fontSize: 12, color: 'grey'}}>{created_at_formatted}</Text>
                   </View>
                 </View>
               </View>
@@ -2105,12 +2123,12 @@ export default function NutritionDetails( {navigation} ) {
               <View style={{padding: 5, paddingBottom: 0}}>
                   <Text style={{fontWeight: '500', flexShrink: 1, fontSize: 13}}>{props.username}</Text>
               </View>
-              <View style={{flexDirection: 'row', padding: 5, paddingTop: 0, justifyContent: 'space-between'}}>
-                <View style={{flex: 1}}>
+              <View style={{flexDirection: 'row', padding: 5, justifyContent: 'space-between'}}>
+                <View style={{flex: 1, paddingBottom: 5}}>
                   <Text style={{fontSize: 13, fontWeight: '300'}}>{props.message}</Text>
                 </View>
                 <View style={{justifyContent: 'flex-end'}}>
-                  <Text style={{fontSize: 12, color: 'grey'}}>{props.time}</Text>
+                  <Text style={{fontSize: 12, color: 'grey'}}>{created_at_formatted}</Text>
                 </View>
               </View>
             </View>
@@ -2203,19 +2221,21 @@ export default function NutritionDetails( {navigation} ) {
     const [inputbottommargin, setInputBottomMargin] = useState(50)
 
     return(
-      <View style={{flex: 1, justifyContent: 'space-between', marginBottom: inputbottommargin}}>
-        <ScrollView ref={scrollViewRef}
-                    onContentSizeChange={() =>
-                      scrollViewRef.current.scrollToEnd({ animated: true })
-                    }
-                    refreshControl={
-                      <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                      />
-                    }>
-        <MessageSection />
-        </ScrollView>
+      <View style={{flex: 1, justifyContent: 'space-between'}}>
+        <KeyboardAvoidingView style={{ flex: 1}}>
+          <ScrollView ref={scrollViewRef}
+                      onContentSizeChange={() =>
+                        scrollViewRef.current.scrollToEnd({ animated: true })
+                      }
+                      refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />
+                      }>
+            <MessageSection />
+          </ScrollView>
+        </KeyboardAvoidingView>
         <View style={{justifyContent: 'flex-end', flexDirection: 'row', padding: 3, borderTopColor: activeColors.primary_text, borderTopWidth: 1}}>
           
           <TextInput 
@@ -2224,7 +2244,7 @@ export default function NutritionDetails( {navigation} ) {
             onChangeText={setMessageText}
             placeholder={'Write a message'} 
             placeholderTextColor={activeColors.primary_text} 
-            style={{flex: 1, borderRadius: 5,marginRight: 5, padding: 5}}
+            style={{flex: 1, borderRadius: 5,marginRight: 5, padding: 5, color: activeColors.primary_text}}
           />
           <Pressable onPress={sendMessage} style={{borderRadius: 5, padding: 10, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', backgroundColor: '#F8BE13'}} >
             <Text>Send</Text>

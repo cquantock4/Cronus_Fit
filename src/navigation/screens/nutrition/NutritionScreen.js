@@ -300,7 +300,7 @@ export default function NutritionScreen( {navigation} ) {
 
     return(
       <>
-      <View style={styles.container}>
+      <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
         <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
           <Text style={[styles.header_text, { color: activeColors.primary_text }]}>Nutrition</Text>
         </View>  

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {  Modal, Pressable, StyleSheet,
-  Text, View, ScrollView, ImageBackground, ActivityIndicator
+  Text, View, ScrollView, ImageBackground, ActivityIndicator, Dimensions
 } from 'react-native';
 import Constants from 'expo-constants'
 
@@ -17,6 +17,8 @@ import ThemeContext from "../../components/ThemeContext"
 import {colors} from "../../../assets/styles/themes"
 
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 
 const Home_Block_Button = ({onPress, title_text, bgColor, fgColor, cstyle}) => {
@@ -193,7 +195,18 @@ export default function HomeScreen( props, {navigation } ) {
     );
   
   }
+
+
+  const Transparent_Background = () => {
+
+    if (windowWidth > 300) {
+      return <ImageBackground source={require('../../../assets/images/CenteredBackgroundImage_Large.png')} style={styles.image}></ImageBackground>
+    }
+
+    return <ImageBackground source={require('../../../assets/images/CenteredBackgroundImage_Large.png')} style={styles.image}></ImageBackground>
+
   
+  }
 
   //Activity loading trigger
   
@@ -210,9 +223,10 @@ export default function HomeScreen( props, {navigation } ) {
   {/*<View style={styles.container}></View>*/}
   return(
 
-    <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+    <View style={[styles.container, {backgroundColor: 'green'}]}>
       <FirstTimeUserWelcome />
       <ImageBackground source={require('../../../assets/images/CenteredBackgroundImage_Large.png')} style={styles.image}>
+      
         
           <View style={styles.header}>
             <Text style={{marginBottom: 10, color: activeColors.primary_text}}>Welcome, {name}!</Text>
