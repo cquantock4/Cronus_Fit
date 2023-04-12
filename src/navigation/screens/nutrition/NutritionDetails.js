@@ -213,7 +213,7 @@ export default function NutritionDetails( {navigation} ) {
     const getCurrentuser = async () => {
         //Get current auth user
         const curr_user = await Auth.currentAuthenticatedUser();
-        console.log(curr_user.attributes.sub)
+        //console.log(curr_user.attributes.sub)
 
         const dbUsers = await DataStore.query(User, c => c.sub.eq(curr_user.attributes.sub));
 
@@ -239,12 +239,12 @@ export default function NutritionDetails( {navigation} ) {
           pe => pe.userInfoUsersId === dbUser.id
         )   
 
-        console.log('this: '+ userinfo_results)
+        //console.log('this: '+ userinfo_results)
 
         const userinfo = userinfo_results[0]
 
         //Set Db Values
-        console.log('this: '+ userinfo)
+        //console.log('this: '+ userinfo)
 
         if (userinfo){
           if (userinfo.i_gender == 'Male') {
@@ -352,13 +352,13 @@ export default function NutritionDetails( {navigation} ) {
     setDinnerList([])
     setSnacksList([])
 
-    console.log('is this running?')
+    //console.log('is this running?')
 
     if (user) {
       //const foodentries = await DataStore.query(Foodentry, c => c.userID("eq", user.id));
 
-      console.log(user.id)
-      console.log(format(new Date(date), 'MM/dd/yyyy').toString())
+      //console.log(user.id)
+      //console.log(format(new Date(date), 'MM/dd/yyyy').toString())
 
       const foodentries = (await DataStore.query(Foodentry)).filter(
         pe => pe.userID === user.id && pe.date === format(new Date(date), 'MM/dd/yyyy').toString()
@@ -366,7 +366,7 @@ export default function NutritionDetails( {navigation} ) {
 
       setFoodEntries(foodentries)
 
-      console.log('here are the entries: ' + JSON.stringify(foodentries))
+      //console.log('here are the entries: ' + JSON.stringify(foodentries))
 
       const result_breakfast = foodentries.filter((value, index) => value.category === 'BREAKFAST')
       const result_lunch = foodentries.filter((value, index) => value.category === 'LUNCH')
@@ -503,7 +503,7 @@ export default function NutritionDetails( {navigation} ) {
     if ((calsmacros === 'Yes - I have a lot of experience' || calsmacros === 'Yes - 2+ years of experience') &&
       (medical === 'No')){
         setQualifiedYN(true)
-        console.log('Qualified')
+        //console.log('Qualified')
         //Change Screens
         setShowQuestionaire(false)
         setShowEditWindow(true)
@@ -563,7 +563,7 @@ export default function NutritionDetails( {navigation} ) {
 
       } else {
         setQualifiedYN(false)
-        console.log('Not Qualified')
+        //console.log('Not Qualified')
         setModalVisible(!modalVisible)
 
          //Save
@@ -732,7 +732,7 @@ export default function NutritionDetails( {navigation} ) {
 
       if (userinfo) {
         //Update
-        console.log('Update');
+        //('Update');
 
         //Update the row
         const updatedinfo = UserInfo.copyOf(userinfo, updated => {
@@ -779,7 +779,7 @@ export default function NutritionDetails( {navigation} ) {
             })
           );
 
-          console.log("Data Saved successfully!");
+          //console.log("Data Saved successfully!");
         } catch (error) {
           console.log("Error saving data", error);
         }
@@ -825,7 +825,7 @@ export default function NutritionDetails( {navigation} ) {
       const input =  event.nativeEvent.text;
 
       // validate all you want here
-      console.log(input)
+      //console.log(input)
 
       //setAdditionalComments(input)
       setHeight(input)
@@ -835,7 +835,7 @@ export default function NutritionDetails( {navigation} ) {
       const input =  event.nativeEvent.text;
 
       // validate all you want here
-      console.log(input)
+      //console.log(input)
 
       //setAdditionalComments(input)
       setWeight(input)
@@ -845,7 +845,7 @@ export default function NutritionDetails( {navigation} ) {
       const input =  event.nativeEvent.text;
 
       // validate all you want here
-      console.log(input)
+      //console.log(input)
 
       //setAdditionalComments(input)
       setNeck(input)
@@ -855,7 +855,7 @@ export default function NutritionDetails( {navigation} ) {
       const input =  event.nativeEvent.text;
 
       // validate all you want here
-      console.log(input)
+      //console.log(input)
 
       //setAdditionalComments(input)
       setWaist(input)
@@ -865,7 +865,7 @@ export default function NutritionDetails( {navigation} ) {
       const input =  event.nativeEvent.text;
 
       // validate all you want here
-      console.log(input)
+      //console.log(input)
 
       //setAdditionalComments(input)
       setHip(input)
@@ -875,7 +875,7 @@ export default function NutritionDetails( {navigation} ) {
       const input =  event.nativeEvent.text;
 
       // validate all you want here
-      console.log(input)
+      //console.log(input)
 
       //setAdditionalComments(input)
       setBodyFatPct(input)
@@ -885,7 +885,9 @@ export default function NutritionDetails( {navigation} ) {
 
 
     return(
-    <View style={{marginBottom: 165}}>
+      <>
+    <View style={{flex: 1}}>
+
       <EditWindowSaveAlertModal />
 
       <ScrollView style={{padding: 0, margin: 0}}> 
@@ -1133,18 +1135,19 @@ export default function NutritionDetails( {navigation} ) {
 
     </ScrollView>
 
+     
 
-
-        <Bubble_Button 
+    </View>
+    <View>
+      <Bubble_Button 
         text='Save'
         onPress={saveEditWindowPress}
         cstyle={{width: '100%'}}
         bgColor='#F8BE13'
         fgColor='#363636'
         />
-
-
     </View>
+  </>
     )
   }
 
@@ -1250,9 +1253,9 @@ export default function NutritionDetails( {navigation} ) {
     //const addFood = (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
     const addFood = async (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
 
-      console.log(category)
+      //console.log(category)
 
-      console.log(pprotein)
+      //console.log(pprotein)
       //if (pfooddesc == null || pprotein == null || pcarbs == null || pfat == null || pfiber == null || pcalories == null) return;
       
       if (pfooddesc == null || pcalories == null) return;
@@ -1284,7 +1287,7 @@ export default function NutritionDetails( {navigation} ) {
             })
           );
   
-            console.log("Data Saved successfully!");
+            //console.log("Data Saved successfully!");
           } catch (error) {
             console.log("Error saving data", error);
           }
@@ -1315,7 +1318,7 @@ export default function NutritionDetails( {navigation} ) {
             })
           );
   
-            console.log("Data Saved successfully!");
+            //console.log("Data Saved successfully!");
           } catch (error) {
             console.log("Error saving data", error);
           }
@@ -1346,7 +1349,7 @@ export default function NutritionDetails( {navigation} ) {
             })
           );
   
-            console.log("Data Saved successfully!");
+            //console.log("Data Saved successfully!");
           } catch (error) {
             console.log("Error saving data", error);
           }
@@ -1377,7 +1380,7 @@ export default function NutritionDetails( {navigation} ) {
             })
           );
   
-            console.log("Data Saved successfully!");
+            //console.log("Data Saved successfully!");
           } catch (error) {
             console.log("Error saving data", error);
           }
@@ -1388,7 +1391,7 @@ export default function NutritionDetails( {navigation} ) {
 
     const deleteTask = (deleteIndex, category, item) => {
 
-      console.log(category)
+      //console.log(category)
       if (category === 'breakfast') {
         setBreakfastList(breakfastlist.filter((value, index) => index != deleteIndex));
       } else if (category === 'lunch') {
@@ -1403,11 +1406,11 @@ export default function NutritionDetails( {navigation} ) {
 
       const item_to_delete = foodentries.filter((value) => value.id === item.id)
 
-      console.log('we need to delete this food item: ' + JSON.stringify(item_to_delete))
+      //console.log('we need to delete this food item: ' + JSON.stringify(item_to_delete))
 
       if (item_to_delete[0]) {
 
-        console.log("found it, let''s delete it")
+        //console.log("found it, let''s delete it")
 
         DataStore.delete(item_to_delete[0]);
 
@@ -1743,7 +1746,7 @@ export default function NutritionDetails( {navigation} ) {
           })
         );
 
-          console.log("Data Saved successfully!");
+          //console.log("Data Saved successfully!");
         } catch (error) {
           console.log("Error saving data", error);
         }
@@ -1768,7 +1771,7 @@ export default function NutritionDetails( {navigation} ) {
 
     function handleSomeWinsChange(event) {
       const input =  event.nativeEvent.text;
-      console.log(input)
+      //console.log(input)
       //setAdditionalComments(input)
       setSomeWins(input)
     };
@@ -2200,7 +2203,7 @@ export default function NutritionDetails( {navigation} ) {
             })
           );
 
-          console.log("Message sent successfully!");
+          //console.log("Message sent successfully!");
         } catch (error) {
           console.log("Error sending message", error);
         }
@@ -2358,18 +2361,17 @@ export default function NutritionDetails( {navigation} ) {
       //Activity loading trigger
 
       //console.log('this is the user info: ' + JSON.stringify(userinfo))
-        
-      if (userinfo === null && !firstload) {
+      /*
+      if ((userinfo === null && nutritionNav != 'myinfo') || (!firstload && nutritionNav != 'myinfo')) {
 
             return (
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <ActivityIndicator />
-            </View>
+              <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                  <ActivityIndicator />
+              </View>
             );
-
-    } else {
+      */
         return <EditWindow />;
-    }
+    
 
         
 
@@ -2388,17 +2390,17 @@ export default function NutritionDetails( {navigation} ) {
     }
 
     const onSearchPress = async () => {
-        console.log('Search button pressed')
+        //console.log('Search button pressed')
         setShowSearch(false)
     };
 
     const onCancelPress = async () => {
-        console.log('Cancel button pressed')
+        //console.log('Cancel button pressed')
         setShowSearch(true)
     };
 
     const onFilterPress = async () => {
-        console.log('Filter button pressed')  
+        //console.log('Filter button pressed')  
         setModalVisible(!modalVisible)
     };
 

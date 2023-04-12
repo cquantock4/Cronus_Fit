@@ -52,7 +52,7 @@ const CreateAccountScreen = ( {navigation} ) => {
 
   const onGoToSignInPressed = async data => {
     navigation.navigate('LoginScreen')
-    console.log('onGoToSignInPressed')
+    //console.log('onGoToSignInPressed')
   }
 
   return (

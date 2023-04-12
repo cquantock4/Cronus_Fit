@@ -71,7 +71,7 @@ export const Workout_Button = (props) => {
     
     return (
         <Pressable style={styles.workoutButtonRow_2} onPress={() => {
-            console.log(props.id)
+            //console.log(props.id)
           }}>
             <View style={styles.sectionRow}>
                 <Text style={{fontSize: 13, fontWeight: 'bold', margin:5}}>{props.text}</Text>

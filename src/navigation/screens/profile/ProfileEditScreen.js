@@ -57,7 +57,7 @@ export default function ProfileEditScreen( { navigation } ) {
         //Get current auth user
         const curr_user = await Auth.currentAuthenticatedUser();
 
-        console.log(curr_user.attributes.sub)
+        //console.log(curr_user.attributes.sub)
 
         const dbUsers = await DataStore.query(User, c => c.sub.eq(curr_user.attributes.sub));
 
@@ -161,7 +161,7 @@ export default function ProfileEditScreen( { navigation } ) {
 
   
     if (!isValid()) {
-      console.log('Not Valid')
+      //console.log('Not Valid')
       return;
     }
 
@@ -217,24 +217,24 @@ export default function ProfileEditScreen( { navigation } ) {
   }
 
   const onMetricPress = async () => {
-    console.log('Daily button pressed')
+    //console.log('Daily button pressed')
     setShowMetric(true)
     setShowImperial(false)
   };
   const onImperialPress = async () => {
-    console.log('Imperial button pressed')
+    //console.log('Imperial button pressed')
     setShowMetric(false)
     setShowImperial(true)
   };
 
   const onLightPress = async () => {
-    console.log('Light button pressed')
+    //console.log('Light button pressed')
     setShowLight(true)
     setShowDark(false)
   };
 
   const onDarkPress = async () => {
-    console.log('Dark button pressed')
+    //console.log('Dark button pressed')
     setShowLight(false)
     setShowDark(true)
   };

@@ -236,7 +236,7 @@ export default function NutritionArticlesDetails( {navigation} ) {
     }
 
     const onSearchPress = async () => {
-        console.log('Search button pressed')
+        //console.log('Search button pressed')
         setShowSearch(true)
     };
 
@@ -253,7 +253,7 @@ export default function NutritionArticlesDetails( {navigation} ) {
     };
 
     const onFilterPress = async () => {
-        console.log('Filter button pressed')  
+        //console.log('Filter button pressed')  
         setModalVisible(!modalVisible)
     };
 

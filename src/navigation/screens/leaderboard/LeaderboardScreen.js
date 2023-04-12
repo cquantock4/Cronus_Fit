@@ -84,9 +84,9 @@ export default function Leaderboard( {navigation} ) {
   const groupAndAdd = (arr) => {
     const res = [];
 
-    console.log('Starting group and add')
+    //console.log('Starting group and add')
 
-    console.log(arr)
+    //console.log(arr)
 
     arr.forEach(el => {
   
@@ -116,7 +116,7 @@ export default function Leaderboard( {navigation} ) {
       
     }, {});
 
-    console.log(res)
+    //console.log(res)
 
     setSubWorkouts(res);
 
@@ -135,15 +135,15 @@ export default function Leaderboard( {navigation} ) {
       return (s[(v-20)%10] || s[v] || s[0]);
     }
     
-    console.log('starting to build User DT')
+    //console.log('starting to build User DT')
     //Loop over arr
-    console.log('This one this one: ' +JSON.stringify(arr))
-    console.log(user_res)
+    //console.log('This one this one: ' +JSON.stringify(arr))
+    //console.log(user_res)
 
     arr.subWorkouts.forEach(el => {
       //console.log('category: ' + JSON.stringify(subworkouts[category]))
 
-      console.log(el)
+      //console.log(el)
 
       let subworkoutid = el.id
       let required =  el.required
@@ -193,7 +193,7 @@ export default function Leaderboard( {navigation} ) {
     
     
     
-            console.log('this: ' + JSON.stringify(res))
+            //console.log('this: ' + JSON.stringify(res))
             
             if(typeof res[userid] === "undefined") {
     
@@ -233,7 +233,7 @@ export default function Leaderboard( {navigation} ) {
     }, {});
 
 
-    console.log(JSON.stringify(res))
+    //console.log(JSON.stringify(res))
 
     setWorkoutResults(res)
 
@@ -279,7 +279,7 @@ export default function Leaderboard( {navigation} ) {
     
 
     if (workouts.length === 0) {
-      console.log('No workout found for today');
+      //console.log('No workout found for today');
       return null;
     }
 
@@ -304,8 +304,8 @@ export default function Leaderboard( {navigation} ) {
       //const workoutResult = workoutResults_filtered.find(result => result.subworkoutsID === subWorkout.id);
       const workoutResult = workoutResults_filtered.filter(result => result.subworkoutsID === subWorkout.id);
 
-      console.log(subWorkout.id)
-      console.log('workout Results: ' + JSON.stringify(workoutResult))
+      //console.log(subWorkout.id)
+      //console.log('workout Results: ' + JSON.stringify(workoutResult))
     
       // If there is no workout result for this sub workout, return the sub workout object as is
       if (!workoutResult) {
@@ -369,7 +369,7 @@ export default function Leaderboard( {navigation} ) {
     }
 
 
-    console.log('this this this: ' + JSON.stringify(subWorkoutsWithResults))
+    //console.log('this this this: ' + JSON.stringify(subWorkoutsWithResults))
     
     // Add the subWorkoutsWithResults array to the dt object
     const dtWithResults = {
@@ -377,7 +377,7 @@ export default function Leaderboard( {navigation} ) {
       subWorkouts: subWorkoutsWithResults
     };
 
-    console.log('Here is the value: ' + JSON.stringify(dtWithResults))
+    //console.log('Here is the value: ' + JSON.stringify(dtWithResults))
     setWorkouts(dtWithResults)
 
     if (dtWithResults.subWorkouts) {
@@ -408,7 +408,7 @@ export default function Leaderboard( {navigation} ) {
     
     const today = format(new Date(), 'MM/dd/yyyy');
 
-    console.log('this is today: ' + today)
+    //('this is today: ' + today)
 
     let workoutssubworkouts= ''
 
@@ -484,7 +484,7 @@ export default function Leaderboard( {navigation} ) {
     let key = props.id
 
     const onRowPress = () => {
-      console.log("Let's go here: " + key)
+      //console.log("Let's go here: " + key)
       navigation.navigate('LeaderboardDetails', {value: key})
     }
     
@@ -493,7 +493,7 @@ export default function Leaderboard( {navigation} ) {
 
     let datadisplayed = workoutresults.map((category, index) => {
 
-      console.log('this this :' + JSON.stringify(workoutresults[category]))
+      //console.log('this this :' + JSON.stringify(workoutresults[category]))
 
       return (
         <LeaderBoardUserRow 
@@ -587,13 +587,13 @@ export default function Leaderboard( {navigation} ) {
   }
 
   const onDailyPress = async () => {
-    console.log('Daily button pressed')
+    //console.log('Daily button pressed')
     setShowDaily(true)
     setShowAll(false)
   };
 
   const onAllPress = async () => {
-    console.log('Overall button pressed')
+    //console.log('Overall button pressed')
     setShowDaily(false)
     setShowAll(true)
     
@@ -604,7 +604,7 @@ export default function Leaderboard( {navigation} ) {
     const key = props.id
   
     const onRowPress = () => {
-      console.log("Let's go here: " + key)
+      //console.log("Let's go here: " + key)
       props.navigation.navigate('LeaderboardDetails', {value: key})
     }
   

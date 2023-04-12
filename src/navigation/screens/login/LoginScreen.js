@@ -48,14 +48,14 @@ const LoginScreen = ( {navigation} ) => {
   const onForgotPasswordPressed = () => {
     onScreen('ForgotPasswordScreen', navigation)()
     //navigation.navigate('ForgotPasswordScreen')
-    console.log('Forgot Password')
+    //console.log('Forgot Password')
   }
 
   const onSignUpPressed = () => {
     
     onScreen('CreateAccountScreen', navigation)()
     //navigation.navigate('CreateAccountScreen')
-    console.log('CreateAccountScreen')
+    //console.log('CreateAccountScreen')
   }
 
 

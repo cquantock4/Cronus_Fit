@@ -156,7 +156,7 @@ export default function NutritionScreen( {navigation} ) {
         setModalVisible(!modalVisible);
         setCurrentUrl(props.video_url)
   
-        console.log(props.video_url)
+        //console.log(props.video_url)
   
         status.isPlaying ? video.current.pauseAsync() : video.current.playAsync()
       };
@@ -235,15 +235,15 @@ export default function NutritionScreen( {navigation} ) {
     
     const onGoToCoachingPress = async () => {
       navigation.navigate('NutritionDetails', {value: 'newcoaching'})
-      console.log('Go to Nutrition Details Screen')
+      //console.log('Go to Nutrition Details Screen')
     };
   
   
     const onGoToNutritionDetails = async (navitem) => {
 
-      console.log('passing this value: ' + user)
+      //console.log('passing this value: ' + user)
       navigation.navigate('NutritionDetails', {value: navitem, user_id: user})
-      console.log('Go to Nutrition Details Screen')
+      //console.log('Go to Nutrition Details Screen')
     };
   
     return(
@@ -356,7 +356,6 @@ const styles = StyleSheet.create({
     width: '100%',
     //height: '50%',
     alignItems: 'center',
-    marginBottom: 50,
     backgroundColor: 'white'
     //backgroundColor: 'blue',
     //maxHeight: '60%',

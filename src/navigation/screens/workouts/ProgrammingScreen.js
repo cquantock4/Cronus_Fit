@@ -153,7 +153,7 @@ export default function ProgrammingScreen( {navigation} ) {
     const curr_carddesc = props.desc;
     const curr_free = props.free;
 
-    console.log(curr_free)
+    //console.log(curr_free)
   
     return(
       
@@ -247,12 +247,12 @@ export default function ProgrammingScreen( {navigation} ) {
     }
 
     const onSearchPress = async () => {
-        console.log('Search button pressed')
+        //console.log('Search button pressed')
         setShowSearch(false)
     };
 
     const onCancelPress = async () => {
-        console.log('Cancel button pressed')
+        //console.log('Cancel button pressed')
         setShowSearch(true)
     };
 

@@ -223,7 +223,7 @@ export default function HomeScreen( props, {navigation } ) {
   {/*<View style={styles.container}></View>*/}
   return(
 
-    <View style={[styles.container, {backgroundColor: 'green'}]}>
+    <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
       <FirstTimeUserWelcome />
       <ImageBackground source={require('../../../assets/images/CenteredBackgroundImage_Large.png')} style={styles.image}>
       
@@ -242,11 +242,13 @@ export default function HomeScreen( props, {navigation } ) {
               </View>
             </View>
 
-            
+            {/*
             <Home_Block_Button title_text='Workout of the day' bgColor = 'rgba(36, 39, 41, 0.6)' fgColor='#fff' cstyle={{padding: 40, paddingTop: 50, paddingBottom: 50, marginBottom: 5}}/>
             <Home_Block_Button title_text='My Programs' bgColor = 'rgba(248, 190, 19, 0.6)' fgColor='#000' cstyle={{padding: 40, paddingTop: 50, paddingBottom: 50, marginBottom: 5}}/>
             <Home_Block_Button title_text='Nutrition Articles' bgColor = {activeColors.grey_transparent} fgColor='#fff' cstyle={{padding: 50, paddingTop: 50, paddingBottom: 50, marginBottom: 5}} onPress={() => navigation.navigate('NutritionArticleSearch', {value: 'all'})}/>
-          </ScrollView>
+  */}
+          
+            </ScrollView>
 
       </ImageBackground>
 

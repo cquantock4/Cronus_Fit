@@ -41,7 +41,7 @@ const ConfirmEmailScreen = ( {navigation} ) => {
         //Get Auth User
         const authUser = await Auth.currentAuthenticatedUser({bypassCache: true});
 
-        console.log(authUser)
+        //console.log(authUser)
 
 
         //Create User in table

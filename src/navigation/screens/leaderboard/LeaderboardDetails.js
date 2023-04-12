@@ -248,7 +248,7 @@ export default function LeaderboardDetails( {navigation} ) {
       return (s[(v-20)%10] || s[v] || s[0]);
     }
     
-    console.log('starting to build User DT')
+    //console.log('starting to build User DT')
     //Loop over arr
     //console.log('This one this one: ' +JSON.stringify(arr))
     //console.log(user_res)
@@ -376,7 +376,7 @@ export default function LeaderboardDetails( {navigation} ) {
         */
 
 
-        console.log("Comment saved successfully!");
+        //console.log("Comment saved successfully!");
       } catch (error) {
         console.log("Error saving post", error);
       }
@@ -678,7 +678,7 @@ export default function LeaderboardDetails( {navigation} ) {
     
 
     if (workouts.length === 0) {
-      console.log('No workout found for today');
+      //console.log('No workout found for today');
       return null;
     }
 
@@ -850,7 +850,7 @@ export default function LeaderboardDetails( {navigation} ) {
             workoutresultssubworkouts.forEach(results => {
 
               if(results.subWorkouts.id.includes(subid)){
-                console.log('this value is included')
+                //console.log('this value is included')
                 setHasSubWorkouts(true);
                 has_sub_workouts = true;
               }
@@ -1290,17 +1290,17 @@ export default function LeaderboardDetails( {navigation} ) {
     }
 
     const onSearchPress = async () => {
-        console.log('Search button pressed')
+        //console.log('Search button pressed')
         setShowSearch(false)
     };
 
     const onCancelPress = async () => {
-        console.log('Cancel button pressed')
+        //console.log('Cancel button pressed')
         setShowSearch(true)
     };
 
     const onFilterPress = async () => {
-        console.log('Filter button pressed')  
+        //console.log('Filter button pressed')  
         setModalVisible(!modalVisible)
     };
 

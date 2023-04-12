@@ -33,7 +33,9 @@ const WorkoutsCard = ( { navigation }) => {
     useEffect(() => {
 
       const sub = DataStore.observeQuery(Workouts).subscribe(({ items }) => {
+        //console.log(items)
 
+        items.sort((a, b) => (a.date > b.date) ? -1 : 1)
 
         setWorkout(items[0]);
         

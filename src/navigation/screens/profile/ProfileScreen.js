@@ -180,13 +180,13 @@ export default function ProfileScreen( {navigation} ) {
     //console.log(result.assets[0].uri);
 
     if (!result.canceled) {
-      console.log('This is the delete key: **************: ' + imagekey);
+      //console.log('This is the delete key: **************: ' + imagekey);
 
       await Storage.remove(imagekey);
 
       setImage(result);
       setImageKey(result.assets[0].uri);
-      console.log('uploading resource: ' + result.assets[0].uri)
+      //console.log('uploading resource: ' + result.assets[0].uri)
     }
 
    
@@ -203,7 +203,7 @@ export default function ProfileScreen( {navigation} ) {
           allowsMultipleSelection: false,
         });
   
-        console.log(result.assets[0].uri)
+        //console.log(result.assets[0].uri)
         //console.log(result.canceled)
   
         if (!result.canceled) {
@@ -232,7 +232,7 @@ export default function ProfileScreen( {navigation} ) {
 
       try {
 
-        console.log('updating the profile image: ' + temp_img_url)
+        //console.log('updating the profile image: ' + temp_img_url)
 
         //const authUser =  Auth.currentAuthenticatedUser({bypassCache: true});
 
@@ -255,7 +255,7 @@ export default function ProfileScreen( {navigation} ) {
 
         //update
 
-        console.log('image saved')
+        //('image saved')
         
 
       } catch (err) {
@@ -301,19 +301,19 @@ export default function ProfileScreen( {navigation} ) {
         setProgressText('');
         //setImage(null);
 
-        console.log('This is the key ---**:: ' + res.key)
+        //console.log('This is the key ---**:: ' + res.key)
 
         Storage.get(res.key)
           .then(result => {
 
-            console.log(JSON.stringify(result))
-            console.log('made it here too')
+            //console.log(JSON.stringify(result))
+            //console.log('made it here too')
 
             setImageURI(result)
 
             temp_img_url = result
 
-            console.log('Updating Profile image')
+            //console.log('Updating Profile image')
             updateProfileImage(temp_img_url);
 
             //console.log(result)
@@ -321,7 +321,7 @@ export default function ProfileScreen( {navigation} ) {
           })
           .catch(err => {
             setProgressText('Upload Error');
-            console.log(err);
+            //console.log(err);
           });
 
           setisLoading(false);
@@ -332,7 +332,7 @@ export default function ProfileScreen( {navigation} ) {
       .catch(err => {
         setisLoading(false);
         setProgressText('Upload Error');
-        console.log(err);
+        //console.log(err);
       });
 
 
@@ -354,7 +354,7 @@ export default function ProfileScreen( {navigation} ) {
 
   const onSettingsPress = async () => {
       navigation.navigate('ProfileEditScreen', {title: 'settings'})
-      console.log('Go to Profile Screen')
+      //console.log('Go to Profile Screen')
   };
 
   const onChangePasswordPress = async () => {
@@ -366,7 +366,7 @@ export default function ProfileScreen( {navigation} ) {
       const onEditPress = async () => {
         //onScreen('ProfileEditScreen', navigation)()
         navigation.navigate('ProfileEditScreen', {title: title, value: value})
-        console.log('Go to Profile Screen')
+        //console.log('Go to Profile Screen')
       }
     
       return(

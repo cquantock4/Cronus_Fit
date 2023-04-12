@@ -160,11 +160,11 @@ export default function WorkoutDetails( {navigation} ) {
         // Inserted text is not blank
         // Filter the masterDataSource and update FilteredDataSource
 
-        console.log(masterDataSource)
+        //console.log(masterDataSource)
 
         const newData = masterDataSource.filter(function (item) {
 
-          console.log(item)
+          //console.log(item)
 
           // Applying filter for the inserted text in search bar
           const titleData = item.title
@@ -227,7 +227,7 @@ export default function WorkoutDetails( {navigation} ) {
 
     const ItemView = ({ item }) => {
 
-      console.log('item: ' + JSON.stringify(item))
+      //console.log('item: ' + JSON.stringify(item))
 
       const goToWorkoutPress = () => {
 
@@ -240,7 +240,7 @@ export default function WorkoutDetails( {navigation} ) {
         //Hide the search page
         setShowSearch(!showSearch)
 
-        console.log(item.date)
+        //console.log(item.date)
         
         try {
           if (item.date) {
@@ -252,7 +252,7 @@ export default function WorkoutDetails( {navigation} ) {
             //const dateObject = new Date(`${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`);
             //const formattedDate = dateObject.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' });
             //console.log(formattedDate); // Output: Tue Apr 23 1996 12:00:00 AM GMT-0400
-            console.log('what: ' + item.date)
+            //console.log('what: ' + item.date)
 
             /*
             const dateString = item.date;
@@ -321,6 +321,21 @@ export default function WorkoutDetails( {navigation} ) {
       );
     };
 
+    const textDisplay = (item) => {
+
+      //console.log(item)
+      if (item) {
+        var str = item;
+        var result = str.split("\\n"); 
+
+        //console.log(result)
+        return result.map((i, key) => <Text key={key}>{i + "\n"}</Text>);
+      }
+
+      return undefined
+
+    
+    }
 
     /*
       Get the User and Todays workout based on date
@@ -329,7 +344,7 @@ export default function WorkoutDetails( {navigation} ) {
     const groupAndAdd = (arr) => {
         const res = [];
     
-        console.log('Starting group and add')
+        //console.log('Starting group and add')
     
         //console.log(arr.id)
 
@@ -453,14 +468,14 @@ export default function WorkoutDetails( {navigation} ) {
                 pe => pe.date === format(new Date(date), 'MM/dd/yyyy').toString() && pe.type === workoutcategory.toString()
             )
 
-            console.log(currworkout)
+            //console.log(currworkout)
 
             //console.log(currworkout)
 
              //Set the current Workout
             if (currworkout.length != 0) {
 
-                console.log(userid + ' ' + currworkout[0].id)
+                //console.log(userid + ' ' + currworkout[0].id)
 
                 //check to see if user workout exixts
                 const savedworkout = (await DataStore.query(UserWorkouts)).filter(
@@ -489,7 +504,7 @@ export default function WorkoutDetails( {navigation} ) {
                 pe => pe.workoutResults.userid === userid
                 )
 
-                console.log('loaded: ' + workoutresults)
+                //console.log('loaded: ' + workoutresults)
 
                 setWorkoutResults(workoutresults)
 
@@ -503,7 +518,7 @@ export default function WorkoutDetails( {navigation} ) {
                 //console.log(subworkouts)
                 
             
-                console.log('this: ' + savedworkout.length)
+                //console.log('this: ' + savedworkout.length)
 
                 if (savedworkout.length === 1) {
                     setIsEnabledIndSave(true)
@@ -537,14 +552,14 @@ export default function WorkoutDetails( {navigation} ) {
 
     async function getWorkoutAndSubWorkouts() {
 
-        console.log('running now')  
-        console.log(date)
+        //('running now')  
+        //console.log(date)
 
         function isValidDate(dateString) {
           const pattern = /^\d{2}\/\d{2}\/\d{4}$/; // pattern for MM/dd/yyyy
 
           if (!pattern.test(dateString)) {
-            console.log(dateString)
+            //console.log(dateString)
             return format(new Date(dateString), 'MM/dd/yyyy').toString();
           }
 
@@ -556,7 +571,7 @@ export default function WorkoutDetails( {navigation} ) {
 
         const formatted_date = isValidDate(date)
 
-        console.log(formatted_date)
+       //console.log(formatted_date)
 
         //const formatted_date = format(new Date(date), 'MM/dd/yyyy').toString()
 
@@ -566,11 +581,11 @@ export default function WorkoutDetails( {navigation} ) {
         )
 
 
-        console.log('reloading here: ' + date + ' ' + JSON.stringify(currworkout))
+        //console.log('reloading here: ' + date + ' ' + JSON.stringify(currworkout))
 
     
         if (currworkout.length === 0) {
-            console.log('No workout found on this date');
+            //console.log('No workout found on this date');
             setWorkout(undefined)
             setWorkoutID(undefined)
             setIsEnabledIndSave(false)
@@ -579,15 +594,15 @@ export default function WorkoutDetails( {navigation} ) {
             return null;
         }
 
-        console.log('userid: ' + userid)
-        console.log(currworkout[0].id)
+        //console.log('userid: ' + userid)
+        //console.log(currworkout[0].id)
         //query saved workouts
         const savedWorkouts = await DataStore.query(SavedWorkouts, (s) =>
           s.workoutsID.eq(currworkout[0].id) && s.userID.eq(userid)
         );
         
-        console.log(savedWorkouts[0])
-        console.log(currworkout[0].id)
+        //console.log(savedWorkouts[0])
+        //console.log(currworkout[0].id)
 
         if (savedWorkouts.length === 1){
 
@@ -730,12 +745,12 @@ export default function WorkoutDetails( {navigation} ) {
     }
 
     const onSearchPress = async () => {
-        console.log('Search button pressed')
+        //console.log('Search button pressed')
         setShowSearch(true)
     };
 
     const onCancelPress = async () => {
-        console.log('Cancel button pressed')
+        //console.log('Cancel button pressed')
         setShowSearch(false)
         setShowFilter(false)
     };
@@ -761,7 +776,7 @@ export default function WorkoutDetails( {navigation} ) {
     };
 
     const onFilterPress = async () => {
-        console.log('Filter button pressed')  
+        //console.log('Filter button pressed')  
         setShowFilter(!showfilter)
         setShowSearch(true)
     };
@@ -782,7 +797,7 @@ export default function WorkoutDetails( {navigation} ) {
                           <Ionicons name='chevron-back-outline' style={{fontSize: 30, color: activeColors.primary_text}}/>
                       </Pressable>
                       <View>
-                          <Text style={[styles.header_text, {color: activeColors.primary_text}]}>Functional Fitness</Text>
+                          <Text style={[styles.header_text, {color: activeColors.primary_text}]}>{workoutcategory}</Text>
                       </View>
                       <View style={{flexDirection: 'row'}}>
                           <Pressable style={{padding: 5}} onPress={onSearchPress}>
@@ -864,17 +879,17 @@ export default function WorkoutDetails( {navigation} ) {
     */
     const onAddNotesPress = async () => {
       setModalVisibleNotes(!modalVisibleNotes)
-      console.log('Add Notes')
+      //console.log('Add Notes')
     }
 
     const onApplyFiltersPress = async () => {
-      console.log('Apply Filters Pressed')  
+      //console.log('Apply Filters Pressed')  
       setShowSearch(false)
       setModalVisible(!modalVisible)
     };
 
     const onSaveNotesPress = async () => {
-      console.log('Notes have been Pressed')  
+      //console.log('Notes have been Pressed')  
       setModalVisibleNotes(!modalVisibleNotes)
     };
 
@@ -903,7 +918,7 @@ export default function WorkoutDetails( {navigation} ) {
 
       try {
 
-                console.log(userid)
+                //console.log(userid)
                 //console.log(workoutid)
                 // then you save the mode that links a post with an editor
                 const saved_workout =  await DataStore.save(
@@ -922,8 +937,8 @@ export default function WorkoutDetails( {navigation} ) {
       
     async function deleteSavedWorkout(workoutid, userid) {
 
-        console.log(savedworkouts)
-        console.log(userid)
+        //console.log(savedworkouts)
+        //console.log(userid)
 
       try{
 
@@ -935,7 +950,7 @@ export default function WorkoutDetails( {navigation} ) {
 
           DataStore.delete(savedworkouts[0]);
           
-          console.log("Workout Deleted")
+          //.log("Workout Deleted")
       } catch (e) {
           console.log('error: ' + e)
       }
@@ -966,7 +981,7 @@ export default function WorkoutDetails( {navigation} ) {
 
     
       const addADay = () => {
-        console.log('here: ' + date)
+       // console.log('here: ' + date)
 
         let isoDateString = ''
 
@@ -982,7 +997,7 @@ export default function WorkoutDetails( {navigation} ) {
         
         let result = new Date(isoDateString)
 
-        console.log('res: ' +result)
+        //console.log('res: ' +result)
 
         setNewDate(result.setDate(result.getDate() + 1 ));
       };
@@ -1054,7 +1069,7 @@ export default function WorkoutDetails( {navigation} ) {
         props.onChange(event.nativeEvent.text);
         
         
-        console.log(event.nativeEvent.text)
+        //(event.nativeEvent.text)
       }
 
       let input
@@ -1197,10 +1212,10 @@ export default function WorkoutDetails( {navigation} ) {
                 //console.log('new: ' + JSON.stringify(workout_result))
                 
                 if (workout_result.length === 1){
-                  console.log('Update');
+                  //console.log('Update');
     
                   let curr_result_obj = workout_result[0];
-                  console.log(curr_result_obj)
+                  //console.log(curr_result_obj)
     
     
                   //Update the row
@@ -1208,13 +1223,13 @@ export default function WorkoutDetails( {navigation} ) {
                     updated.value = curr_value;
                   })
     
-                  console.log(updatedWorkoutResult)
+                  //console.log(updatedWorkoutResult)
           
                   DataStore.save(updatedWorkoutResult)
                   
     
                 } else {
-                  console.log('Insert')
+                  //console.log('Insert')
     
                   try {
     
@@ -1227,7 +1242,7 @@ export default function WorkoutDetails( {navigation} ) {
                       })
                     );
     
-                    console.log("Post saved successfully!");
+                    //console.log("Post saved successfully!");
                   } catch (error) {
                     console.log("Error saving post", error);
                   }
@@ -1379,7 +1394,7 @@ export default function WorkoutDetails( {navigation} ) {
                   return(
                     <View key={item.id} style={{padding: 12, flexDirection: "row", borderBottomColor: '#363636', borderBottomWidth: 0.5, justifyContent: 'space-between'}}>
                       <View style={{alignItems: 'flex-start', justifyContent: 'center', width: '60%'}}>
-                        <Text  style={{fontWeight: '400', fontSize: 15, lineHeight: 25, color: activeColors.primary_text}}>{item.desc}</Text>
+                        <Text  style={{fontWeight: '400', fontSize: 15, lineHeight: 25, color: activeColors.primary_text}}>{textDisplay(item.desc)}</Text>
                       </View>
 
                       <View style={{padding: 0, width: '40%'}}>
@@ -1420,6 +1435,8 @@ export default function WorkoutDetails( {navigation} ) {
         
     }
 
+   
+
 
     const WorkoutInfoView = () => {
 
@@ -1440,7 +1457,7 @@ export default function WorkoutDetails( {navigation} ) {
                         <>
                           <View key={workout.id} style={{alignItems: 'center', padding: 20, paddingBottom: 0, paddingHorizontal: 15}}>
                             {/*<Text style={{fontSize: 18, fontWeight: '500', marginBottom: 20}}>{workout.title}</Text>*/}
-                            <Text style={{fontWeight: '400', lineHeight: 25, textAlign: 'left', color: activeColors.primary_text}}>{workout.desc}</Text>
+                            <Text style={{fontWeight: '400', lineHeight: 25, textAlign: 'left', color: activeColors.primary_text}}>{textDisplay(workout.desc)}</Text>
                             <View style={{backgroundColor: 'transparent',alignSelf: 'flex-end', justifyContent:'flex-end', flexDirection: 'row', alignItems: 'center'}}>
                               <Text style={{fontWeight: '500', color: activeColors.primary_text, marginTop: -5}}>Save</Text>
                               <Switch
@@ -1458,7 +1475,9 @@ export default function WorkoutDetails( {navigation} ) {
                         </>
                       
                     ) : (
-                      <></>
+                      <>
+                      <Text style={{fontWeight: '400', lineHeight: 25, textAlign: 'left', color: activeColors.primary_text}}>No workout posted today</Text>
+                      </>
                     )}
 
                     {
