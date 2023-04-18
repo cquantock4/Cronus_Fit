@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useContext, useRef} from 'react';
-import {View, ActivityIndicator, Image, StyleSheet, Dimensions, SafeAreaView } from 'react-native';
+import {View, ActivityIndicator, Image, StyleSheet, Dimensions, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
@@ -231,8 +231,8 @@ const Navigation = () => {
   const header_label = <Image style={styles.image} source={require('../../assets/images/CronusFit_Logo_Transparent.png')} />
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: activeColors.primary_bg}}>
-      <StatusBar style={(darkMode) ? "light" : "dark"} />
+    
+      <>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerTitle: () => header_label}}>
           {user ? (
@@ -254,8 +254,8 @@ const Navigation = () => {
 
         
       </NavigationContainer>
-
-    </SafeAreaView>
+      
+      </>
   );
 
  

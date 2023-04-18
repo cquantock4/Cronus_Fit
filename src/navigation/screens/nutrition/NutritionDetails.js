@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl} from 'react-native';
-import { TextInput, Pressable, Modal, Dimensions,ActivityIndicator, KeyboardAvoidingView} from 'react-native';
+import { TextInput, Pressable, Modal, Dimensions,ActivityIndicator, KeyboardAvoidingView,SafeAreaView} from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Bubble_Button} from '../../../components/ui/buttons'
@@ -2225,7 +2225,6 @@ export default function NutritionDetails( {navigation} ) {
 
     return(
       <View style={{flex: 1, justifyContent: 'space-between'}}>
-        <KeyboardAvoidingView style={{ flex: 1}}>
           <ScrollView ref={scrollViewRef}
                       onContentSizeChange={() =>
                         scrollViewRef.current.scrollToEnd({ animated: true })
@@ -2238,21 +2237,40 @@ export default function NutritionDetails( {navigation} ) {
                       }>
             <MessageSection />
           </ScrollView>
-        </KeyboardAvoidingView>
-        <View style={{justifyContent: 'flex-end', flexDirection: 'row', padding: 3, borderTopColor: activeColors.primary_text, borderTopWidth: 1}}>
-          
-          <TextInput 
-            multiline 
-            value={messagetext} 
-            onChangeText={setMessageText}
-            placeholder={'Write a message'} 
-            placeholderTextColor={activeColors.primary_text} 
-            style={{flex: 1, borderRadius: 5,marginRight: 5, padding: 5, color: activeColors.primary_text}}
-          />
-          <Pressable onPress={sendMessage} style={{borderRadius: 5, padding: 10, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', backgroundColor: '#F8BE13'}} >
-            <Text>Send</Text>
-          </Pressable>
-        </View>
+
+          <View style={{flexDirection: 'row', padding: 3, paddingTop: 10, backgroundColor: activeColors.primary_bg, borderTopWidth: 1, borderColor: activeColors.secondary_text}}>
+                <TextInput 
+                multiline 
+                value={messagetext} 
+                onChangeText={setMessageText}
+                placeholder={'Write a message'} 
+                placeholderTextColor={activeColors.primary_text} 
+                style={{flex: 1, borderRadius: 5,marginRight: 5, padding: 5, backgroundColor: activeColors.primary_bg, color: activeColors.secondary_text}}
+              />
+            <View style={{ justifyContent: 'flex-end'}}>
+              <Pressable onPress={sendMessage} style={{height: 40, borderRadius: 5, padding: 10, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', backgroundColor: '#E1AB09'}}>
+                <Text>Send</Text>
+              </Pressable>
+            </View>
+        
+          </View>
+        {/*
+          <View style={{justifyContent: 'flex-end', flexDirection: 'row', padding: 3, borderTopColor: activeColors.primary_text, borderTopWidth: 1}}>
+            
+            <TextInput 
+              multiline 
+              value={messagetext} 
+              onChangeText={setMessageText}
+              placeholder={'Write a message'} 
+              placeholderTextColor={activeColors.primary_text} 
+              style={{flex: 1, borderRadius: 5,marginRight: 5, padding: 5, backgroundColor: activeColors.primary_bg, color: activeColors.secondary_text}}
+            />
+            <Pressable onPress={sendMessage} style={{borderRadius: 5, padding: 10, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', backgroundColor: '#F8BE13'}} >
+              <Text>Send</Text>
+            </Pressable>
+          </View>
+        */}
+
       </View>
     )
   }
@@ -2429,13 +2447,24 @@ export default function NutritionDetails( {navigation} ) {
 
   
     return(
-      
+      <SafeAreaView style={{flex: 1, backgroundColor: activeColors.primary_bg}}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : ''}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
+        style={{
+          borderRadius: 10,
+          flex: 1,
+          marginHorizontal: 10,
+
+        }}>
+          
         <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
           <Header />
           <QuestionaireAlertModal />
           <Controller />
         </View>
-      
+      </KeyboardAvoidingView>      
+      </SafeAreaView>
     );
 }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, KeyboardAvoidingView, FlatList, TouchableOpacity } from 'react-native';
 import { TextInput, Pressable, RefreshControl, Dimensions, SafeAreaView, Platform } from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -1132,7 +1132,7 @@ export default function LeaderboardDetails( {navigation} ) {
 
     
     return(
-      <View style={{justifyContent: 'flex-end'}}>
+      <View style={{justifyContent: 'flex-end', flex: 1}}>
 
 
           {/*
@@ -1389,8 +1389,17 @@ export default function LeaderboardDetails( {navigation} ) {
         */}
 
     return(
+      <SafeAreaView style={{flex: 1, backgroundColor: activeColors.primary_bg}}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : ''}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
+        style={{
+          borderRadius: 10,
+          flex: 1,
+          marginHorizontal: 10,
 
-      <KeyboardAvoidingView style={{ flex: 1,  backgroundColor: activeColors.primary_bg, paddingTop: 50}}>
+        }}>
+          
         <Header />
         { (workoutresults.length > 0 && workouts) ? (
 
@@ -1406,8 +1415,8 @@ export default function LeaderboardDetails( {navigation} ) {
         )}
 
 
-        { showcomments ? (
-          <View style={{flexDirection: 'row', padding: 3, backgroundColor: activeColors.primary_bg, position: 'absolute', bottom: 0}}>
+         {showcomments ? (
+          <View style={{flexDirection: 'row', padding: 3, backgroundColor: activeColors.primary_bg}}>
                 <TextInput 
                 multiline 
                 value={commenttext} 
@@ -1425,14 +1434,26 @@ export default function LeaderboardDetails( {navigation} ) {
           </View>
         ) : (
           <></>
-        )}
-        
+        ) }
+
+        {/*
+      <View
+        style={{
+          padding: 16,
+          borderTopWidth: 1,
+          backgroundColor: 'white'
+        }}>
+        <TextInput
+          multiline={true}
+          blurOnSubmit={true}
+          numberOfLines={2}
+          placeholder="Leave a comment..."
+        />
+      </View>
+        */}
       </KeyboardAvoidingView>
 
-        
-     
-
-      
+      </SafeAreaView>
     );
 }
 
