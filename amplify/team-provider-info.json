@@ -1,14 +1,14 @@
 {
-  "dev": {
+  "staging": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-cronusfit-dev-02325-authRole",
-      "UnauthRoleArn": "arn:aws:iam::473770778907:role/amplify-cronusfit-dev-02325-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::473770778907:role/amplify-cronusfit-dev-02325-authRole",
+      "AuthRoleName": "amplify-cronusfit-staging-141500-authRole",
+      "UnauthRoleArn": "arn:aws:iam::473770778907:role/amplify-cronusfit-staging-141500-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::473770778907:role/amplify-cronusfit-staging-141500-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-cronusfit-dev-02325-deployment",
-      "UnauthRoleName": "amplify-cronusfit-dev-02325-unauthRole",
-      "StackName": "amplify-cronusfit-dev-02325",
-      "StackId": "arn:aws:cloudformation:us-east-1:473770778907:stack/amplify-cronusfit-dev-02325/c5479560-58d3-11ed-9ca9-0e02e00b515b",
+      "DeploymentBucketName": "amplify-cronusfit-staging-141500-deployment",
+      "UnauthRoleName": "amplify-cronusfit-staging-141500-unauthRole",
+      "StackName": "amplify-cronusfit-staging-141500",
+      "StackId": "arn:aws:cloudformation:us-east-1:473770778907:stack/amplify-cronusfit-staging-141500/1c8704b0-dede-11ed-97c8-0ebbb03beb47",
       "AmplifyAppId": "d1xrtnlj40em0g"
     },
     "categories": {

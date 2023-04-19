@@ -4,3 +4,4 @@ dist
 .expo
 .expo-shared
 web-build
+amplify-codegen-temp\models

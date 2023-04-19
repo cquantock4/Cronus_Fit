@@ -86,7 +86,7 @@ const ConfirmEmailScreen = ( {navigation} ) => {
 
   return (
       <View style={styles.container}>
-        <Text style={styles.title}>Confirm your email</Text>
+        <Text style={styles.title}>We sent a verification code to the email provided, please enter it below</Text>
 
         {/*
         <CustomInput
@@ -138,10 +138,11 @@ const styles = StyleSheet.create({
     //backgroundColor: '#fff',
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '400',
     color: '#000000',
     margin: 20,
+    textAlign: 'center'
   },
 });
 

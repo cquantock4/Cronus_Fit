@@ -1,6 +1,57 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const createSavedWorkouts = /* GraphQL */ `
+  mutation CreateSavedWorkouts(
+    $input: CreateSavedWorkoutsInput!
+    $condition: ModelSavedWorkoutsConditionInput
+  ) {
+    createSavedWorkouts(input: $input, condition: $condition) {
+      id
+      userID
+      workoutsID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const updateSavedWorkouts = /* GraphQL */ `
+  mutation UpdateSavedWorkouts(
+    $input: UpdateSavedWorkoutsInput!
+    $condition: ModelSavedWorkoutsConditionInput
+  ) {
+    updateSavedWorkouts(input: $input, condition: $condition) {
+      id
+      userID
+      workoutsID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const deleteSavedWorkouts = /* GraphQL */ `
+  mutation DeleteSavedWorkouts(
+    $input: DeleteSavedWorkoutsInput!
+    $condition: ModelSavedWorkoutsConditionInput
+  ) {
+    deleteSavedWorkouts(input: $input, condition: $condition) {
+      id
+      userID
+      workoutsID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
 export const createFoodentry = /* GraphQL */ `
   mutation CreateFoodentry(
     $input: CreateFoodentryInput!
@@ -233,10 +284,6 @@ export const createUserInfo = /* GraphQL */ `
         name
         email
         sub
-        Workouts {
-          nextToken
-          startedAt
-        }
         units
         nutrition_info
         nutrition_coaching
@@ -255,6 +302,18 @@ export const createUserInfo = /* GraphQL */ `
         theme
         image
         image_uri
+        WorkoutResults {
+          nextToken
+          startedAt
+        }
+        Comments {
+          nextToken
+          startedAt
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -298,10 +357,6 @@ export const updateUserInfo = /* GraphQL */ `
         name
         email
         sub
-        Workouts {
-          nextToken
-          startedAt
-        }
         units
         nutrition_info
         nutrition_coaching
@@ -320,6 +375,18 @@ export const updateUserInfo = /* GraphQL */ `
         theme
         image
         image_uri
+        WorkoutResults {
+          nextToken
+          startedAt
+        }
+        Comments {
+          nextToken
+          startedAt
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -363,10 +430,6 @@ export const deleteUserInfo = /* GraphQL */ `
         name
         email
         sub
-        Workouts {
-          nextToken
-          startedAt
-        }
         units
         nutrition_info
         nutrition_coaching
@@ -385,6 +448,18 @@ export const deleteUserInfo = /* GraphQL */ `
         theme
         image
         image_uri
+        WorkoutResults {
+          nextToken
+          startedAt
+        }
+        Comments {
+          nextToken
+          startedAt
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -528,21 +603,8 @@ export const createComments = /* GraphQL */ `
     createComments(input: $input, condition: $condition) {
       id
       comment
-      userid
-      Workouts {
-        items {
-          id
-          commentsID
-          workoutsID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
+      workoutsID
+      userID
       createdAt
       updatedAt
       _version
@@ -559,21 +621,8 @@ export const updateComments = /* GraphQL */ `
     updateComments(input: $input, condition: $condition) {
       id
       comment
-      userid
-      Workouts {
-        items {
-          id
-          commentsID
-          workoutsID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
+      workoutsID
+      userID
       createdAt
       updatedAt
       _version
@@ -590,21 +639,8 @@ export const deleteComments = /* GraphQL */ `
     deleteComments(input: $input, condition: $condition) {
       id
       comment
-      userid
-      Workouts {
-        items {
-          id
-          commentsID
-          workoutsID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
+      workoutsID
+      userID
       createdAt
       updatedAt
       _version
@@ -621,21 +657,8 @@ export const createWorkoutResults = /* GraphQL */ `
     createWorkoutResults(input: $input, condition: $condition) {
       id
       value
-      SubWorkouts {
-        items {
-          id
-          workoutResultsID
-          subWorkoutsID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      userid
+      subworkoutsID
+      userID
       createdAt
       updatedAt
       _version
@@ -652,21 +675,8 @@ export const updateWorkoutResults = /* GraphQL */ `
     updateWorkoutResults(input: $input, condition: $condition) {
       id
       value
-      SubWorkouts {
-        items {
-          id
-          workoutResultsID
-          subWorkoutsID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      userid
+      subworkoutsID
+      userID
       createdAt
       updatedAt
       _version
@@ -683,21 +693,8 @@ export const deleteWorkoutResults = /* GraphQL */ `
     deleteWorkoutResults(input: $input, condition: $condition) {
       id
       value
-      SubWorkouts {
-        items {
-          id
-          workoutResultsID
-          subWorkoutsID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      userid
+      subworkoutsID
+      userID
       createdAt
       updatedAt
       _version
@@ -715,27 +712,14 @@ export const createSubWorkouts = /* GraphQL */ `
       id
       group
       grouptitle
-      workoutss {
-        items {
-          id
-          subWorkoutsID
-          workoutsID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       desc
       resultcategory
       workoutresultss {
         items {
           id
-          workoutResultsID
-          subWorkoutsID
+          value
+          subworkoutsID
+          userID
           createdAt
           updatedAt
           _version
@@ -747,6 +731,7 @@ export const createSubWorkouts = /* GraphQL */ `
       }
       required
       timecap
+      workoutsID
       createdAt
       updatedAt
       _version
@@ -764,27 +749,14 @@ export const updateSubWorkouts = /* GraphQL */ `
       id
       group
       grouptitle
-      workoutss {
-        items {
-          id
-          subWorkoutsID
-          workoutsID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       desc
       resultcategory
       workoutresultss {
         items {
           id
-          workoutResultsID
-          subWorkoutsID
+          value
+          subworkoutsID
+          userID
           createdAt
           updatedAt
           _version
@@ -796,6 +768,7 @@ export const updateSubWorkouts = /* GraphQL */ `
       }
       required
       timecap
+      workoutsID
       createdAt
       updatedAt
       _version
@@ -813,27 +786,14 @@ export const deleteSubWorkouts = /* GraphQL */ `
       id
       group
       grouptitle
-      workoutss {
-        items {
-          id
-          subWorkoutsID
-          workoutsID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       desc
       resultcategory
       workoutresultss {
         items {
           id
-          workoutResultsID
-          subWorkoutsID
+          value
+          subworkoutsID
+          userID
           createdAt
           updatedAt
           _version
@@ -845,6 +805,7 @@ export const deleteSubWorkouts = /* GraphQL */ `
       }
       required
       timecap
+      workoutsID
       createdAt
       updatedAt
       _version
@@ -863,25 +824,16 @@ export const createWorkouts = /* GraphQL */ `
       title
       desc
       date
-      users {
-        items {
-          id
-          workoutsID
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       type
       SubWorkouts {
         items {
           id
-          subWorkoutsID
+          group
+          grouptitle
+          desc
+          resultcategory
+          required
+          timecap
           workoutsID
           createdAt
           updatedAt
@@ -895,7 +847,22 @@ export const createWorkouts = /* GraphQL */ `
       commentss {
         items {
           id
-          commentsID
+          comment
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      SavedWorkouts {
+        items {
+          id
+          userID
           workoutsID
           createdAt
           updatedAt
@@ -924,25 +891,16 @@ export const updateWorkouts = /* GraphQL */ `
       title
       desc
       date
-      users {
-        items {
-          id
-          workoutsID
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       type
       SubWorkouts {
         items {
           id
-          subWorkoutsID
+          group
+          grouptitle
+          desc
+          resultcategory
+          required
+          timecap
           workoutsID
           createdAt
           updatedAt
@@ -956,7 +914,22 @@ export const updateWorkouts = /* GraphQL */ `
       commentss {
         items {
           id
-          commentsID
+          comment
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      SavedWorkouts {
+        items {
+          id
+          userID
           workoutsID
           createdAt
           updatedAt
@@ -985,25 +958,16 @@ export const deleteWorkouts = /* GraphQL */ `
       title
       desc
       date
-      users {
-        items {
-          id
-          workoutsID
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       type
       SubWorkouts {
         items {
           id
-          subWorkoutsID
+          group
+          grouptitle
+          desc
+          resultcategory
+          required
+          timecap
           workoutsID
           createdAt
           updatedAt
@@ -1017,7 +981,22 @@ export const deleteWorkouts = /* GraphQL */ `
       commentss {
         items {
           id
-          commentsID
+          comment
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      SavedWorkouts {
+        items {
+          id
+          userID
           workoutsID
           createdAt
           updatedAt
@@ -1046,20 +1025,6 @@ export const createUser = /* GraphQL */ `
       name
       email
       sub
-      Workouts {
-        items {
-          id
-          workoutsID
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       units
       nutrition_info
       nutrition_coaching
@@ -1114,6 +1079,50 @@ export const createUser = /* GraphQL */ `
       theme
       image
       image_uri
+      WorkoutResults {
+        items {
+          id
+          value
+          subworkoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      Comments {
+        items {
+          id
+          comment
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      SavedWorkouts {
+        items {
+          id
+          userID
+          workoutsID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -1132,20 +1141,6 @@ export const updateUser = /* GraphQL */ `
       name
       email
       sub
-      Workouts {
-        items {
-          id
-          workoutsID
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       units
       nutrition_info
       nutrition_coaching
@@ -1200,6 +1195,50 @@ export const updateUser = /* GraphQL */ `
       theme
       image
       image_uri
+      WorkoutResults {
+        items {
+          id
+          value
+          subworkoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      Comments {
+        items {
+          id
+          comment
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      SavedWorkouts {
+        items {
+          id
+          userID
+          workoutsID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -1218,20 +1257,6 @@ export const deleteUser = /* GraphQL */ `
       name
       email
       sub
-      Workouts {
-        items {
-          id
-          workoutsID
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       units
       nutrition_info
       nutrition_coaching
@@ -1286,740 +1311,49 @@ export const deleteUser = /* GraphQL */ `
       theme
       image
       image_uri
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const createCommentsWorkouts = /* GraphQL */ `
-  mutation CreateCommentsWorkouts(
-    $input: CreateCommentsWorkoutsInput!
-    $condition: ModelCommentsWorkoutsConditionInput
-  ) {
-    createCommentsWorkouts(input: $input, condition: $condition) {
-      id
-      commentsID
-      workoutsID
-      comments {
-        id
-        comment
-        userid
-        Workouts {
-          nextToken
-          startedAt
+      WorkoutResults {
+        items {
+          id
+          value
+          subworkoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
         }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
+        nextToken
+        startedAt
       }
-      workouts {
-        id
-        title
-        desc
-        date
-        users {
-          nextToken
-          startedAt
+      Comments {
+        items {
+          id
+          comment
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
         }
-        type
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        commentss {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
+        nextToken
+        startedAt
       }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const updateCommentsWorkouts = /* GraphQL */ `
-  mutation UpdateCommentsWorkouts(
-    $input: UpdateCommentsWorkoutsInput!
-    $condition: ModelCommentsWorkoutsConditionInput
-  ) {
-    updateCommentsWorkouts(input: $input, condition: $condition) {
-      id
-      commentsID
-      workoutsID
-      comments {
-        id
-        comment
-        userid
-        Workouts {
-          nextToken
-          startedAt
+      SavedWorkouts {
+        items {
+          id
+          userID
+          workoutsID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
         }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      workouts {
-        id
-        title
-        desc
-        date
-        users {
-          nextToken
-          startedAt
-        }
-        type
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        commentss {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const deleteCommentsWorkouts = /* GraphQL */ `
-  mutation DeleteCommentsWorkouts(
-    $input: DeleteCommentsWorkoutsInput!
-    $condition: ModelCommentsWorkoutsConditionInput
-  ) {
-    deleteCommentsWorkouts(input: $input, condition: $condition) {
-      id
-      commentsID
-      workoutsID
-      comments {
-        id
-        comment
-        userid
-        Workouts {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      workouts {
-        id
-        title
-        desc
-        date
-        users {
-          nextToken
-          startedAt
-        }
-        type
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        commentss {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const createWorkoutResultsSubWorkouts = /* GraphQL */ `
-  mutation CreateWorkoutResultsSubWorkouts(
-    $input: CreateWorkoutResultsSubWorkoutsInput!
-    $condition: ModelWorkoutResultsSubWorkoutsConditionInput
-  ) {
-    createWorkoutResultsSubWorkouts(input: $input, condition: $condition) {
-      id
-      workoutResultsID
-      subWorkoutsID
-      workoutResults {
-        id
-        value
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        userid
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      subWorkouts {
-        id
-        group
-        grouptitle
-        workoutss {
-          nextToken
-          startedAt
-        }
-        desc
-        resultcategory
-        workoutresultss {
-          nextToken
-          startedAt
-        }
-        required
-        timecap
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const updateWorkoutResultsSubWorkouts = /* GraphQL */ `
-  mutation UpdateWorkoutResultsSubWorkouts(
-    $input: UpdateWorkoutResultsSubWorkoutsInput!
-    $condition: ModelWorkoutResultsSubWorkoutsConditionInput
-  ) {
-    updateWorkoutResultsSubWorkouts(input: $input, condition: $condition) {
-      id
-      workoutResultsID
-      subWorkoutsID
-      workoutResults {
-        id
-        value
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        userid
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      subWorkouts {
-        id
-        group
-        grouptitle
-        workoutss {
-          nextToken
-          startedAt
-        }
-        desc
-        resultcategory
-        workoutresultss {
-          nextToken
-          startedAt
-        }
-        required
-        timecap
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const deleteWorkoutResultsSubWorkouts = /* GraphQL */ `
-  mutation DeleteWorkoutResultsSubWorkouts(
-    $input: DeleteWorkoutResultsSubWorkoutsInput!
-    $condition: ModelWorkoutResultsSubWorkoutsConditionInput
-  ) {
-    deleteWorkoutResultsSubWorkouts(input: $input, condition: $condition) {
-      id
-      workoutResultsID
-      subWorkoutsID
-      workoutResults {
-        id
-        value
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        userid
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      subWorkouts {
-        id
-        group
-        grouptitle
-        workoutss {
-          nextToken
-          startedAt
-        }
-        desc
-        resultcategory
-        workoutresultss {
-          nextToken
-          startedAt
-        }
-        required
-        timecap
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const createWorkoutsSubWorkouts = /* GraphQL */ `
-  mutation CreateWorkoutsSubWorkouts(
-    $input: CreateWorkoutsSubWorkoutsInput!
-    $condition: ModelWorkoutsSubWorkoutsConditionInput
-  ) {
-    createWorkoutsSubWorkouts(input: $input, condition: $condition) {
-      id
-      subWorkoutsID
-      workoutsID
-      subWorkouts {
-        id
-        group
-        grouptitle
-        workoutss {
-          nextToken
-          startedAt
-        }
-        desc
-        resultcategory
-        workoutresultss {
-          nextToken
-          startedAt
-        }
-        required
-        timecap
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      workouts {
-        id
-        title
-        desc
-        date
-        users {
-          nextToken
-          startedAt
-        }
-        type
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        commentss {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const updateWorkoutsSubWorkouts = /* GraphQL */ `
-  mutation UpdateWorkoutsSubWorkouts(
-    $input: UpdateWorkoutsSubWorkoutsInput!
-    $condition: ModelWorkoutsSubWorkoutsConditionInput
-  ) {
-    updateWorkoutsSubWorkouts(input: $input, condition: $condition) {
-      id
-      subWorkoutsID
-      workoutsID
-      subWorkouts {
-        id
-        group
-        grouptitle
-        workoutss {
-          nextToken
-          startedAt
-        }
-        desc
-        resultcategory
-        workoutresultss {
-          nextToken
-          startedAt
-        }
-        required
-        timecap
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      workouts {
-        id
-        title
-        desc
-        date
-        users {
-          nextToken
-          startedAt
-        }
-        type
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        commentss {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const deleteWorkoutsSubWorkouts = /* GraphQL */ `
-  mutation DeleteWorkoutsSubWorkouts(
-    $input: DeleteWorkoutsSubWorkoutsInput!
-    $condition: ModelWorkoutsSubWorkoutsConditionInput
-  ) {
-    deleteWorkoutsSubWorkouts(input: $input, condition: $condition) {
-      id
-      subWorkoutsID
-      workoutsID
-      subWorkouts {
-        id
-        group
-        grouptitle
-        workoutss {
-          nextToken
-          startedAt
-        }
-        desc
-        resultcategory
-        workoutresultss {
-          nextToken
-          startedAt
-        }
-        required
-        timecap
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      workouts {
-        id
-        title
-        desc
-        date
-        users {
-          nextToken
-          startedAt
-        }
-        type
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        commentss {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const createUserWorkouts = /* GraphQL */ `
-  mutation CreateUserWorkouts(
-    $input: CreateUserWorkoutsInput!
-    $condition: ModelUserWorkoutsConditionInput
-  ) {
-    createUserWorkouts(input: $input, condition: $condition) {
-      id
-      workoutsID
-      userID
-      workouts {
-        id
-        title
-        desc
-        date
-        users {
-          nextToken
-          startedAt
-        }
-        type
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        commentss {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      user {
-        id
-        name
-        email
-        sub
-        Workouts {
-          nextToken
-          startedAt
-        }
-        units
-        nutrition_info
-        nutrition_coaching
-        q_experience
-        q_medical
-        q_calsmacros
-        coach_userid
-        Checkins {
-          nextToken
-          startedAt
-        }
-        Foodentries {
-          nextToken
-          startedAt
-        }
-        theme
-        image
-        image_uri
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const updateUserWorkouts = /* GraphQL */ `
-  mutation UpdateUserWorkouts(
-    $input: UpdateUserWorkoutsInput!
-    $condition: ModelUserWorkoutsConditionInput
-  ) {
-    updateUserWorkouts(input: $input, condition: $condition) {
-      id
-      workoutsID
-      userID
-      workouts {
-        id
-        title
-        desc
-        date
-        users {
-          nextToken
-          startedAt
-        }
-        type
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        commentss {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      user {
-        id
-        name
-        email
-        sub
-        Workouts {
-          nextToken
-          startedAt
-        }
-        units
-        nutrition_info
-        nutrition_coaching
-        q_experience
-        q_medical
-        q_calsmacros
-        coach_userid
-        Checkins {
-          nextToken
-          startedAt
-        }
-        Foodentries {
-          nextToken
-          startedAt
-        }
-        theme
-        image
-        image_uri
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const deleteUserWorkouts = /* GraphQL */ `
-  mutation DeleteUserWorkouts(
-    $input: DeleteUserWorkoutsInput!
-    $condition: ModelUserWorkoutsConditionInput
-  ) {
-    deleteUserWorkouts(input: $input, condition: $condition) {
-      id
-      workoutsID
-      userID
-      workouts {
-        id
-        title
-        desc
-        date
-        users {
-          nextToken
-          startedAt
-        }
-        type
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        commentss {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      user {
-        id
-        name
-        email
-        sub
-        Workouts {
-          nextToken
-          startedAt
-        }
-        units
-        nutrition_info
-        nutrition_coaching
-        q_experience
-        q_medical
-        q_calsmacros
-        coach_userid
-        Checkins {
-          nextToken
-          startedAt
-        }
-        Foodentries {
-          nextToken
-          startedAt
-        }
-        theme
-        image
-        image_uri
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
+        nextToken
+        startedAt
       }
       createdAt
       updatedAt

@@ -1,6 +1,70 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getSavedWorkouts = /* GraphQL */ `
+  query GetSavedWorkouts($id: ID!) {
+    getSavedWorkouts(id: $id) {
+      id
+      userID
+      workoutsID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const listSavedWorkouts = /* GraphQL */ `
+  query ListSavedWorkouts(
+    $filter: ModelSavedWorkoutsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listSavedWorkouts(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        userID
+        workoutsID
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const syncSavedWorkouts = /* GraphQL */ `
+  query SyncSavedWorkouts(
+    $filter: ModelSavedWorkoutsFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncSavedWorkouts(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        userID
+        workoutsID
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
 export const getFoodentry = /* GraphQL */ `
   query GetFoodentry($id: ID!) {
     getFoodentry(id: $id) {
@@ -269,10 +333,6 @@ export const getUserInfo = /* GraphQL */ `
         name
         email
         sub
-        Workouts {
-          nextToken
-          startedAt
-        }
         units
         nutrition_info
         nutrition_coaching
@@ -291,6 +351,18 @@ export const getUserInfo = /* GraphQL */ `
         theme
         image
         image_uri
+        WorkoutResults {
+          nextToken
+          startedAt
+        }
+        Comments {
+          nextToken
+          startedAt
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -579,21 +651,8 @@ export const getComments = /* GraphQL */ `
     getComments(id: $id) {
       id
       comment
-      userid
-      Workouts {
-        items {
-          id
-          commentsID
-          workoutsID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
+      workoutsID
+      userID
       createdAt
       updatedAt
       _version
@@ -612,11 +671,8 @@ export const listComments = /* GraphQL */ `
       items {
         id
         comment
-        userid
-        Workouts {
-          nextToken
-          startedAt
-        }
+        workoutsID
+        userID
         createdAt
         updatedAt
         _version
@@ -644,11 +700,8 @@ export const syncComments = /* GraphQL */ `
       items {
         id
         comment
-        userid
-        Workouts {
-          nextToken
-          startedAt
-        }
+        workoutsID
+        userID
         createdAt
         updatedAt
         _version
@@ -665,21 +718,8 @@ export const getWorkoutResults = /* GraphQL */ `
     getWorkoutResults(id: $id) {
       id
       value
-      SubWorkouts {
-        items {
-          id
-          workoutResultsID
-          subWorkoutsID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      userid
+      subworkoutsID
+      userID
       createdAt
       updatedAt
       _version
@@ -698,11 +738,8 @@ export const listWorkoutResults = /* GraphQL */ `
       items {
         id
         value
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        userid
+        subworkoutsID
+        userID
         createdAt
         updatedAt
         _version
@@ -730,11 +767,8 @@ export const syncWorkoutResults = /* GraphQL */ `
       items {
         id
         value
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        userid
+        subworkoutsID
+        userID
         createdAt
         updatedAt
         _version
@@ -752,27 +786,14 @@ export const getSubWorkouts = /* GraphQL */ `
       id
       group
       grouptitle
-      workoutss {
-        items {
-          id
-          subWorkoutsID
-          workoutsID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       desc
       resultcategory
       workoutresultss {
         items {
           id
-          workoutResultsID
-          subWorkoutsID
+          value
+          subworkoutsID
+          userID
           createdAt
           updatedAt
           _version
@@ -784,6 +805,7 @@ export const getSubWorkouts = /* GraphQL */ `
       }
       required
       timecap
+      workoutsID
       createdAt
       updatedAt
       _version
@@ -803,10 +825,6 @@ export const listSubWorkouts = /* GraphQL */ `
         id
         group
         grouptitle
-        workoutss {
-          nextToken
-          startedAt
-        }
         desc
         resultcategory
         workoutresultss {
@@ -815,6 +833,7 @@ export const listSubWorkouts = /* GraphQL */ `
         }
         required
         timecap
+        workoutsID
         createdAt
         updatedAt
         _version
@@ -843,10 +862,6 @@ export const syncSubWorkouts = /* GraphQL */ `
         id
         group
         grouptitle
-        workoutss {
-          nextToken
-          startedAt
-        }
         desc
         resultcategory
         workoutresultss {
@@ -855,6 +870,7 @@ export const syncSubWorkouts = /* GraphQL */ `
         }
         required
         timecap
+        workoutsID
         createdAt
         updatedAt
         _version
@@ -873,25 +889,16 @@ export const getWorkouts = /* GraphQL */ `
       title
       desc
       date
-      users {
-        items {
-          id
-          workoutsID
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       type
       SubWorkouts {
         items {
           id
-          subWorkoutsID
+          group
+          grouptitle
+          desc
+          resultcategory
+          required
+          timecap
           workoutsID
           createdAt
           updatedAt
@@ -905,7 +912,22 @@ export const getWorkouts = /* GraphQL */ `
       commentss {
         items {
           id
-          commentsID
+          comment
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      SavedWorkouts {
+        items {
+          id
+          userID
           workoutsID
           createdAt
           updatedAt
@@ -936,16 +958,16 @@ export const listWorkouts = /* GraphQL */ `
         title
         desc
         date
-        users {
-          nextToken
-          startedAt
-        }
         type
         SubWorkouts {
           nextToken
           startedAt
         }
         commentss {
+          nextToken
+          startedAt
+        }
+        SavedWorkouts {
           nextToken
           startedAt
         }
@@ -978,16 +1000,16 @@ export const syncWorkouts = /* GraphQL */ `
         title
         desc
         date
-        users {
-          nextToken
-          startedAt
-        }
         type
         SubWorkouts {
           nextToken
           startedAt
         }
         commentss {
+          nextToken
+          startedAt
+        }
+        SavedWorkouts {
           nextToken
           startedAt
         }
@@ -1009,20 +1031,6 @@ export const getUser = /* GraphQL */ `
       name
       email
       sub
-      Workouts {
-        items {
-          id
-          workoutsID
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       units
       nutrition_info
       nutrition_coaching
@@ -1077,6 +1085,50 @@ export const getUser = /* GraphQL */ `
       theme
       image
       image_uri
+      WorkoutResults {
+        items {
+          id
+          value
+          subworkoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      Comments {
+        items {
+          id
+          comment
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      SavedWorkouts {
+        items {
+          id
+          userID
+          workoutsID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -1097,10 +1149,6 @@ export const listUsers = /* GraphQL */ `
         name
         email
         sub
-        Workouts {
-          nextToken
-          startedAt
-        }
         units
         nutrition_info
         nutrition_coaching
@@ -1119,6 +1167,18 @@ export const listUsers = /* GraphQL */ `
         theme
         image
         image_uri
+        WorkoutResults {
+          nextToken
+          startedAt
+        }
+        Comments {
+          nextToken
+          startedAt
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -1148,10 +1208,6 @@ export const syncUsers = /* GraphQL */ `
         name
         email
         sub
-        Workouts {
-          nextToken
-          startedAt
-        }
         units
         nutrition_info
         nutrition_coaching
@@ -1170,105 +1226,17 @@ export const syncUsers = /* GraphQL */ `
         theme
         image
         image_uri
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const getCommentsWorkouts = /* GraphQL */ `
-  query GetCommentsWorkouts($id: ID!) {
-    getCommentsWorkouts(id: $id) {
-      id
-      commentsID
-      workoutsID
-      comments {
-        id
-        comment
-        userid
-        Workouts {
+        WorkoutResults {
           nextToken
           startedAt
         }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      workouts {
-        id
-        title
-        desc
-        date
-        users {
+        Comments {
           nextToken
           startedAt
         }
-        type
-        SubWorkouts {
+        SavedWorkouts {
           nextToken
           startedAt
-        }
-        commentss {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const listCommentsWorkouts = /* GraphQL */ `
-  query ListCommentsWorkouts(
-    $filter: ModelCommentsWorkoutsFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listCommentsWorkouts(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        commentsID
-        workoutsID
-        comments {
-          id
-          comment
-          userid
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        workouts {
-          id
-          title
-          desc
-          date
-          type
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
         }
         createdAt
         updatedAt
@@ -1281,642 +1249,3 @@ export const listCommentsWorkouts = /* GraphQL */ `
     }
   }
 `;
-export const syncCommentsWorkouts = /* GraphQL */ `
-  query SyncCommentsWorkouts(
-    $filter: ModelCommentsWorkoutsFilterInput
-    $limit: Int
-    $nextToken: String
-    $lastSync: AWSTimestamp
-  ) {
-    syncCommentsWorkouts(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      lastSync: $lastSync
-    ) {
-      items {
-        id
-        commentsID
-        workoutsID
-        comments {
-          id
-          comment
-          userid
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        workouts {
-          id
-          title
-          desc
-          date
-          type
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const getWorkoutResultsSubWorkouts = /* GraphQL */ `
-  query GetWorkoutResultsSubWorkouts($id: ID!) {
-    getWorkoutResultsSubWorkouts(id: $id) {
-      id
-      workoutResultsID
-      subWorkoutsID
-      workoutResults {
-        id
-        value
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        userid
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      subWorkouts {
-        id
-        group
-        grouptitle
-        workoutss {
-          nextToken
-          startedAt
-        }
-        desc
-        resultcategory
-        workoutresultss {
-          nextToken
-          startedAt
-        }
-        required
-        timecap
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const listWorkoutResultsSubWorkouts = /* GraphQL */ `
-  query ListWorkoutResultsSubWorkouts(
-    $filter: ModelWorkoutResultsSubWorkoutsFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listWorkoutResultsSubWorkouts(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        workoutResultsID
-        subWorkoutsID
-        workoutResults {
-          id
-          value
-          userid
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        subWorkouts {
-          id
-          group
-          grouptitle
-          desc
-          resultcategory
-          required
-          timecap
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const syncWorkoutResultsSubWorkouts = /* GraphQL */ `
-  query SyncWorkoutResultsSubWorkouts(
-    $filter: ModelWorkoutResultsSubWorkoutsFilterInput
-    $limit: Int
-    $nextToken: String
-    $lastSync: AWSTimestamp
-  ) {
-    syncWorkoutResultsSubWorkouts(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      lastSync: $lastSync
-    ) {
-      items {
-        id
-        workoutResultsID
-        subWorkoutsID
-        workoutResults {
-          id
-          value
-          userid
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        subWorkouts {
-          id
-          group
-          grouptitle
-          desc
-          resultcategory
-          required
-          timecap
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const getWorkoutsSubWorkouts = /* GraphQL */ `
-  query GetWorkoutsSubWorkouts($id: ID!) {
-    getWorkoutsSubWorkouts(id: $id) {
-      id
-      subWorkoutsID
-      workoutsID
-      subWorkouts {
-        id
-        group
-        grouptitle
-        workoutss {
-          nextToken
-          startedAt
-        }
-        desc
-        resultcategory
-        workoutresultss {
-          nextToken
-          startedAt
-        }
-        required
-        timecap
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      workouts {
-        id
-        title
-        desc
-        date
-        users {
-          nextToken
-          startedAt
-        }
-        type
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        commentss {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const listWorkoutsSubWorkouts = /* GraphQL */ `
-  query ListWorkoutsSubWorkouts(
-    $filter: ModelWorkoutsSubWorkoutsFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listWorkoutsSubWorkouts(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        subWorkoutsID
-        workoutsID
-        subWorkouts {
-          id
-          group
-          grouptitle
-          desc
-          resultcategory
-          required
-          timecap
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        workouts {
-          id
-          title
-          desc
-          date
-          type
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const syncWorkoutsSubWorkouts = /* GraphQL */ `
-  query SyncWorkoutsSubWorkouts(
-    $filter: ModelWorkoutsSubWorkoutsFilterInput
-    $limit: Int
-    $nextToken: String
-    $lastSync: AWSTimestamp
-  ) {
-    syncWorkoutsSubWorkouts(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      lastSync: $lastSync
-    ) {
-      items {
-        id
-        subWorkoutsID
-        workoutsID
-        subWorkouts {
-          id
-          group
-          grouptitle
-          desc
-          resultcategory
-          required
-          timecap
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        workouts {
-          id
-          title
-          desc
-          date
-          type
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const getUserWorkouts = /* GraphQL */ `
-  query GetUserWorkouts($id: ID!) {
-    getUserWorkouts(id: $id) {
-      id
-      workoutsID
-      userID
-      workouts {
-        id
-        title
-        desc
-        date
-        users {
-          nextToken
-          startedAt
-        }
-        type
-        SubWorkouts {
-          nextToken
-          startedAt
-        }
-        commentss {
-          nextToken
-          startedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      user {
-        id
-        name
-        email
-        sub
-        Workouts {
-          nextToken
-          startedAt
-        }
-        units
-        nutrition_info
-        nutrition_coaching
-        q_experience
-        q_medical
-        q_calsmacros
-        coach_userid
-        Checkins {
-          nextToken
-          startedAt
-        }
-        Foodentries {
-          nextToken
-          startedAt
-        }
-        theme
-        image
-        image_uri
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const listUserWorkouts = /* GraphQL */ `
-  query ListUserWorkouts(
-    $filter: ModelUserWorkoutsFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listUserWorkouts(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        workoutsID
-        userID
-        workouts {
-          id
-          title
-          desc
-          date
-          type
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        user {
-          id
-          name
-          email
-          sub
-          units
-          nutrition_info
-          nutrition_coaching
-          q_experience
-          q_medical
-          q_calsmacros
-          coach_userid
-          theme
-          image
-          image_uri
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const syncUserWorkouts = /* GraphQL */ `
-  query SyncUserWorkouts(
-    $filter: ModelUserWorkoutsFilterInput
-    $limit: Int
-    $nextToken: String
-    $lastSync: AWSTimestamp
-  ) {
-    syncUserWorkouts(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      lastSync: $lastSync
-    ) {
-      items {
-        id
-        workoutsID
-        userID
-        workouts {
-          id
-          title
-          desc
-          date
-          type
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        user {
-          id
-          name
-          email
-          sub
-          units
-          nutrition_info
-          nutrition_coaching
-          q_experience
-          q_medical
-          q_calsmacros
-          coach_userid
-          theme
-          image
-          image_uri
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-
-
-//Manually added
-
-export const listWorkoutsSubWorkouts_date = /* GraphQL */ `
-
-  query listWorkoutsSubWorkouts_date(
-    $date: String
-  ) {
-    listWorkouts(filter: {date: {eq: $date}}) {
-      items {
-        SubWorkouts {
-          items {
-            workoutsID
-            updatedAt
-            subWorkoutsID
-            createdAt
-            subWorkouts {
-              group
-              desc
-              grouptitle
-              id
-              resultcategory
-              required
-              timecap
-            }
-          }
-        }
-        type
-        title
-        id
-        desc
-        date
-      }
-    }
-  }
-
-`;
-
-
-export const listTestQuery = /* GraphQL */ `
-
-  query listTestQuery(
-    $date: String
-  ) {
-    listWorkoutsSubWorkouts (filter: {date: {eq: $date}}) {
-      items {
-        id
-        subWorkoutsID
-        workoutsID
-        subWorkouts {
-          id
-          group
-          grouptitle
-          desc
-          resultcategory
-          required
-          timecap
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        workouts {
-          id
-          title
-          desc
-          date
-          type
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        updatedAt
-      }
-    }
-  }
-
-`;
-
-
