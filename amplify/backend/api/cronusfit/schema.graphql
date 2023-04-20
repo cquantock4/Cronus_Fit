@@ -161,4 +161,4 @@ type User @model @auth(rules: [{allow: public}]) {
   Comments: [Comments] @hasMany(indexName: "byUser", fields: ["id"])
   SavedWorkouts: [SavedWorkouts] @hasMany(indexName: "byUser", fields: ["id"])
 }
- 
+  
