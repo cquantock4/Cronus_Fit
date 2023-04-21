@@ -32,13 +32,18 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.cquantock.cronus_fit"
+      "package": "com.cquantock.cronus_fit",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-
+      "eas": {
+        "projectId": "40c5d756-34c3-4ddb-89de-f2242671e72c"
+      }
     },
     "runtimeVersion": {
       "policy": "sdkVersion"
