@@ -7,7 +7,7 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "auth": {
-    "CronusFit": {
+    "cronusfit": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
       "IdentityPoolId": "string",
@@ -18,7 +18,7 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "storage": {
-    "images": {
+    "s3cronusfitstoragef09cdbd0": {
       "BucketName": "string",
       "Region": "string"
     }

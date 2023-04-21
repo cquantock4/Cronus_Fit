@@ -3,8 +3,8 @@
   "cognitoConfig": {
     "identityPoolName": "testAuthIdentityPool",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "cronus0687bfcc",
-    "userPoolName": "CronusFit",
+    "resourceNameTruncated": "cronus232c065b",
+    "userPoolName": "cronusfit",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -24,17 +24,18 @@
       "Requires Uppercase"
     ],
     "requiredAttributes": [
-      "email"
+      "email",
+      "name"
     ],
     "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [],
     "userpoolClientReadAttributes": [],
-    "userpoolClientLambdaRole": "Cronus0687bfcc_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "cronus232c065b_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "0687bfcc",
-    "resourceName": "CronusFit",
+    "sharedId": "232c065b",
+    "resourceName": "cronusfit",
     "authSelections": "identityPoolAndUserPool",
     "serviceName": "Cognito",
     "usernameAttributes": [

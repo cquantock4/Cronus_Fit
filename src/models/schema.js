@@ -551,8 +551,12 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "HAS_ONE",
-                        "associatedWith": "id",
-                        "targetName": "userInfoUsersId"
+                        "associatedWith": [
+                            "id"
+                        ],
+                        "targetNames": [
+                            "userInfoUsersId"
+                        ]
                     }
                 },
                 "createdAt": {
@@ -1011,7 +1015,9 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "subworkoutsID"
+                        "associatedWith": [
+                            "subworkoutsID"
+                        ]
                     }
                 },
                 "required": {
@@ -1135,7 +1141,9 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "workoutsID"
+                        "associatedWith": [
+                            "workoutsID"
+                        ]
                     }
                 },
                 "commentss": {
@@ -1149,7 +1157,9 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "workoutsID"
+                        "associatedWith": [
+                            "workoutsID"
+                        ]
                     }
                 },
                 "SavedWorkouts": {
@@ -1163,7 +1173,9 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "workoutsID"
+                        "associatedWith": [
+                            "workoutsID"
+                        ]
                     }
                 },
                 "createdAt": {
@@ -1301,7 +1313,9 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "userID"
+                        "associatedWith": [
+                            "userID"
+                        ]
                     }
                 },
                 "Foodentries": {
@@ -1315,7 +1329,9 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "userID"
+                        "associatedWith": [
+                            "userID"
+                        ]
                     }
                 },
                 "theme": {
@@ -1352,7 +1368,9 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "userID"
+                        "associatedWith": [
+                            "userID"
+                        ]
                     }
                 },
                 "Comments": {
@@ -1366,7 +1384,9 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "userID"
+                        "associatedWith": [
+                            "userID"
+                        ]
                     }
                 },
                 "SavedWorkouts": {
@@ -1380,7 +1400,9 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "userID"
+                        "associatedWith": [
+                            "userID"
+                        ]
                     }
                 },
                 "createdAt": {
@@ -1461,5 +1483,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.4.0",
-    "version": "a9514870878d227e7dee2aa552510616"
+    "version": "4f06a41ab657f46df6cad5cff9a5299a"
 };

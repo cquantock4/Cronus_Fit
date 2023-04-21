@@ -1,4 +1,4 @@
-import { ModelInit, MutableModel } from "@aws-amplify/datastore";
+import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-amplify/datastore";
 // @ts-ignore
 import { LazyLoading, LazyLoadingDisabled, AsyncItem, AsyncCollection } from "@aws-amplify/datastore";
 
@@ -25,53 +25,13 @@ export enum ResultCategory {
   WEIGHT = "WEIGHT"
 }
 
-type SavedWorkoutsMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
 
-type FoodentryMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
-type CheckinMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
-
-
-type UserInfoMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
-type ArticlesMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
-type ProgramsMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
-type CommentsMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
-type WorkoutResultsMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
-type SubWorkoutsMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
-type WorkoutsMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
-type UserMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
 
 type EagerSavedWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<SavedWorkouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly userID: string;
   readonly workoutsID: string;
@@ -80,6 +40,10 @@ type EagerSavedWorkouts = {
 }
 
 type LazySavedWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<SavedWorkouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly userID: string;
   readonly workoutsID: string;
@@ -89,11 +53,15 @@ type LazySavedWorkouts = {
 
 export declare type SavedWorkouts = LazyLoading extends LazyLoadingDisabled ? EagerSavedWorkouts : LazySavedWorkouts
 
-export declare const SavedWorkouts: (new (init: ModelInit<SavedWorkouts, SavedWorkoutsMetaData>) => SavedWorkouts) & {
-  copyOf(source: SavedWorkouts, mutator: (draft: MutableModel<SavedWorkouts, SavedWorkoutsMetaData>) => MutableModel<SavedWorkouts, SavedWorkoutsMetaData> | void): SavedWorkouts;
+export declare const SavedWorkouts: (new (init: ModelInit<SavedWorkouts>) => SavedWorkouts) & {
+  copyOf(source: SavedWorkouts, mutator: (draft: MutableModel<SavedWorkouts>) => MutableModel<SavedWorkouts> | void): SavedWorkouts;
 }
 
 type EagerFoodentry = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Foodentry, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly date?: string | null;
   readonly category?: Foodcategory | keyof typeof Foodcategory | null;
@@ -109,6 +77,10 @@ type EagerFoodentry = {
 }
 
 type LazyFoodentry = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Foodentry, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly date?: string | null;
   readonly category?: Foodcategory | keyof typeof Foodcategory | null;
@@ -125,11 +97,15 @@ type LazyFoodentry = {
 
 export declare type Foodentry = LazyLoading extends LazyLoadingDisabled ? EagerFoodentry : LazyFoodentry
 
-export declare const Foodentry: (new (init: ModelInit<Foodentry, FoodentryMetaData>) => Foodentry) & {
-  copyOf(source: Foodentry, mutator: (draft: MutableModel<Foodentry, FoodentryMetaData>) => MutableModel<Foodentry, FoodentryMetaData> | void): Foodentry;
+export declare const Foodentry: (new (init: ModelInit<Foodentry>) => Foodentry) & {
+  copyOf(source: Foodentry, mutator: (draft: MutableModel<Foodentry>) => MutableModel<Foodentry> | void): Foodentry;
 }
 
 type EagerCheckin = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Checkin, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly lowestweight?: number | null;
   readonly somewins?: string | null;
@@ -147,6 +123,10 @@ type EagerCheckin = {
 }
 
 type LazyCheckin = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Checkin, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly lowestweight?: number | null;
   readonly somewins?: string | null;
@@ -165,11 +145,14 @@ type LazyCheckin = {
 
 export declare type Checkin = LazyLoading extends LazyLoadingDisabled ? EagerCheckin : LazyCheckin
 
-export declare const Checkin: (new (init: ModelInit<Checkin, CheckinMetaData>) => Checkin) & {
-  copyOf(source: Checkin, mutator: (draft: MutableModel<Checkin, CheckinMetaData>) => MutableModel<Checkin, CheckinMetaData> | void): Checkin;
+export declare const Checkin: (new (init: ModelInit<Checkin>) => Checkin) & {
+  copyOf(source: Checkin, mutator: (draft: MutableModel<Checkin>) => MutableModel<Checkin> | void): Checkin;
 }
 
 type EagerMessages = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Messages, 'id'>;
+  };
   readonly id: string;
   readonly message?: string | null;
   readonly sender_userid?: string | null;
@@ -179,6 +162,9 @@ type EagerMessages = {
 }
 
 type LazyMessages = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Messages, 'id'>;
+  };
   readonly id: string;
   readonly message?: string | null;
   readonly sender_userid?: string | null;
@@ -194,6 +180,10 @@ export declare const Messages: (new (init: ModelInit<Messages>) => Messages) & {
 }
 
 type EagerUserInfo = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UserInfo, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly type?: string | null;
   readonly i_gender?: string | null;
@@ -218,6 +208,10 @@ type EagerUserInfo = {
 }
 
 type LazyUserInfo = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UserInfo, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly type?: string | null;
   readonly i_gender?: string | null;
@@ -243,11 +237,15 @@ type LazyUserInfo = {
 
 export declare type UserInfo = LazyLoading extends LazyLoadingDisabled ? EagerUserInfo : LazyUserInfo
 
-export declare const UserInfo: (new (init: ModelInit<UserInfo, UserInfoMetaData>) => UserInfo) & {
-  copyOf(source: UserInfo, mutator: (draft: MutableModel<UserInfo, UserInfoMetaData>) => MutableModel<UserInfo, UserInfoMetaData> | void): UserInfo;
+export declare const UserInfo: (new (init: ModelInit<UserInfo>) => UserInfo) & {
+  copyOf(source: UserInfo, mutator: (draft: MutableModel<UserInfo>) => MutableModel<UserInfo> | void): UserInfo;
 }
 
 type EagerArticles = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Articles, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly title?: string | null;
   readonly author?: string | null;
@@ -260,6 +258,10 @@ type EagerArticles = {
 }
 
 type LazyArticles = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Articles, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly title?: string | null;
   readonly author?: string | null;
@@ -273,11 +275,15 @@ type LazyArticles = {
 
 export declare type Articles = LazyLoading extends LazyLoadingDisabled ? EagerArticles : LazyArticles
 
-export declare const Articles: (new (init: ModelInit<Articles, ArticlesMetaData>) => Articles) & {
-  copyOf(source: Articles, mutator: (draft: MutableModel<Articles, ArticlesMetaData>) => MutableModel<Articles, ArticlesMetaData> | void): Articles;
+export declare const Articles: (new (init: ModelInit<Articles>) => Articles) & {
+  copyOf(source: Articles, mutator: (draft: MutableModel<Articles>) => MutableModel<Articles> | void): Articles;
 }
 
 type EagerPrograms = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Programs, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly title?: string | null;
   readonly desc?: string | null;
@@ -288,6 +294,10 @@ type EagerPrograms = {
 }
 
 type LazyPrograms = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Programs, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly title?: string | null;
   readonly desc?: string | null;
@@ -299,11 +309,15 @@ type LazyPrograms = {
 
 export declare type Programs = LazyLoading extends LazyLoadingDisabled ? EagerPrograms : LazyPrograms
 
-export declare const Programs: (new (init: ModelInit<Programs, ProgramsMetaData>) => Programs) & {
-  copyOf(source: Programs, mutator: (draft: MutableModel<Programs, ProgramsMetaData>) => MutableModel<Programs, ProgramsMetaData> | void): Programs;
+export declare const Programs: (new (init: ModelInit<Programs>) => Programs) & {
+  copyOf(source: Programs, mutator: (draft: MutableModel<Programs>) => MutableModel<Programs> | void): Programs;
 }
 
 type EagerComments = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Comments, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly comment?: string | null;
   readonly workoutsID: string;
@@ -313,6 +327,10 @@ type EagerComments = {
 }
 
 type LazyComments = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Comments, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly comment?: string | null;
   readonly workoutsID: string;
@@ -323,11 +341,15 @@ type LazyComments = {
 
 export declare type Comments = LazyLoading extends LazyLoadingDisabled ? EagerComments : LazyComments
 
-export declare const Comments: (new (init: ModelInit<Comments, CommentsMetaData>) => Comments) & {
-  copyOf(source: Comments, mutator: (draft: MutableModel<Comments, CommentsMetaData>) => MutableModel<Comments, CommentsMetaData> | void): Comments;
+export declare const Comments: (new (init: ModelInit<Comments>) => Comments) & {
+  copyOf(source: Comments, mutator: (draft: MutableModel<Comments>) => MutableModel<Comments> | void): Comments;
 }
 
 type EagerWorkoutResults = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<WorkoutResults, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly value?: string | null;
   readonly subworkoutsID: string;
@@ -337,6 +359,10 @@ type EagerWorkoutResults = {
 }
 
 type LazyWorkoutResults = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<WorkoutResults, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly value?: string | null;
   readonly subworkoutsID: string;
@@ -347,11 +373,15 @@ type LazyWorkoutResults = {
 
 export declare type WorkoutResults = LazyLoading extends LazyLoadingDisabled ? EagerWorkoutResults : LazyWorkoutResults
 
-export declare const WorkoutResults: (new (init: ModelInit<WorkoutResults, WorkoutResultsMetaData>) => WorkoutResults) & {
-  copyOf(source: WorkoutResults, mutator: (draft: MutableModel<WorkoutResults, WorkoutResultsMetaData>) => MutableModel<WorkoutResults, WorkoutResultsMetaData> | void): WorkoutResults;
+export declare const WorkoutResults: (new (init: ModelInit<WorkoutResults>) => WorkoutResults) & {
+  copyOf(source: WorkoutResults, mutator: (draft: MutableModel<WorkoutResults>) => MutableModel<WorkoutResults> | void): WorkoutResults;
 }
 
 type EagerSubWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<SubWorkouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly group?: string | null;
   readonly grouptitle?: string | null;
@@ -366,6 +396,10 @@ type EagerSubWorkouts = {
 }
 
 type LazySubWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<SubWorkouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly group?: string | null;
   readonly grouptitle?: string | null;
@@ -381,11 +415,15 @@ type LazySubWorkouts = {
 
 export declare type SubWorkouts = LazyLoading extends LazyLoadingDisabled ? EagerSubWorkouts : LazySubWorkouts
 
-export declare const SubWorkouts: (new (init: ModelInit<SubWorkouts, SubWorkoutsMetaData>) => SubWorkouts) & {
-  copyOf(source: SubWorkouts, mutator: (draft: MutableModel<SubWorkouts, SubWorkoutsMetaData>) => MutableModel<SubWorkouts, SubWorkoutsMetaData> | void): SubWorkouts;
+export declare const SubWorkouts: (new (init: ModelInit<SubWorkouts>) => SubWorkouts) & {
+  copyOf(source: SubWorkouts, mutator: (draft: MutableModel<SubWorkouts>) => MutableModel<SubWorkouts> | void): SubWorkouts;
 }
 
 type EagerWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Workouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly title?: string | null;
   readonly desc?: string | null;
@@ -399,6 +437,10 @@ type EagerWorkouts = {
 }
 
 type LazyWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Workouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly title?: string | null;
   readonly desc?: string | null;
@@ -413,11 +455,15 @@ type LazyWorkouts = {
 
 export declare type Workouts = LazyLoading extends LazyLoadingDisabled ? EagerWorkouts : LazyWorkouts
 
-export declare const Workouts: (new (init: ModelInit<Workouts, WorkoutsMetaData>) => Workouts) & {
-  copyOf(source: Workouts, mutator: (draft: MutableModel<Workouts, WorkoutsMetaData>) => MutableModel<Workouts, WorkoutsMetaData> | void): Workouts;
+export declare const Workouts: (new (init: ModelInit<Workouts>) => Workouts) & {
+  copyOf(source: Workouts, mutator: (draft: MutableModel<Workouts>) => MutableModel<Workouts> | void): Workouts;
 }
 
 type EagerUser = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<User, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly name?: string | null;
   readonly email?: string | null;
@@ -442,6 +488,10 @@ type EagerUser = {
 }
 
 type LazyUser = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<User, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
   readonly id: string;
   readonly name?: string | null;
   readonly email?: string | null;
@@ -467,6 +517,6 @@ type LazyUser = {
 
 export declare type User = LazyLoading extends LazyLoadingDisabled ? EagerUser : LazyUser
 
-export declare const User: (new (init: ModelInit<User, UserMetaData>) => User) & {
-  copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
+export declare const User: (new (init: ModelInit<User>) => User) & {
+  copyOf(source: User, mutator: (draft: MutableModel<User>) => MutableModel<User> | void): User;
 }
