@@ -1,6 +1,5 @@
 {
   "AppSyncApiName": "cronusfit",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
-  "DynamoDBEnableServerSideEncryption": false,
-  "AuthModeLastUpdated": "2023-04-21T16:32:01.573Z"
+  "DynamoDBEnableServerSideEncryption": false
 }

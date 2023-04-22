@@ -27,36 +27,6 @@ export enum ResultCategory {
 
 
 
-type EagerSavedWorkouts = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<SavedWorkouts, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly userID: string;
-  readonly workoutsID: string;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazySavedWorkouts = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<SavedWorkouts, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly userID: string;
-  readonly workoutsID: string;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type SavedWorkouts = LazyLoading extends LazyLoadingDisabled ? EagerSavedWorkouts : LazySavedWorkouts
-
-export declare const SavedWorkouts: (new (init: ModelInit<SavedWorkouts>) => SavedWorkouts) & {
-  copyOf(source: SavedWorkouts, mutator: (draft: MutableModel<SavedWorkouts>) => MutableModel<SavedWorkouts> | void): SavedWorkouts;
-}
-
 type EagerFoodentry = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<Foodentry, 'id'>;
@@ -320,8 +290,8 @@ type EagerComments = {
   };
   readonly id: string;
   readonly comment?: string | null;
-  readonly workoutsID: string;
-  readonly userID: string;
+  readonly userid?: string | null;
+  readonly Workouts?: (CommentsWorkouts | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -333,8 +303,8 @@ type LazyComments = {
   };
   readonly id: string;
   readonly comment?: string | null;
-  readonly workoutsID: string;
-  readonly userID: string;
+  readonly userid?: string | null;
+  readonly Workouts: AsyncCollection<CommentsWorkouts>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -352,8 +322,8 @@ type EagerWorkoutResults = {
   };
   readonly id: string;
   readonly value?: string | null;
-  readonly subworkoutsID: string;
-  readonly userID: string;
+  readonly SubWorkouts?: (WorkoutResultsSubWorkouts | null)[] | null;
+  readonly userid?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -365,8 +335,8 @@ type LazyWorkoutResults = {
   };
   readonly id: string;
   readonly value?: string | null;
-  readonly subworkoutsID: string;
-  readonly userID: string;
+  readonly SubWorkouts: AsyncCollection<WorkoutResultsSubWorkouts>;
+  readonly userid?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -385,12 +355,12 @@ type EagerSubWorkouts = {
   readonly id: string;
   readonly group?: string | null;
   readonly grouptitle?: string | null;
+  readonly workoutss?: (WorkoutsSubWorkouts | null)[] | null;
   readonly desc?: string | null;
   readonly resultcategory?: ResultCategory | keyof typeof ResultCategory | null;
-  readonly workoutresultss?: (WorkoutResults | null)[] | null;
+  readonly workoutresultss?: (WorkoutResultsSubWorkouts | null)[] | null;
   readonly required?: boolean | null;
   readonly timecap?: string | null;
-  readonly workoutsID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -403,12 +373,12 @@ type LazySubWorkouts = {
   readonly id: string;
   readonly group?: string | null;
   readonly grouptitle?: string | null;
+  readonly workoutss: AsyncCollection<WorkoutsSubWorkouts>;
   readonly desc?: string | null;
   readonly resultcategory?: ResultCategory | keyof typeof ResultCategory | null;
-  readonly workoutresultss: AsyncCollection<WorkoutResults>;
+  readonly workoutresultss: AsyncCollection<WorkoutResultsSubWorkouts>;
   readonly required?: boolean | null;
   readonly timecap?: string | null;
-  readonly workoutsID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -428,10 +398,10 @@ type EagerWorkouts = {
   readonly title?: string | null;
   readonly desc?: string | null;
   readonly date?: string | null;
+  readonly users?: (UserWorkouts | null)[] | null;
   readonly type?: string | null;
-  readonly SubWorkouts?: (SubWorkouts | null)[] | null;
-  readonly commentss?: (Comments | null)[] | null;
-  readonly SavedWorkouts?: (SavedWorkouts | null)[] | null;
+  readonly SubWorkouts?: (WorkoutsSubWorkouts | null)[] | null;
+  readonly commentss?: (CommentsWorkouts | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -445,10 +415,10 @@ type LazyWorkouts = {
   readonly title?: string | null;
   readonly desc?: string | null;
   readonly date?: string | null;
+  readonly users: AsyncCollection<UserWorkouts>;
   readonly type?: string | null;
-  readonly SubWorkouts: AsyncCollection<SubWorkouts>;
-  readonly commentss: AsyncCollection<Comments>;
-  readonly SavedWorkouts: AsyncCollection<SavedWorkouts>;
+  readonly SubWorkouts: AsyncCollection<WorkoutsSubWorkouts>;
+  readonly commentss: AsyncCollection<CommentsWorkouts>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -468,6 +438,7 @@ type EagerUser = {
   readonly name?: string | null;
   readonly email?: string | null;
   readonly sub?: string | null;
+  readonly Workouts?: (UserWorkouts | null)[] | null;
   readonly units?: Units | keyof typeof Units | null;
   readonly nutrition_info?: boolean | null;
   readonly nutrition_coaching?: boolean | null;
@@ -480,9 +451,6 @@ type EagerUser = {
   readonly theme?: Themes | keyof typeof Themes | null;
   readonly image?: string | null;
   readonly image_uri?: string | null;
-  readonly WorkoutResults?: (WorkoutResults | null)[] | null;
-  readonly Comments?: (Comments | null)[] | null;
-  readonly SavedWorkouts?: (SavedWorkouts | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -496,6 +464,7 @@ type LazyUser = {
   readonly name?: string | null;
   readonly email?: string | null;
   readonly sub?: string | null;
+  readonly Workouts: AsyncCollection<UserWorkouts>;
   readonly units?: Units | keyof typeof Units | null;
   readonly nutrition_info?: boolean | null;
   readonly nutrition_coaching?: boolean | null;
@@ -508,9 +477,6 @@ type LazyUser = {
   readonly theme?: Themes | keyof typeof Themes | null;
   readonly image?: string | null;
   readonly image_uri?: string | null;
-  readonly WorkoutResults: AsyncCollection<WorkoutResults>;
-  readonly Comments: AsyncCollection<Comments>;
-  readonly SavedWorkouts: AsyncCollection<SavedWorkouts>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -519,4 +485,140 @@ export declare type User = LazyLoading extends LazyLoadingDisabled ? EagerUser :
 
 export declare const User: (new (init: ModelInit<User>) => User) & {
   copyOf(source: User, mutator: (draft: MutableModel<User>) => MutableModel<User> | void): User;
+}
+
+type EagerCommentsWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<CommentsWorkouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly commentsId?: string | null;
+  readonly workoutsId?: string | null;
+  readonly comments: Comments;
+  readonly workouts: Workouts;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyCommentsWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<CommentsWorkouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly commentsId?: string | null;
+  readonly workoutsId?: string | null;
+  readonly comments: AsyncItem<Comments>;
+  readonly workouts: AsyncItem<Workouts>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type CommentsWorkouts = LazyLoading extends LazyLoadingDisabled ? EagerCommentsWorkouts : LazyCommentsWorkouts
+
+export declare const CommentsWorkouts: (new (init: ModelInit<CommentsWorkouts>) => CommentsWorkouts) & {
+  copyOf(source: CommentsWorkouts, mutator: (draft: MutableModel<CommentsWorkouts>) => MutableModel<CommentsWorkouts> | void): CommentsWorkouts;
+}
+
+type EagerWorkoutResultsSubWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<WorkoutResultsSubWorkouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly workoutResultsId?: string | null;
+  readonly subWorkoutsId?: string | null;
+  readonly workoutResults: WorkoutResults;
+  readonly subWorkouts: SubWorkouts;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyWorkoutResultsSubWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<WorkoutResultsSubWorkouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly workoutResultsId?: string | null;
+  readonly subWorkoutsId?: string | null;
+  readonly workoutResults: AsyncItem<WorkoutResults>;
+  readonly subWorkouts: AsyncItem<SubWorkouts>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type WorkoutResultsSubWorkouts = LazyLoading extends LazyLoadingDisabled ? EagerWorkoutResultsSubWorkouts : LazyWorkoutResultsSubWorkouts
+
+export declare const WorkoutResultsSubWorkouts: (new (init: ModelInit<WorkoutResultsSubWorkouts>) => WorkoutResultsSubWorkouts) & {
+  copyOf(source: WorkoutResultsSubWorkouts, mutator: (draft: MutableModel<WorkoutResultsSubWorkouts>) => MutableModel<WorkoutResultsSubWorkouts> | void): WorkoutResultsSubWorkouts;
+}
+
+type EagerWorkoutsSubWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<WorkoutsSubWorkouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly subWorkoutsId?: string | null;
+  readonly workoutsId?: string | null;
+  readonly subWorkouts: SubWorkouts;
+  readonly workouts: Workouts;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyWorkoutsSubWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<WorkoutsSubWorkouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly subWorkoutsId?: string | null;
+  readonly workoutsId?: string | null;
+  readonly subWorkouts: AsyncItem<SubWorkouts>;
+  readonly workouts: AsyncItem<Workouts>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type WorkoutsSubWorkouts = LazyLoading extends LazyLoadingDisabled ? EagerWorkoutsSubWorkouts : LazyWorkoutsSubWorkouts
+
+export declare const WorkoutsSubWorkouts: (new (init: ModelInit<WorkoutsSubWorkouts>) => WorkoutsSubWorkouts) & {
+  copyOf(source: WorkoutsSubWorkouts, mutator: (draft: MutableModel<WorkoutsSubWorkouts>) => MutableModel<WorkoutsSubWorkouts> | void): WorkoutsSubWorkouts;
+}
+
+type EagerUserWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UserWorkouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly workoutsId?: string | null;
+  readonly userId?: string | null;
+  readonly workouts: Workouts;
+  readonly user: User;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyUserWorkouts = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UserWorkouts, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly workoutsId?: string | null;
+  readonly userId?: string | null;
+  readonly workouts: AsyncItem<Workouts>;
+  readonly user: AsyncItem<User>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type UserWorkouts = LazyLoading extends LazyLoadingDisabled ? EagerUserWorkouts : LazyUserWorkouts
+
+export declare const UserWorkouts: (new (init: ModelInit<UserWorkouts>) => UserWorkouts) & {
+  copyOf(source: UserWorkouts, mutator: (draft: MutableModel<UserWorkouts>) => MutableModel<UserWorkouts> | void): UserWorkouts;
 }
