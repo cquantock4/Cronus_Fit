@@ -163,7 +163,7 @@ const Navigation = () => {
   const checkUser = async () => {
     try {
 
-      //console.log('item1: ' + user)
+      //console.log('item1: ' + JSON.stringify(user))
 
       const authUser = await Auth.currentAuthenticatedUser({bypassCache: true});
       //console.log('THIS: ' + JSON.stringify(authUser))

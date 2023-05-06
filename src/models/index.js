@@ -2,16 +2,16 @@
 import { initSchema } from '@aws-amplify/datastore';
 import { schema } from './schema';
 
-const Themes = {
-  "LIGHT": "LIGHT",
-  "DARK": "DARK"
-};
-
 const Foodcategory = {
   "BREAKFAST": "BREAKFAST",
   "LUNCH": "LUNCH",
   "DINNER": "DINNER",
   "SNACKS": "SNACKS"
+};
+
+const Themes = {
+  "LIGHT": "LIGHT",
+  "DARK": "DARK"
 };
 
 const Units = {
@@ -25,26 +25,23 @@ const ResultCategory = {
   "WEIGHT": "WEIGHT"
 };
 
-const { Foodentry, Checkin, Messages, UserInfo, Articles, Programs, Comments, WorkoutResults, SubWorkouts, Workouts, User, CommentsWorkouts, WorkoutResultsSubWorkouts, WorkoutsSubWorkouts, UserWorkouts } = initSchema(schema);
+const { SavedWorkouts, Checkin, FoodEntry, Messages, UserInfo, Articles, Programs, Comments, SubWorkouts, WorkoutResults, Workouts, User } = initSchema(schema);
 
 export {
-  Foodentry,
+  SavedWorkouts,
   Checkin,
+  FoodEntry,
   Messages,
   UserInfo,
   Articles,
   Programs,
   Comments,
-  WorkoutResults,
   SubWorkouts,
+  WorkoutResults,
   Workouts,
   User,
-  CommentsWorkouts,
-  WorkoutResultsSubWorkouts,
-  WorkoutsSubWorkouts,
-  UserWorkouts,
-  Themes,
   Foodcategory,
+  Themes,
   Units,
   ResultCategory
 };

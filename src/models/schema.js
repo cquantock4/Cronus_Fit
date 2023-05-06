@@ -1,29 +1,13 @@
 export const schema = {
     "models": {
-        "Foodentry": {
-            "name": "Foodentry",
+        "SavedWorkouts": {
+            "name": "SavedWorkouts",
             "fields": {
                 "id": {
                     "name": "id",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
-                    "attributes": []
-                },
-                "date": {
-                    "name": "date",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "category": {
-                    "name": "category",
-                    "isArray": false,
-                    "type": {
-                        "enum": "Foodcategory"
-                    },
-                    "isRequired": false,
                     "attributes": []
                 },
                 "userID": {
@@ -33,46 +17,11 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "desc": {
-                    "name": "desc",
+                "workoutsID": {
+                    "name": "workoutsID",
                     "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "protein": {
-                    "name": "protein",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "carbs": {
-                    "name": "carbs",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "fat": {
-                    "name": "fat",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "fiber": {
-                    "name": "fiber",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "calories": {
-                    "name": "calories",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": false,
+                    "type": "ID",
+                    "isRequired": true,
                     "attributes": []
                 },
                 "createdAt": {
@@ -93,7 +42,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "Foodentries",
+            "pluralName": "SavedWorkouts",
             "attributes": [
                 {
                     "type": "model",
@@ -105,6 +54,15 @@ export const schema = {
                         "name": "byUser",
                         "fields": [
                             "userID"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byWorkouts",
+                        "fields": [
+                            "workoutsID"
                         ]
                     }
                 },
@@ -139,7 +97,7 @@ export const schema = {
                 "lowestweight": {
                     "name": "lowestweight",
                     "isArray": false,
-                    "type": "Float",
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -167,21 +125,21 @@ export const schema = {
                 "sleepquality": {
                     "name": "sleepquality",
                     "isArray": false,
-                    "type": "Int",
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
                 "appetite": {
                     "name": "appetite",
                     "isArray": false,
-                    "type": "Int",
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
                 "energylevel": {
                     "name": "energylevel",
                     "isArray": false,
-                    "type": "Int",
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -232,6 +190,132 @@ export const schema = {
             },
             "syncable": true,
             "pluralName": "Checkins",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byUser",
+                        "fields": [
+                            "userID"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "FoodEntry": {
+            "name": "FoodEntry",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "date": {
+                    "name": "date",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "category": {
+                    "name": "category",
+                    "isArray": false,
+                    "type": {
+                        "enum": "Foodcategory"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "desc": {
+                    "name": "desc",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "protein": {
+                    "name": "protein",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "carbs": {
+                    "name": "carbs",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "fat": {
+                    "name": "fat",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "fiber": {
+                    "name": "fiber",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "calories": {
+                    "name": "calories",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "userID": {
+                    "name": "userID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "FoodEntries",
             "attributes": [
                 {
                     "type": "model",
@@ -457,8 +541,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "Users": {
-                    "name": "Users",
+                "User": {
+                    "name": "User",
                     "isArray": false,
                     "type": {
                         "model": "User"
@@ -471,7 +555,7 @@ export const schema = {
                             "id"
                         ],
                         "targetNames": [
-                            "userInfoUsersId"
+                            "userInfoUserId"
                         ]
                     }
                 },
@@ -491,8 +575,8 @@ export const schema = {
                     "attributes": [],
                     "isReadOnly": true
                 },
-                "userInfoUsersId": {
-                    "name": "userInfoUsersId",
+                "userInfoUserId": {
+                    "name": "userInfoUserId",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": false,
@@ -652,7 +736,7 @@ export const schema = {
                 "price": {
                     "name": "price",
                     "isArray": false,
-                    "type": "Float",
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -715,28 +799,19 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "userid": {
-                    "name": "userid",
+                "userID": {
+                    "name": "userID",
                     "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
+                    "type": "ID",
+                    "isRequired": true,
                     "attributes": []
                 },
-                "Workouts": {
-                    "name": "Workouts",
-                    "isArray": true,
-                    "type": {
-                        "model": "CommentsWorkouts"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "comments"
-                        ]
-                    }
+                "workoutsID": {
+                    "name": "workoutsID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -763,86 +838,22 @@ export const schema = {
                     "properties": {}
                 },
                 {
-                    "type": "auth",
+                    "type": "key",
                     "properties": {
-                        "rules": [
-                            {
-                                "allow": "public",
-                                "operations": [
-                                    "create",
-                                    "update",
-                                    "delete",
-                                    "read"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "WorkoutResults": {
-            "name": "WorkoutResults",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "value": {
-                    "name": "value",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "SubWorkouts": {
-                    "name": "SubWorkouts",
-                    "isArray": true,
-                    "type": {
-                        "model": "WorkoutResultsSubWorkouts"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "workoutResults"
+                        "name": "byUser",
+                        "fields": [
+                            "userID"
                         ]
                     }
                 },
-                "userid": {
-                    "name": "userid",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "WorkoutResults",
-            "attributes": [
                 {
-                    "type": "model",
-                    "properties": {}
+                    "type": "key",
+                    "properties": {
+                        "name": "byWorkouts",
+                        "fields": [
+                            "workoutsID"
+                        ]
+                    }
                 },
                 {
                     "type": "auth",
@@ -886,22 +897,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "workoutss": {
-                    "name": "workoutss",
-                    "isArray": true,
-                    "type": {
-                        "model": "WorkoutsSubWorkouts"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "subWorkouts"
-                        ]
-                    }
-                },
                 "desc": {
                     "name": "desc",
                     "isArray": false,
@@ -918,22 +913,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "workoutresultss": {
-                    "name": "workoutresultss",
-                    "isArray": true,
-                    "type": {
-                        "model": "WorkoutResultsSubWorkouts"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "subWorkouts"
-                        ]
-                    }
-                },
                 "required": {
                     "name": "required",
                     "isArray": false,
@@ -947,6 +926,29 @@ export const schema = {
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
+                },
+                "workoutsID": {
+                    "name": "workoutsID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "WorkoutResults": {
+                    "name": "WorkoutResults",
+                    "isArray": true,
+                    "type": {
+                        "model": "WorkoutResults"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "subworkoutsID"
+                        ]
+                    }
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -971,6 +973,106 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byWorkouts",
+                        "fields": [
+                            "workoutsID"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "WorkoutResults": {
+            "name": "WorkoutResults",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "value": {
+                    "name": "value",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "userID": {
+                    "name": "userID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "subworkoutsID": {
+                    "name": "subworkoutsID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "WorkoutResults",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byUser",
+                        "fields": [
+                            "userID"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "bySubWorkouts",
+                        "fields": [
+                            "subworkoutsID"
+                        ]
+                    }
                 },
                 {
                     "type": "auth",
@@ -1021,22 +1123,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "users": {
-                    "name": "users",
-                    "isArray": true,
-                    "type": {
-                        "model": "UserWorkouts"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "workouts"
-                        ]
-                    }
-                },
                 "type": {
                     "name": "type",
                     "isArray": false,
@@ -1048,7 +1134,7 @@ export const schema = {
                     "name": "SubWorkouts",
                     "isArray": true,
                     "type": {
-                        "model": "WorkoutsSubWorkouts"
+                        "model": "SubWorkouts"
                     },
                     "isRequired": false,
                     "attributes": [],
@@ -1056,15 +1142,15 @@ export const schema = {
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": [
-                            "workouts"
+                            "workoutsID"
                         ]
                     }
                 },
-                "commentss": {
-                    "name": "commentss",
+                "Comments": {
+                    "name": "Comments",
                     "isArray": true,
                     "type": {
-                        "model": "CommentsWorkouts"
+                        "model": "Comments"
                     },
                     "isRequired": false,
                     "attributes": [],
@@ -1072,7 +1158,23 @@ export const schema = {
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": [
-                            "workouts"
+                            "workoutsID"
+                        ]
+                    }
+                },
+                "SavedWorkouts": {
+                    "name": "SavedWorkouts",
+                    "isArray": true,
+                    "type": {
+                        "model": "SavedWorkouts"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "workoutsID"
                         ]
                     }
                 },
@@ -1149,22 +1251,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "Workouts": {
-                    "name": "Workouts",
-                    "isArray": true,
-                    "type": {
-                        "model": "UserWorkouts"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "user"
-                        ]
-                    }
-                },
                 "units": {
                     "name": "units",
                     "isArray": false,
@@ -1202,8 +1288,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "q_calsmacros": {
-                    "name": "q_calsmacros",
+                "q_calcmacros": {
+                    "name": "q_calcmacros",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -1211,6 +1297,29 @@ export const schema = {
                 },
                 "coach_userid": {
                     "name": "coach_userid",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "theme": {
+                    "name": "theme",
+                    "isArray": false,
+                    "type": {
+                        "enum": "Themes"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "image": {
+                    "name": "image",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "image_uri": {
+                    "name": "image_uri",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -1236,7 +1345,7 @@ export const schema = {
                     "name": "Foodentries",
                     "isArray": true,
                     "type": {
-                        "model": "Foodentry"
+                        "model": "FoodEntry"
                     },
                     "isRequired": false,
                     "attributes": [],
@@ -1248,28 +1357,53 @@ export const schema = {
                         ]
                     }
                 },
-                "theme": {
-                    "name": "theme",
-                    "isArray": false,
+                "WorkoutResults": {
+                    "name": "WorkoutResults",
+                    "isArray": true,
                     "type": {
-                        "enum": "Themes"
+                        "model": "WorkoutResults"
                     },
                     "isRequired": false,
-                    "attributes": []
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "userID"
+                        ]
+                    }
                 },
-                "image": {
-                    "name": "image",
-                    "isArray": false,
-                    "type": "String",
+                "Comments": {
+                    "name": "Comments",
+                    "isArray": true,
+                    "type": {
+                        "model": "Comments"
+                    },
                     "isRequired": false,
-                    "attributes": []
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "userID"
+                        ]
+                    }
                 },
-                "image_uri": {
-                    "name": "image_uri",
-                    "isArray": false,
-                    "type": "String",
+                "SavedWorkouts": {
+                    "name": "SavedWorkouts",
+                    "isArray": true,
+                    "type": {
+                        "model": "SavedWorkouts"
+                    },
                     "isRequired": false,
-                    "attributes": []
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "userID"
+                        ]
+                    }
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -1312,408 +1446,9 @@ export const schema = {
                     }
                 }
             ]
-        },
-        "CommentsWorkouts": {
-            "name": "CommentsWorkouts",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "commentsId": {
-                    "name": "commentsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "workoutsId": {
-                    "name": "workoutsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "comments": {
-                    "name": "comments",
-                    "isArray": false,
-                    "type": {
-                        "model": "Comments"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "commentsId"
-                        ]
-                    }
-                },
-                "workouts": {
-                    "name": "workouts",
-                    "isArray": false,
-                    "type": {
-                        "model": "Workouts"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "workoutsId"
-                        ]
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "CommentsWorkouts",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byComments",
-                        "fields": [
-                            "commentsId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byWorkouts",
-                        "fields": [
-                            "workoutsId"
-                        ]
-                    }
-                }
-            ]
-        },
-        "WorkoutResultsSubWorkouts": {
-            "name": "WorkoutResultsSubWorkouts",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "workoutResultsId": {
-                    "name": "workoutResultsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "subWorkoutsId": {
-                    "name": "subWorkoutsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "workoutResults": {
-                    "name": "workoutResults",
-                    "isArray": false,
-                    "type": {
-                        "model": "WorkoutResults"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "workoutResultsId"
-                        ]
-                    }
-                },
-                "subWorkouts": {
-                    "name": "subWorkouts",
-                    "isArray": false,
-                    "type": {
-                        "model": "SubWorkouts"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "subWorkoutsId"
-                        ]
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "WorkoutResultsSubWorkouts",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byWorkoutResults",
-                        "fields": [
-                            "workoutResultsId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "bySubWorkouts",
-                        "fields": [
-                            "subWorkoutsId"
-                        ]
-                    }
-                }
-            ]
-        },
-        "WorkoutsSubWorkouts": {
-            "name": "WorkoutsSubWorkouts",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "subWorkoutsId": {
-                    "name": "subWorkoutsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "workoutsId": {
-                    "name": "workoutsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "subWorkouts": {
-                    "name": "subWorkouts",
-                    "isArray": false,
-                    "type": {
-                        "model": "SubWorkouts"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "subWorkoutsId"
-                        ]
-                    }
-                },
-                "workouts": {
-                    "name": "workouts",
-                    "isArray": false,
-                    "type": {
-                        "model": "Workouts"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "workoutsId"
-                        ]
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "WorkoutsSubWorkouts",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "bySubWorkouts",
-                        "fields": [
-                            "subWorkoutsId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byWorkouts",
-                        "fields": [
-                            "workoutsId"
-                        ]
-                    }
-                }
-            ]
-        },
-        "UserWorkouts": {
-            "name": "UserWorkouts",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "workoutsId": {
-                    "name": "workoutsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "userId": {
-                    "name": "userId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "workouts": {
-                    "name": "workouts",
-                    "isArray": false,
-                    "type": {
-                        "model": "Workouts"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "workoutsId"
-                        ]
-                    }
-                },
-                "user": {
-                    "name": "user",
-                    "isArray": false,
-                    "type": {
-                        "model": "User"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "userId"
-                        ]
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "UserWorkouts",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byWorkouts",
-                        "fields": [
-                            "workoutsId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byUser",
-                        "fields": [
-                            "userId"
-                        ]
-                    }
-                }
-            ]
         }
     },
     "enums": {
-        "Themes": {
-            "name": "Themes",
-            "values": [
-                "LIGHT",
-                "DARK"
-            ]
-        },
         "Foodcategory": {
             "name": "Foodcategory",
             "values": [
@@ -1721,6 +1456,13 @@ export const schema = {
                 "LUNCH",
                 "DINNER",
                 "SNACKS"
+            ]
+        },
+        "Themes": {
+            "name": "Themes",
+            "values": [
+                "LIGHT",
+                "DARK"
             ]
         },
         "Units": {
@@ -1741,5 +1483,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.4.0",
-    "version": "c9dad8256385c018f456b916c39f6fbc"
+    "version": "5fdf200e3990d4aa162dd795f871d944"
 };

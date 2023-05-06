@@ -91,7 +91,7 @@ export default function HomeScreen( props, {navigation } ) {
       //Get current authenticated user
       try {
         const authUser = await Auth.currentAuthenticatedUser({bypassCache: true});
-        //console.log(authUser)
+        console.log(authUser)
         setAuthSub(authUser.attributes.sub)
         temp_sub = authUser.attributes.sub
 

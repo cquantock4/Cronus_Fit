@@ -1,10 +1,7 @@
-# This "input" configures a global authorization rule to enable public access to
-# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
-input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
-
-enum Themes {
-  LIGHT
-  DARK
+type SavedWorkouts @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  userID: ID! @index(name: "byUser")
+  workoutsID: ID! @index(name: "byWorkouts")
 }
 
 enum Foodcategory {
@@ -14,31 +11,36 @@ enum Foodcategory {
   SNACKS
 }
 
-type Foodentry @model @auth(rules: [{allow: public}]) {
+enum Themes {
+  LIGHT
+  DARK
+}
+
+type Checkin @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  lowestweight: String
+  somewins: String
+  setbacks: String
+  barriers: String
+  sleepquality: String
+  appetite: String
+  energylevel: String
+  othernotes: String
+  waist: String
+  neck: String
+  userID: ID! @index(name: "byUser")
+}
+
+type FoodEntry @model @auth(rules: [{allow: public}]) {
   id: ID!
   date: String
   category: Foodcategory
-  userID: ID! @index(name: "byUser")
   desc: String
   protein: Float
   carbs: Float
   fat: Float
   fiber: Float
   calories: Float
-}
-
-type Checkin @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  lowestweight: Float
-  somewins: String
-  setbacks: String
-  barriers: String
-  sleepquality: Int
-  appetite: Int
-  energylevel: Int
-  othernotes: String
-  waist: String
-  neck: String
   userID: ID! @index(name: "byUser")
 }
 
@@ -69,7 +71,7 @@ type UserInfo @model @auth(rules: [{allow: public}]) {
   i_hip: String
   i_hip_units: String
   i_body_fat_pct: String
-  Users: User @hasOne
+  User: User @hasOne
 }
 
 type Articles @model @auth(rules: [{allow: public}]) {
@@ -87,19 +89,19 @@ type Programs @model @auth(rules: [{allow: public}]) {
   title: String
   desc: String
   free: Boolean
-  price: Float
-}
-
-type Comments @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  comment: String
-  userid: String
-  Workouts: [Workouts] @manyToMany(relationName: "CommentsWorkouts")
+  price: String
 }
 
 enum Units {
   KG
   LBS
+}
+
+type Comments @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  comment: String
+  userID: ID! @index(name: "byUser")
+  workoutsID: ID! @index(name: "byWorkouts")
 }
 
 enum ResultCategory {
@@ -108,23 +110,23 @@ enum ResultCategory {
   WEIGHT
 }
 
-type WorkoutResults @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  value: String
-  SubWorkouts: [SubWorkouts] @manyToMany(relationName: "WorkoutResultsSubWorkouts")
-  userid: ID
-}
-
 type SubWorkouts @model @auth(rules: [{allow: public}]) {
   id: ID!
   group: String
   grouptitle: String
-  workoutss: [Workouts] @manyToMany(relationName: "WorkoutsSubWorkouts")
   desc: String
   resultcategory: ResultCategory
-  workoutresultss: [WorkoutResults] @manyToMany(relationName: "WorkoutResultsSubWorkouts")
   required: Boolean
   timecap: String
+  workoutsID: ID! @index(name: "byWorkouts")
+  WorkoutResults: [WorkoutResults] @hasMany(indexName: "bySubWorkouts", fields: ["id"])
+}
+
+type WorkoutResults @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  value: String
+  userID: ID! @index(name: "byUser")
+  subworkoutsID: ID! @index(name: "bySubWorkouts")
 }
 
 type Workouts @model @auth(rules: [{allow: public}]) {
@@ -132,10 +134,10 @@ type Workouts @model @auth(rules: [{allow: public}]) {
   title: String
   desc: String
   date: String
-  users: [User] @manyToMany(relationName: "UserWorkouts")
   type: String
-  SubWorkouts: [SubWorkouts] @manyToMany(relationName: "WorkoutsSubWorkouts")
-  commentss: [Comments] @manyToMany(relationName: "CommentsWorkouts")
+  SubWorkouts: [SubWorkouts] @hasMany(indexName: "byWorkouts", fields: ["id"])
+  Comments: [Comments] @hasMany(indexName: "byWorkouts", fields: ["id"])
+  SavedWorkouts: [SavedWorkouts] @hasMany(indexName: "byWorkouts", fields: ["id"])
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -143,18 +145,20 @@ type User @model @auth(rules: [{allow: public}]) {
   name: String
   email: String
   sub: String
-  Workouts: [Workouts] @manyToMany(relationName: "UserWorkouts")
   units: Units
   nutrition_info: Boolean
   nutrition_coaching: Boolean
   q_experience: String
   q_medical: String
-  q_calsmacros: String
+  q_calcmacros: String
   coach_userid: String
-  Checkins: [Checkin] @hasMany(indexName: "byUser", fields: ["id"])
-  Foodentries: [Foodentry] @hasMany(indexName: "byUser", fields: ["id"])
   theme: Themes
   image: String
   image_uri: String
+  Checkins: [Checkin] @hasMany(indexName: "byUser", fields: ["id"])
+  Foodentries: [FoodEntry] @hasMany(indexName: "byUser", fields: ["id"])
+  WorkoutResults: [WorkoutResults] @hasMany(indexName: "byUser", fields: ["id"])
+  Comments: [Comments] @hasMany(indexName: "byUser", fields: ["id"])
+  SavedWorkouts: [SavedWorkouts] @hasMany(indexName: "byUser", fields: ["id"])
 }
  

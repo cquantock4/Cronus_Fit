@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "aws-export": "echo 'Update Expo AWS_EXPORTS_DEVELOP secret with value: \n\n' && cat ./src/aws-exports.js |base64",
-    "eas-build-pre-install": "echo $AWS_EXPORTS_DEVELOP | base64 -di > ./src/aws-exports.js"
+    "eas-build-pre-install": "echo $AWS_EXPORTS_DEVELOP | base64 -d > ./src/aws-exports.js"
   },
   "dependencies": {
     "@aws-amplify/datastore-storage-adapter": "^2.0.29",
