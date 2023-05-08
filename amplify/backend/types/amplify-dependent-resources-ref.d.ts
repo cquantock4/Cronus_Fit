@@ -16,5 +16,11 @@ export type AmplifyDependentResourcesAttributes = {
       "UserPoolId": "string",
       "UserPoolName": "string"
     }
+  },
+  "storage": {
+    "s3cronusfitstorage53141d21": {
+      "BucketName": "string",
+      "Region": "string"
+    }
   }
 }

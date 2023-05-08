@@ -1,0 +1,14 @@
+{
+  "resourceName": "s3cronusfitstorage53141d21",
+  "bucketName": "cronusfit-storage-53141d21",
+  "policyUUID": "532b6ad8",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "READ",
+    "CREATE_AND_UPDATE",
+    "DELETE"
+  ]
+}

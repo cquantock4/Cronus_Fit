@@ -17,6 +17,9 @@
       },
       "api": {
         "cronusfit": {}
+      },
+      "storage": {
+        "s3cronusfitstorage53141d21": {}
       }
     }
   }

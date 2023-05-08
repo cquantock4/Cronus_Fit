@@ -62,7 +62,7 @@ export default function ProfileScreen( {navigation} ) {
     activeColors = colors['light'];
   }
     
-
+/*
   useEffect(() => {
 
     // Call only when screen open or when back on screen 
@@ -73,6 +73,18 @@ export default function ProfileScreen( {navigation} ) {
     //getUser();
 
   }, [isFocused]);
+*/
+  useEffect(() => {
+
+    // Call only when screen open or when back on screen 
+    console.log(isFocused)
+    if(isFocused){ 
+        getUser();
+    }
+
+    //getUser();
+
+  }, []);
 
   useEffect(() => {
 
@@ -105,7 +117,12 @@ export default function ProfileScreen( {navigation} ) {
         setUser(_user[0])
         setEmail(_user[0].email)
         setFullname(_user[0].name)
+        console.log('setting the imageurl to: ' + _user[0].image)
+
+        
+
         setImageURI(_user[0].image)
+
         setImageKey(_user[0].image_uri)
       }
 
@@ -158,12 +175,6 @@ export default function ProfileScreen( {navigation} ) {
      Image Upload Section
   */
 
-  const fetchResourceFromURI = async uri => {
-    const response = await fetch(uri);
-    console.log(JSON.stringify(response));
-    const blob = await response.blob();
-    return blob;
-  };
 
   const pickImage = async () => {
 
@@ -186,7 +197,7 @@ export default function ProfileScreen( {navigation} ) {
 
       setImage(result);
       setImageKey(result.assets[0].uri);
-      //console.log('uploading resource: ' + result.assets[0].uri)
+      console.log('uploading resource: ' + result.assets[0].uri)
     }
 
    
@@ -228,6 +239,7 @@ export default function ProfileScreen( {navigation} ) {
     //console.log('here')
 
 
+
     if (temp_img_url) {
 
       try {
@@ -265,22 +277,45 @@ export default function ProfileScreen( {navigation} ) {
 
   }
 
+  
+  const fetchResourceFromURI = async uri => {
+    const response = await fetch(uri);
+    //console.log(JSON.stringify(response));
+    const blob = await response.blob();
+    return blob;
+  };
+
   const uploadResource = async () => {
     //console.log(isLoading)
     if (isLoading) return;
 
     setisLoading(true);
 
+    /*
+    try {
+      //Delete Previous Image
+      const original = await DataStore.query(User, user.id);
+      const currentImageUrl = original.image;
+
+      await Storage.remove(currentImageUrl);
+
+    } catch (e) {
+      console.log('Error: ' + e.message)
+    }
+    */
+    
     //console.log('we made it here')
 
     //console.log(image)
     const img = await fetchResourceFromURI(image.assets[0].uri);
+    const fileName = user.name.replace(/\s+/g, '')+ '_profileImage.jpeg';
+    console.log(fileName)
 
-    //console.log(img)
 
     let temp_img_url = ''
 
-    return Storage.put(image.assets[0].uri, img, {
+
+    return Storage.put(fileName, img, {
       level: 'public',
       contentType: image.assets[0].type,
       progressCallback(uploadProgress) {
@@ -306,7 +341,7 @@ export default function ProfileScreen( {navigation} ) {
         Storage.get(res.key)
           .then(result => {
 
-            //console.log(JSON.stringify(result))
+            console.log('here is the result: ' + JSON.stringify(result))
             //console.log('made it here too')
 
             setImageURI(result)
