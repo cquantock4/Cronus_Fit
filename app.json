@@ -11,14 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "plugins": [
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "The app accesses your photos."
-        }
-      ]
-    ],
+    "plugins": [],
     "assetBundlePatterns": [
       "**/*"
     ],

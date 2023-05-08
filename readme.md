@@ -1,4 +1,4 @@
-# Cronus fit Mobile App
+# Cronusfit Mobile App
 
 A mobile app created for https://cronusfit.org/
 
