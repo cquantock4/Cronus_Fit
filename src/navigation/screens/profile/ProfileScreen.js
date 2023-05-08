@@ -62,18 +62,6 @@ export default function ProfileScreen( {navigation} ) {
     activeColors = colors['light'];
   }
     
-/*
-  useEffect(() => {
-
-    // Call only when screen open or when back on screen 
-    if(isFocused){ 
-        getUser();
-    }
-
-    //getUser();
-
-  }, [isFocused]);
-*/
   useEffect(() => {
 
     // Call only when screen open or when back on screen 
@@ -84,7 +72,7 @@ export default function ProfileScreen( {navigation} ) {
 
     //getUser();
 
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
 
