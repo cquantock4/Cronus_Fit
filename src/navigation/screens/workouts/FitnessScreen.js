@@ -115,7 +115,7 @@ export default function WorkoutScreen( {navigation} ) {
     return(
         
       
-        <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+      <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
            <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
             <View>
                 <Text style={[styles.header_text, { color: activeColors.primary_text }]}>Fitness and Programming</Text>
@@ -141,11 +141,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    marginTop: statusBarHeight,
+    //marginTop: statusBarHeight,
     //backgroundColor: 'white',
     //alignItems: 'center',
     //paddingTop: 40
   },  
+  marginTop: {
+    marginTop: statusBarHeight,
+  },
   header: {
     justifyContent: 'space-between',
     flexDirection: 'row',

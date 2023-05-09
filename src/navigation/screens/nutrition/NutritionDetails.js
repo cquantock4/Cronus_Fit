@@ -2447,7 +2447,7 @@ export default function NutritionDetails( {navigation} ) {
 
   
     return(
-      <SafeAreaView style={{flex: 1, backgroundColor: activeColors.primary_bg}}>
+      <SafeAreaView style={[Platform.OS === 'ios' && styles.marginTop, {flex: 1, backgroundColor: activeColors.primary_bg }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : ''}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
@@ -2475,9 +2475,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    marginTop: statusBarHeight,
+    //marginTop: statusBarHeight,
     backgroundColor: '#EFEFEF',
     //alignItems: 'center'
+  },
+  marginTop: {
+    marginTop: statusBarHeight,
   },
   //header
   header: {

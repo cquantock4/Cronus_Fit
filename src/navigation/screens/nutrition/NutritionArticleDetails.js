@@ -288,8 +288,8 @@ export default function NutritionArticlesDetails( {navigation} ) {
     
 
     return(
-      
-        <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+    
+        <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
 
             <Header /> 
 
@@ -335,9 +335,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    marginTop: statusBarHeight,
+    //marginTop: statusBarHeight,
     backgroundColor: '#EFEFEF',
     //alignItems: 'center'
+  },
+  marginTop: {
+    marginTop: statusBarHeight,
   },
   //header
   header: {

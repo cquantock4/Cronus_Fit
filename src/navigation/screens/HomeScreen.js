@@ -222,8 +222,7 @@ export default function HomeScreen( props, {navigation } ) {
   {/*<View style={[styles.container, {backgroundColor: colors[theme].primary}]}>*/}
   {/*<View style={styles.container}></View>*/}
   return(
-
-    <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+    <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
       <FirstTimeUserWelcome />
       <ImageBackground source={require('../../../assets/images/CenteredBackgroundImage_Large.png')} style={styles.image}>
       
@@ -271,6 +270,9 @@ const styles = StyleSheet.create({
     //marginTop: statusBarHeight,
     //backgroundColor: activeColors.primary
   },  
+  marginTop: {
+    marginTop: statusBarHeight,
+  },
   image: {
     height: '100%',
     width: '100%',

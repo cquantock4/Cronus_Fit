@@ -299,15 +299,13 @@ export default function NutritionScreen( {navigation} ) {
   
 
     return(
-      <>
-      <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+      <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
         <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
           <Text style={[styles.header_text, { color: activeColors.primary_text }]}>Nutrition</Text>
         </View>  
         <NutritionCard navigation={navigation} />
         <ArticlesCard navigation={navigation} />
       </View>
-      </>
     );
 }
 
@@ -318,11 +316,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    marginTop: statusBarHeight,
+    //marginTop: statusBarHeight,
     //backgroundColor: 'white',
     //alignItems: 'center',
     //paddingTop: 40
   },  
+  marginTop: {
+    marginTop: statusBarHeight,
+  },
   header: {
     justifyContent: 'space-between',
     flexDirection: 'row',

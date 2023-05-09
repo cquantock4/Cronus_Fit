@@ -241,7 +241,7 @@ export default function ProfileEditScreen( { navigation } ) {
 
 
   return(
-    <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+    <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
       <View style={styles.header}>
         <Pressable onPress={goBackPress}>
           <Ionicons name='arrow-back-outline' style={{fontSize: 30, color: activeColors.primary_text}}/>
@@ -346,9 +346,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    marginTop: statusBarHeight,
+    //marginTop: statusBarHeight,
     backgroundColor: 'white',
   },  
+  marginTop: {
+    marginTop: statusBarHeight,
+  },
   bodyContainer: {
    alignItems: 'center',
    padding: 10,

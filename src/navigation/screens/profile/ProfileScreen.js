@@ -413,7 +413,7 @@ export default function ProfileScreen( {navigation} ) {
   }
 
   return(
-    <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+    <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
         <View style={styles.topContainer}>
           <View style={styles.topLeftContainer}> 
           
@@ -531,9 +531,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    marginTop: statusBarHeight,
+    //marginTop: statusBarHeight,
     backgroundColor: 'white'
   },  
+  marginTop: {
+    marginTop: statusBarHeight,
+  },
   topContainer: {
     //flex: 1,
     height: 200,

@@ -1,5 +1,5 @@
 import React, { useState , useEffect, useContext} from 'react';
-import { StyleSheet, Text, View, Pressable, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, Pressable, ActivityIndicator, ScrollView, RefreshControl, SafeAreaView, StatusBar } from 'react-native';
 import Constants from 'expo-constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Bubble_Button_Small } from '../../../components/ui/buttons'
@@ -639,7 +639,7 @@ export default function Leaderboard( {navigation} ) {
   
   
   return(
-    <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+      <SafeAreaView style={[Platform.OS === 'ios' && styles.marginTop, {flex: 1, backgroundColor: activeColors.primary_bg }]}>
 
       {/* Header with Search and Filtering Window 
 
@@ -698,7 +698,7 @@ export default function Leaderboard( {navigation} ) {
         ) : null}
       </ScrollView>
       
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -711,9 +711,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    marginTop: statusBarHeight,
-    backgroundColor: 'white'
+    //marginTop: statusBarHeight,
+    //backgroundColor: 'white'
   },  
+  marginTop: {
+    marginTop: statusBarHeight,
+  },
   header: {
     justifyContent: 'space-between',
     flexDirection: 'row',

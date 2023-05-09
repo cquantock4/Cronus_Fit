@@ -340,11 +340,11 @@ export default function ProgrammingScreen( {navigation} ) {
     return(
       <>
       {showProgramView ? (
-        <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+        <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
           <DownloadScreenDisplay />
         </View>
       ) : (
-        <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+        <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
             { showSearch ? (
               <Header />
             ) : (
@@ -394,12 +394,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    marginTop: statusBarHeight,
+    //marginTop: statusBarHeight,
     //backgroundColor: 'white',
     //alignItems: 'center',
     //backgroundColor: 'blue'
     //paddingTop: 40
   },  
+  marginTop: {
+    marginTop: statusBarHeight,
+  },
   //header
   header: {
     justifyContent: 'space-between',
