@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: statusBarHeight,
+    //marginTop: statusBarHeight,
     //backgroundColor: activeColors.primary
   },  
   image: {

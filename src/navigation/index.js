@@ -126,7 +126,6 @@ const Navigation = () => {
                     //"fontSize": 20
                 },
                 "tabBarHideOnKeyboard": true,
-                
                 "tabBarStyle": {
                   "paddingTop": 10,
                   "backgroundColor": activeColors.primary_bg,
