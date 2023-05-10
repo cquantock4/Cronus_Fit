@@ -40,6 +40,8 @@
       "url": "https://u.expo.dev/40c5d756-34c3-4ddb-89de-f2242671e72c"
     },
     "extra": {
+      "fatSecretAPIKey": "fa132652e7f24d40ac5b0de166d10a05",
+      "fatSecretAPISecret": "6d1733c4af524ff4bf9c32d43f7e1aa8",
       "eas": {
         "projectId": "ccb6c5ec-5edf-46b2-bfe8-14514a2628d7"
       }

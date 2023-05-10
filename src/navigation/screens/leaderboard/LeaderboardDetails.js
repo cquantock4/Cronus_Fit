@@ -276,11 +276,18 @@ export default function LeaderboardDetails( {navigation} ) {
           if (resultcategory === 'TIME') {
 
             calc_workoutResults = timecap.replace(':', '').replace(':', '') - parseInt(calc_workoutResults.replace(':', '').replace(':', ''));
+          } else if (resultcategory === 'SETSREPS') {
+
+            console.log('sets and reps: ' + calc_workoutResults)
+            
           }
           
           if (calc_workoutResults != null && required) {
+
             score = calc_workoutResults
+
           } else if (calc_workoutResults != null) { 
+            //This is to put lower scoring on non-required workouts
             score = calc_workoutResults * 0.25 //Scale to 25%
           } else {  
             score = 0

@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl} from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl, FlatList, Button, BackHandler} from 'react-native';
 import { TextInput, Pressable, Modal, Dimensions,ActivityIndicator, KeyboardAvoidingView,SafeAreaView} from 'react-native';
+
+import axios from 'axios';
 import Constants from 'expo-constants'
+import oauthSignature from 'oauth-signature';
+import CryptoJS from 'crypto-js';
+import OAuth from 'oauth-1.0a';
+
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Bubble_Button} from '../../../components/ui/buttons'
 
@@ -12,7 +19,7 @@ import {useRoute} from '@react-navigation/native';
 import ModalSelector from 'react-native-modal-selector'
 
 import { Auth, DataStore } from 'aws-amplify';
-import { User, UserInfo, Messages, Checkin, Foodentry} from '../../../models';
+import { User, UserInfo, Messages, Checkin, FoodEntry} from '../../../models';
 
 //import Header from '../../../ui/components/headers/header'
 //import moment from 'moment';
@@ -157,8 +164,8 @@ export default function NutritionDetails( {navigation} ) {
 
   }, []);
   
-  
-  {/* This is called on page load */}
+  const [date, setNewDate] = useState(new Date());
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
 
@@ -195,6 +202,7 @@ export default function NutritionDetails( {navigation} ) {
     return unsubscribe;
   }, [navigation]);
 
+  
   useEffect(() => {
     const subscription = Dimensions.addEventListener(
       "change",
@@ -207,6 +215,9 @@ export default function NutritionDetails( {navigation} ) {
 
 
   }, [Dimensions]);
+
+   
+
 
   useEffect(() => {
 
@@ -272,11 +283,6 @@ export default function NutritionDetails( {navigation} ) {
 
         }
 
-
-        /*
-          User Messages
-        */
-
         const messages = (await DataStore.query(Messages)).filter(
           pe => pe.sender_userid === dbUser.id || (pe.receiver_userid === dbUser.id && pe.sender_userid === dbUser.coach_userid)
         )
@@ -298,7 +304,7 @@ export default function NutritionDetails( {navigation} ) {
 
   }, [commentrefresh]);
 
-  const [date, setNewDate] = useState(new Date());
+ 
 
   useEffect(() => {
 
@@ -307,6 +313,14 @@ export default function NutritionDetails( {navigation} ) {
   }, [date]);
 
   
+ function componentDidMount (){
+
+ }
+
+ function handleBackButtonClick( navigation ) {
+  this.props.navigation.goBack(null);
+  return true;
+}
 
   /*
   useEffect(() => {
@@ -343,6 +357,7 @@ export default function NutritionDetails( {navigation} ) {
  
 
   const getFoodEntries = async () => {
+
     //Get current auth user
     const curr_user = await Auth.currentAuthenticatedUser();
     //console.log(curr_user.attributes.sub)
@@ -352,7 +367,7 @@ export default function NutritionDetails( {navigation} ) {
     setDinnerList([])
     setSnacksList([])
 
-    //console.log('is this running?')
+    
 
     if (user) {
       //const foodentries = await DataStore.query(Foodentry, c => c.userID("eq", user.id));
@@ -360,9 +375,10 @@ export default function NutritionDetails( {navigation} ) {
       //console.log(user.id)
       //console.log(format(new Date(date), 'MM/dd/yyyy').toString())
 
-      const foodentries = (await DataStore.query(Foodentry)).filter(
+      const foodentries = (await DataStore.query(FoodEntry)).filter(
         pe => pe.userID === user.id && pe.date === format(new Date(date), 'MM/dd/yyyy').toString()
       )
+
 
       setFoodEntries(foodentries)
 
@@ -442,7 +458,7 @@ export default function NutritionDetails( {navigation} ) {
 
 
 }
-
+/*
   const QuestionaireAlertModal = () => {
 
     const onDismissPress = () => {
@@ -495,6 +511,8 @@ export default function NutritionDetails( {navigation} ) {
     );
   
   }
+*/
+
 
   const onSaveQuestionnairePress = async ( { navigation } ) => {
     //navigation.navigate('NutritionScreen')
@@ -584,8 +602,120 @@ export default function NutritionDetails( {navigation} ) {
     
   }
 
+  const onAcceptWaiver = async ( { navigation } ) => {
+    //navigation.navigate('NutritionScreen')
+
+    setQualifiedYN(true)
+    setShowQuestionaire(false)
+    setShowEditWindow(true)
+    setFirstLoad(true)
+
+    try {
+      if (user) {
+    
+        const updatedUser = User.copyOf(user, updated => {
+           updated.q_calsmacros = calsmacros;
+           updated.q_experience = experience;
+           updated.q_medical = medical;
+           updated.nutrition_coaching = true;
+        })
+ 
+        DataStore.save(updatedUser)
+     }
+    }catch (error) {
+      console.log("Error saving data", error);
+    }
+    //setModalVisible(!modalVisible)
+
+      /*
+    if ((calsmacros === 'Yes - I have a lot of experience' || calsmacros === 'Yes - 2+ years of experience') &&
+      (medical === 'No')){
+        setQualifiedYN(true)
+        //console.log('Qualified')
+        //Change Screens
+        setShowQuestionaire(false)
+        setShowEditWindow(true)
+        setFirstLoad(true)
+
+        //Pop up Alert
+        setModalVisible(!modalVisible)
+
+        //Save
+        if (user) {
+    
+           const updatedUser = User.copyOf(user, updated => {
+              updated.q_calsmacros = calsmacros;
+              updated.q_experience = experience;
+              updated.q_medical = medical;
+              updated.nutrition_coaching = true;
+           })
+    
+           DataStore.save(updatedUser)
+
+           //console.log('userid: ' + user.id)
+
+           /*
+           //Create User Info Record
+           const user_info = await DataStore.save(
+                new UserInfo({
+                    "Users": user
+                })
+            );
+            */
+
+        /*
+            i_gender: i_gender,
+              i_goals: goal,
+              i_height: height,
+              i_height_units: '',
+              i_hip: hip,
+              i_hip_units: '',
+              i_lifestyleactivity: lifestyle,
+              i_neck: neck,
+              i_neck_units: 'sd',
+              i_trainingactivity: exercise,
+              i_waist: waist,
+              i_waist_units: '',
+              i_weight: weight,
+              i_weight_units: '',
+              i_body_fat_pct: bodyfatpct,
+        
+
+
+
+        //console.log(user_info)
+        //setUserInfo(user_info)
+
+
+        }
+
+      } else {
+        setQualifiedYN(false)
+        //console.log('Not Qualified')
+        setModalVisible(!modalVisible)
+
+         //Save
+         if (user) {
+    
+          const updatedUser = User.copyOf(user, updated => {
+             updated.q_calsmacros = calsmacros;
+             updated.q_experience = experience;
+             updated.q_medical = medical;
+             updated.nutrition_coaching = false;
+          })
+   
+          DataStore.save(updatedUser)
+        
+       }
+        
+      }
+      */
+    
+  }
+
   const Questionaire = () => {
 
+      /*
     //Data
     let calexpindex = 0
     const calexpdata = [
@@ -681,6 +811,27 @@ export default function NutritionDetails( {navigation} ) {
           </View>
         </>
     )
+    */
+    return (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={{color: 'red', marginBottom: 20, fontSize: 18}}>
+
+            EXAMPLE: Liability Waiver placeholder 
+          </Text>
+          <Text style={{color: 'white', fontSize: 16, textAlign: 'center'}}>
+          I understand that it is my responsibility to consult with a physician prior to and regarding my
+participation in the above mentioned program. I represent and warrant that I have no medical condition
+that would prevent my participation in the program. 
+          </Text>
+          <Bubble_Button 
+              text='Accept'
+              onPress={onAcceptWaiver}
+              cstyle={{width: '100%', marginTop: 50}}
+              bgColor='#F8BE13'
+              fgColor='#363636'
+            />
+        </View>
+      )
   }
 
   const EditWindow = () => {
@@ -1249,7 +1400,83 @@ export default function NutritionDetails( {navigation} ) {
   */
   const AddMealSnack = () => {
 
+    const FoodSearch = () => {
+      const [searchTerm, setSearchTerm] = useState('');
+      const [searchResults, setSearchResults] = useState([]);
     
+      const handleSearch = async () => {
+        try {
+          const oauth = OAuth({
+            consumer: {
+              key: Constants.expoConfig.extra.fatSecretAPIKey,
+              secret: Constants.expoConfig.extra.fatSecretAPISecret,
+            },
+            signature_method: 'HMAC-SHA1',
+            hash_function: (baseString, key) =>
+              CryptoJS.HmacSHA1(baseString, key).toString(CryptoJS.enc.Base64),
+          });
+    
+          const requestData = {
+            url: 'https://platform.fatsecret.com/rest/server.api',
+            method: 'GET',
+            data: {
+              method: 'foods.search',
+              format: 'json',
+              search_expression: searchTerm,
+            },
+          };
+    
+          const headers = oauth.toHeader(
+            oauth.authorize(requestData, {
+              key: Constants.expoConfig.extra.fatSecretAPIKey,
+              secret: Constants.expoConfig.extra.fatSecretAPISecret,
+            })
+          );
+    
+          const response = await axios.get(requestData.url, {
+            headers: headers,
+            params: requestData.data,
+          });
+
+          console.log(response)
+    
+          const foodResults = response.data?.foods?.food;
+    
+          if (foodResults) {
+            if (Array.isArray(foodResults)) {
+              setSearchResults(foodResults);
+            } else {
+              setSearchResults([foodResults]);
+            }
+          } else {
+            setSearchResults([]);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+    
+      return (
+        <View>
+          <TextInput
+            placeholder="Search for food"
+            value={searchTerm}
+            onChangeText={setSearchTerm}
+          />
+          <Button title="Search" onPress={handleSearch} />
+          {searchResults.map((food) => (
+            <View key={food.food_id}>
+              <Text>Name: {food.food_name}</Text>
+              <Text>Brand: {food.brand_name}</Text>
+              <Text>Calories: {food.calories}</Text>
+              {/* Add more fields as per your requirements */}
+            </View>
+          ))}
+        </View>
+      );
+    };
+
+
     //const addFood = (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
     const addFood = async (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
 
@@ -2445,8 +2672,8 @@ export default function NutritionDetails( {navigation} ) {
             )
     }
 
-  
     return(
+      
       <SafeAreaView style={[Platform.OS === 'ios' && styles.marginTop, {flex: 1, backgroundColor: activeColors.primary_bg }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : ''}
@@ -2460,7 +2687,6 @@ export default function NutritionDetails( {navigation} ) {
           
         <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
           <Header />
-          <QuestionaireAlertModal />
           <Controller />
         </View>
       </KeyboardAvoidingView>      
