@@ -1405,16 +1405,22 @@ export const schema = {
                         ]
                     }
                 },
-                "createdAt": {
-                    "name": "createdAt",
+                "coach_yn": {
+                    "name": "coach_yn",
                     "isArray": false,
-                    "type": "AWSDateTime",
+                    "type": "Boolean",
                     "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
+                    "attributes": []
                 },
                 "updatedAt": {
                     "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
                     "isArray": false,
                     "type": "AWSDateTime",
                     "isRequired": false,
@@ -1482,6 +1488,6 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "codegenVersion": "3.4.2",
-    "version": "5fdf200e3990d4aa162dd795f871d944"
+    "codegenVersion": "3.4.3",
+    "version": "3ff80a069efbe8cd859afe4f7e6af22d"
 };

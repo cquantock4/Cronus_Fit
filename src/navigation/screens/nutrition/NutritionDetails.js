@@ -228,6 +228,8 @@ export default function NutritionDetails( {navigation} ) {
 
         const dbUsers = await DataStore.query(User, c => c.sub.eq(curr_user.attributes.sub));
 
+        console.log('Current User: ' + JSON.stringify(dbUsers))
+
         if (dbUsers.length < 0){
           return;
         }
@@ -245,9 +247,13 @@ export default function NutritionDetails( {navigation} ) {
 
         //const userinfo_query = await DataStore.query(UserInfo, c => c.Users.User.id("eq", dbUser.id));
         //console.log(userinfo_query)
+
+        const testing = (await DataStore.query(UserInfo))
+        //console.log(testing)
+
         
         const userinfo_results = (await DataStore.query(UserInfo)).filter(
-          pe => pe.userInfoUsersId === dbUser.id
+          pe => pe.userInfoUserId === dbUser.id
         )   
 
         //console.log('this: '+ userinfo_results)
@@ -313,15 +319,6 @@ export default function NutritionDetails( {navigation} ) {
   }, [date]);
 
   
- function componentDidMount (){
-
- }
-
- function handleBackButtonClick( navigation ) {
-  this.props.navigation.goBack(null);
-  return true;
-}
-
   /*
   useEffect(() => {
 
@@ -880,10 +877,14 @@ that would prevent my participation in the program.
 
       // Save this data to database
 
+      console.log('here we are')
+
 
       if (userinfo) {
         //Update
         //('Update');
+
+        console.log('here it is: ' + userinfo)
 
         //Update the row
         const updatedinfo = UserInfo.copyOf(userinfo, updated => {
@@ -895,9 +896,10 @@ that would prevent my participation in the program.
           updated.i_weight = weight,
           updated.i_neck = neck,
           updated.i_waist = waist,
-          updated.i_hip = hip,
-          updated.i_body_fat_pct = bodyfatpct
+          updated.i_hip = hip
+          //updated.i_body_fat_pct = bodyfatpct
         })
+        
 
 
         DataStore.save(updatedinfo)
@@ -907,10 +909,14 @@ that would prevent my participation in the program.
       } else {
         //Insert
 
+        console.log('insert')
+
         try {
+
+          console.log(user)
           await DataStore.save(
             new UserInfo({
-              Users: user,
+              User: user,
               type: '',
               i_gender: i_gender,
               i_goals: goal,
@@ -925,8 +931,8 @@ that would prevent my participation in the program.
               i_waist: waist,
               i_waist_units: '',
               i_weight: weight,
-              i_weight_units: '',
-              i_body_fat_pct: bodyfatpct,
+              i_weight_units: ''
+              //i_body_fat_pct: bodyfatpct,
             })
           );
 
@@ -971,9 +977,47 @@ that would prevent my participation in the program.
 
     //const [additionalComments, setAdditionalComments] = useState("");
 
+    function calculateBodyFatPercentage(gender, height, weight, neck, waist, hip) {
+      // Convert height from inches to centimeters
+      var heightCM = height * 2.54;
+
+      if (gender, height, weight, neck, waist, hip) {
+        // Convert weight from pounds to kilograms
+        var weightKG = weight * 0.45359237;
+      
+        // Calculate the body fat percentage based on gender
+        var bodyFatPercentage = 0;
+        if (gender === 'male') {
+          // Formula for males: 86.010 * log10(abdomen - neck) - 70.041 * log10(height) + 36.76
+          var log10 = Math.log10;
+          bodyFatPercentage = 86.010 * log10(waist - neck) - 70.041 * log10(heightCM) + 36.76;
+        } else if (gender === 'female') {
+          // Formula for females: 163.205 * log10(waist + hip - neck) - 97.684 * log10(height) - 78.387
+          var log10 = Math.log10;
+          bodyFatPercentage = 163.205 * log10(waist + hip - neck) - 97.684 * log10(heightCM) - 78.387;
+        }
+
+        // Adjust the body fat percentage based on weight
+        bodyFatPercentage += weightKG * 0.082 + 34.89;
+
+        console.log('Setting Body Fat pct to: ' + bodyFatPercentage.toFixed(2))
+        setBodyFatPct(bodyFatPercentage.toFixed(2))
+
+      } else {
+        setBodyFatPct(null)
+      }
+    
+      
+       // Return the body fat percentage rounded to 2 decimal places
+
+       return bodyFatPercentage.toFixed(2);
+    }
+
 
     function handleHeightChange(event) {
       const input =  event.nativeEvent.text;
+
+      calculateBodyFatPercentage(i_gender, input, weight, neck, waist, hip)
 
       // validate all you want here
       //console.log(input)
@@ -1263,12 +1307,23 @@ that would prevent my participation in the program.
               </Pressable>
             </View>
         </View>
+        {/*
         <View style={{marginTop: 20, marginBottom: 10}}>
           <Text style={{fontSize: 18, fontWeight: '300', textAlign: 'center', color: activeColors.secondary_text}}>Not sure of the above measurements? Estimate your body fat % below</Text>
         </View>
+    */}
         <View style={{width: '100%', flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly', paddingLeft: 20}}>
-              <Text style={{color: activeColors.secondary_text}}>Body Fat Percentage</Text>
-              <View style={styles.inputView}>
+              <Text style={{color: activeColors.secondary_text}}>Body Fat Percentage:</Text>
+              {bodyfatpct ? (
+                <Text style={{color: activeColors.secondary_text}}>{bodyfatpct} %</Text>
+              ) : (
+                <Text style={{color: activeColors.secondary_text}}>- %</Text>
+              )
+
+              }
+              
+                {/*
+                <View style={styles.inputView}>
                   <TextInput
                     name='bodyfatpct'
                     placeholder="00"
@@ -1278,16 +1333,15 @@ that would prevent my participation in the program.
                     defaultValue={bodyfatpct}
                     style={{textAlign: 'center'}}
                 />
-              </View>
+                </View>
+               */}
+              
         </View>
 
         
       </View>
 
     </ScrollView>
-
-     
-
     </View>
     <View>
       <Bubble_Button 
@@ -1987,6 +2041,7 @@ that would prevent my participation in the program.
         
 
     }
+
 
     function handleLowWeightChange(event) {
       const input =  event.nativeEvent.text;

@@ -462,7 +462,7 @@ export declare const Workouts: (new (init: ModelInit<Workouts>) => Workouts) & {
 type EagerUser = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<User, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
+    readOnlyFields: 'createdAt';
   };
   readonly id: string;
   readonly name?: string | null;
@@ -483,14 +483,15 @@ type EagerUser = {
   readonly WorkoutResults?: (WorkoutResults | null)[] | null;
   readonly Comments?: (Comments | null)[] | null;
   readonly SavedWorkouts?: (SavedWorkouts | null)[] | null;
-  readonly createdAt?: string | null;
+  readonly coach_yn?: boolean | null;
   readonly updatedAt?: string | null;
+  readonly createdAt?: string | null;
 }
 
 type LazyUser = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<User, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
+    readOnlyFields: 'createdAt';
   };
   readonly id: string;
   readonly name?: string | null;
@@ -511,8 +512,9 @@ type LazyUser = {
   readonly WorkoutResults: AsyncCollection<WorkoutResults>;
   readonly Comments: AsyncCollection<Comments>;
   readonly SavedWorkouts: AsyncCollection<SavedWorkouts>;
-  readonly createdAt?: string | null;
+  readonly coach_yn?: boolean | null;
   readonly updatedAt?: string | null;
+  readonly createdAt?: string | null;
 }
 
 export declare type User = LazyLoading extends LazyLoadingDisabled ? EagerUser : LazyUser
