@@ -65,31 +65,7 @@ export default function NutritionDetails( {navigation} ) {
   const [qualifiedyn, setQualifiedYN] = useState(false);
   const [firstload, setFirstLoad] = useState(false);
 
-  //EditScreen
-  //Measurements
-  const [i_gender, setGender] = useState('Male');
-  const [goal, setGoal] = useState('Lose Fat');
-  const [exercise, setExercise] = useState('Moderate Exercise');
-  const [lifestyle, setLifestyle] = useState('Moderate Activity');
-  const [height, setHeight] = useState('');
-  const [heightunits, setHeightUnits] = useState('');
-  const [weight, setWeight] = useState('');
-  const [weightunits, setWeightUnits] = useState('');
-  const [neck, setNeck] = useState('');
-  const [neckunits, setNeckUnits] = useState('');
-  const [waist, setWaist] = useState('');
-  const [waistunits, setWaistUnits] = useState('');
-  const [hip, setHip] = useState('');
-  const [hiptunits, setHipUnits] = useState('');
-  const [bodyfatpct, setBodyFatPct] = useState('');
-
-  const [showMale, setShowMale] = useState(undefined);
-  const [showFemale, setShowFemale] = useState(false);
-  const [heightftincm, setHeightFTINCM] = useState(false);
-  const [weightlbskgs, setWeightLBSKGS] = useState(false);
-  const [neckincm, setNeckincm] = useState(false);
-  const [waistincm, setWaistincm] = useState(false);
-  const [hipincm, setHipincm] = useState(false);
+  
 
   //Main Nutrition page navigation
   const [addfood, setAddFood] = useState(false)
@@ -264,27 +240,11 @@ export default function NutritionDetails( {navigation} ) {
         //console.log('this: '+ userinfo)
 
         if (userinfo){
-          if (userinfo.i_gender == 'Male') {
-            //console.log('male')
-            setShowMale(true)
-            setShowFemale(false)
-            setGender(userinfo.i_gender)
-          } else if (userinfo.i_gender == 'Female') {
-            setShowMale(false)
-            setShowFemale(true)
-            setGender(userinfo.i_gender)
-          }
+          
 
           setUserInfo(userinfo)
           //console.log(userinfo)
-        
-          setGoal(userinfo.i_goals)
-          setHeight(userinfo.i_height)
-          setWeight(userinfo.i_weight)
-          setNeck(userinfo.i_neck)
-          setWaist(userinfo.i_waist)
-          setHip(userinfo.i_hip)
-          setBodyFatPct(userinfo.i_body_fat_pct)
+          
 
 
         }
@@ -832,7 +792,60 @@ that would prevent my participation in the program.
   }
 
   const EditWindow = () => {
-    
+
+
+    //EditScreen
+    //Measurements
+    const [i_gender, setGender] = useState('Male');
+    const [goal, setGoal] = useState('Lose Fat');
+    const [exercise, setExercise] = useState('Moderate Exercise');
+    const [lifestyle, setLifestyle] = useState('Moderate Activity');
+    const [height, setHeight] = useState('');
+    const [heightunits, setHeightUnits] = useState('');
+    const [weight, setWeight] = useState('');
+    const [weightunits, setWeightUnits] = useState('');
+    const [neck, setNeck] = useState('');
+    const [neckunits, setNeckUnits] = useState('');
+    const [waist, setWaist] = useState('');
+    const [waistunits, setWaistUnits] = useState('');
+    const [hip, setHip] = useState('');
+    const [hiptunits, setHipUnits] = useState('');
+    const [bodyfatpct, setBodyFatPct] = useState('');
+
+    const [showMale, setShowMale] = useState(undefined);
+    const [showFemale, setShowFemale] = useState(false);
+    const [heightftincm, setHeightFTINCM] = useState(false);
+    const [weightlbskgs, setWeightLBSKGS] = useState(false);
+    const [neckincm, setNeckincm] = useState(false);
+    const [waistincm, setWaistincm] = useState(false);
+    const [hipincm, setHipincm] = useState(false);
+
+    useEffect(() => {
+
+      if(userinfo) {
+        if (userinfo.i_gender == 'Male') {
+          //console.log('male')
+          setShowMale(true)
+          setShowFemale(false)
+          setGender(userinfo.i_gender)
+        } else if (userinfo.i_gender == 'Female') {
+          setShowMale(false)
+          setShowFemale(true)
+          setGender(userinfo.i_gender)
+        }
+        
+        setGoal(userinfo.i_goals)
+        setHeight(userinfo.i_height)
+        setWeight(userinfo.i_weight)
+        setNeck(userinfo.i_neck)
+        setWaist(userinfo.i_waist)
+        setHip(userinfo.i_hip)
+        setBodyFatPct(userinfo.i_body_fat_pct)
+      }
+
+      
+    }, [])
+      
 
     const onMalePress = async () => {
       //console.log('Male button pressed')
@@ -1080,279 +1093,279 @@ that would prevent my participation in the program.
 
 
     return(
-      <>
-    <View style={{flex: 1}}>
-
-      <EditWindowSaveAlertModal />
-
       <ScrollView style={{padding: 0, margin: 0}}> 
-      <View style={{padding: 10, paddingTop: 0, alignItems: 'center'}}>
-        <View style={{marginTop: 10, marginBottom: 10}}>
-          <Text style={{fontSize: 22, fontWeight: '500', textAlign: 'center', color: activeColors.secondary_text}}>Please fill out the information below</Text>
-          <Text style={{fontSize: 13, fontWeight: '300', textAlign: 'center', color: activeColors.secondary_text}}>This information will not be visible on your public profile</Text>
-        </View>
-        <View style={{flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', marginBottom: 10, marginTop: 10}}>
-          <Bubble_Button 
-            onPress={onMalePress}
-            text='Male'
-            bgColor= {showMale ? '#363636' : '#363636' }
-            fgColor= {showMale ? '#E1AB09' : 'white' }
-            cstyle= {{width: '50%', borderRadius: 5, padding: 25, marginRight: 10}}
-            />
-          <Bubble_Button
-            onPress={onFemalePress}
-            text='Female'
-            bgColor= {showFemale ? '#363636' : '#363636' }
-            fgColor= {showFemale ? '#E1AB09' : 'white' }
-            cstyle= {{width: '50%', borderRadius: 5, padding: 25}}
-            />
-        </View>
-        <View style={{width:'100%', alignItems: 'center', marginBottom: 10}}>
-          <Text style={{fontSize: 18, fontWeight: '300', textAlign: 'center', marginBottom: 5, color: activeColors.secondary_text}}>Goals</Text>
-          <ModalSelector
-            data={goaldata}
-            initValue={goal}
-            style={{width: '100%', backgroundColor: '#363636', borderRadius: 5}}
-            //Selected Item text Style
-            selectedItemTextStyle={{color: '#F8BE13'}}
-            //Picker Option Text Style
-            optionTextStyle={{color: 'white'}}
-            cancelTextStyle={{color: 'white'}}
-            cancelStyle={{padding: 20, backgroundColor: '#363636' }}
-            optionStyle={{padding: 20}}
-            optionContainerStyle={{backgroundColor: '#363636'}}
-            initValueTextStyle={{color: '#F8BE13', padding: 7}}
-            onChange={(option)=>{ setGoal(option.label) }} />  
-        </View>
-        <View style={{width:'100%', alignItems: 'center', marginBottom: 10}}>
-          <Text style={{fontSize: 18, fontWeight: '300', textAlign: 'center', marginBottom: 5, color: activeColors.secondary_text}}>Training/Exercise Activity</Text>
-          <ModalSelector
-            data={exercisedata}
-            initValue={exercise}
-            style={{width: '100%', backgroundColor: '#363636', borderRadius: 5}}
-            //Selected Item text Style
-            selectedItemTextStyle={{color: '#F8BE13'}}
-            //Picker Option Text Style
-            optionTextStyle={{color: 'white'}}
-            cancelTextStyle={{color: 'white'}}
-            cancelStyle={{padding: 20, backgroundColor: '#363636' }}
-            optionStyle={{padding: 20}}
-            optionContainerStyle={{backgroundColor: '#363636'}}
-            initValueTextStyle={{color: '#F8BE13', padding: 7}}
-            onChange={(option)=>{ setExercise(option.label) }} />  
-        </View>
-        <View style={{width:'100%', alignItems: 'center', marginBottom: 10}}>
-          <Text style={{fontSize: 18, fontWeight: '300', textAlign: 'center', marginBottom: 5, color: activeColors.secondary_text}}>Lifestyle Activity</Text>
-          <ModalSelector
-            data={lifestyledata}
-            initValue={lifestyle}
-            style={{width: '100%', backgroundColor: '#363636', borderRadius: 5}}
-            //Selected Item text Style
-            selectedItemTextStyle={{color: '#F8BE13'}}
-            //Picker Option Text Style
-            optionTextStyle={{color: 'white'}}
-            cancelTextStyle={{color: 'white'}}
-            cancelStyle={{padding: 20, backgroundColor: '#363636' }}
-            optionStyle={{padding: 20}}
-            optionContainerStyle={{backgroundColor: '#363636'}}
-            initValueTextStyle={{color: '#F8BE13', padding: 7}}
-            onChange={(option)=>{ setLifestyle(option.label) }} />  
-        </View>
-        <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
-          <View style={{width: '50%',flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',}}>
-            <Text style={{marginLeft:20, color: activeColors.secondary_text}}>Height</Text>
-              <View style={styles.inputView}>
+      <View style={{flex: 1}}>
 
+        <EditWindowSaveAlertModal />
+
+        
+        <View style={{padding: 10, paddingTop: 0, alignItems: 'center'}}>
+          <View style={{marginTop: 10, marginBottom: 10}}>
+            <Text style={{fontSize: 22, fontWeight: '500', textAlign: 'center', color: activeColors.secondary_text}}>Please fill out the information below</Text>
+            <Text style={{fontSize: 13, fontWeight: '300', textAlign: 'center', color: activeColors.secondary_text}}>This information will not be visible on your public profile</Text>
+          </View>
+          <View style={{flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', marginBottom: 10, marginTop: 10}}>
+            <Bubble_Button 
+              onPress={onMalePress}
+              text='Male'
+              bgColor= {showMale ? '#363636' : '#363636' }
+              fgColor= {showMale ? '#E1AB09' : 'white' }
+              cstyle= {{width: '50%', borderRadius: 5, padding: 25, marginRight: 10}}
+              />
+            <Bubble_Button
+              onPress={onFemalePress}
+              text='Female'
+              bgColor= {showFemale ? '#363636' : '#363636' }
+              fgColor= {showFemale ? '#E1AB09' : 'white' }
+              cstyle= {{width: '50%', borderRadius: 5, padding: 25}}
+              />
+          </View>
+          <View style={{width:'100%', alignItems: 'center', marginBottom: 10}}>
+            <Text style={{fontSize: 18, fontWeight: '300', textAlign: 'center', marginBottom: 5, color: activeColors.secondary_text}}>Goals</Text>
+            <ModalSelector
+              data={goaldata}
+              initValue={goal}
+              style={{width: '100%', backgroundColor: '#363636', borderRadius: 5}}
+              //Selected Item text Style
+              selectedItemTextStyle={{color: '#F8BE13'}}
+              //Picker Option Text Style
+              optionTextStyle={{color: 'white'}}
+              cancelTextStyle={{color: 'white'}}
+              cancelStyle={{padding: 20, backgroundColor: '#363636' }}
+              optionStyle={{padding: 20}}
+              optionContainerStyle={{backgroundColor: '#363636'}}
+              initValueTextStyle={{color: '#F8BE13', padding: 7}}
+              onChange={(option)=>{ setGoal(option.label) }} />  
+          </View>
+          <View style={{width:'100%', alignItems: 'center', marginBottom: 10}}>
+            <Text style={{fontSize: 18, fontWeight: '300', textAlign: 'center', marginBottom: 5, color: activeColors.secondary_text}}>Training/Exercise Activity</Text>
+            <ModalSelector
+              data={exercisedata}
+              initValue={exercise}
+              style={{width: '100%', backgroundColor: '#363636', borderRadius: 5}}
+              //Selected Item text Style
+              selectedItemTextStyle={{color: '#F8BE13'}}
+              //Picker Option Text Style
+              optionTextStyle={{color: 'white'}}
+              cancelTextStyle={{color: 'white'}}
+              cancelStyle={{padding: 20, backgroundColor: '#363636' }}
+              optionStyle={{padding: 20}}
+              optionContainerStyle={{backgroundColor: '#363636'}}
+              initValueTextStyle={{color: '#F8BE13', padding: 7}}
+              onChange={(option)=>{ setExercise(option.label) }} />  
+          </View>
+          <View style={{width:'100%', alignItems: 'center', marginBottom: 10}}>
+            <Text style={{fontSize: 18, fontWeight: '300', textAlign: 'center', marginBottom: 5, color: activeColors.secondary_text}}>Lifestyle Activity</Text>
+            <ModalSelector
+              data={lifestyledata}
+              initValue={lifestyle}
+              style={{width: '100%', backgroundColor: '#363636', borderRadius: 5}}
+              //Selected Item text Style
+              selectedItemTextStyle={{color: '#F8BE13'}}
+              //Picker Option Text Style
+              optionTextStyle={{color: 'white'}}
+              cancelTextStyle={{color: 'white'}}
+              cancelStyle={{padding: 20, backgroundColor: '#363636' }}
+              optionStyle={{padding: 20}}
+              optionContainerStyle={{backgroundColor: '#363636'}}
+              initValueTextStyle={{color: '#F8BE13', padding: 7}}
+              onChange={(option)=>{ setLifestyle(option.label) }} />  
+          </View>
+          <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
+            <View style={{width: '50%',flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',}}>
+              <Text style={{marginLeft:20, color: activeColors.secondary_text}}>Height</Text>
+                <View style={styles.inputView}>
+
+                  <TextInput
+                      name='height'
+                      placeholder="00"
+                      keyboardType='numeric'
+                      maxLength={5}
+                      onEndEditing={handleHeightChange}
+                      defaultValue={height}
+                      style={{textAlign: 'center'}}
+                  />
+
+                </View>
+            </View>
+            <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center',}}>
+              <Pressable
+              style={{marginRight: 10}}
+              onPress={onheightftincmPress}
+              >
+                <Text style={[{fontSize: 15}, heightftincm ? {color: activeColors.secondary_text} : {color: 'black'}]}>ft/in</Text>
+              </Pressable>
+              <Pressable
+              onPress={onheightftincmPress}
+              >
+                <Text style={[{fontSize: 15}, heightftincm ? { color: 'black'} : {color: activeColors.secondary_text}]}>cm</Text>
+              </Pressable>
+            </View>
+          </View>
+          
+          <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
+              <View style={{width: '50%', flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-between', paddingLeft: 20}}>
+                <Text style={{color: activeColors.secondary_text}}>Weight</Text>
+                  <View style={styles.inputView}>
+                  <TextInput
+                      name='weight'
+                      placeholder="00"
+                      keyboardType='numeric'
+                      maxLength={5}
+                      onEndEditing={handleWeightChange}
+                      defaultValue={weight}
+                      style={{textAlign: 'center'}}
+                  />
+
+                  </View>
+              </View>
+              <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center',alignItems: 'center'}}>
+                <Pressable
+                  style={{marginRight: 10}}
+                  onPress={onWeightlbskgsPress}
+                  >
+                    <Text style={[{fontSize: 15}, weightlbskgs ? { color: activeColors.secondary_text} : {color: 'black'}]}>lbs</Text>
+                  </Pressable>
+                  <Pressable
+                  onPress={onWeightlbskgsPress}
+                  >
+                    <Text style={[{fontSize: 15}, weightlbskgs ? { color: 'black'} : {color: activeColors.secondary_text}]}>kgs</Text>
+                </Pressable>
+              </View>
+          </View>
+          <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
+              <View style={{width: '50%', flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-between', paddingLeft: 20}}>
+                <Text style={{color: activeColors.secondary_text}}>Neck</Text>
+                <View style={styles.inputView}>
                 <TextInput
-                    name='height'
-                    placeholder="00"
-                    keyboardType='numeric'
-                    maxLength={5}
-                    onEndEditing={handleHeightChange}
-                    defaultValue={height}
-                    style={{textAlign: 'center'}}
-                />
-
+                      name='neck'
+                      placeholder="00"
+                      keyboardType='numeric'
+                      maxLength={5}
+                      onEndEditing={handleNeckChange}
+                      defaultValue={neck}
+                      style={{textAlign: 'center'}}
+                  />
+                </View>
+              </View>
+              <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center',alignItems: 'center'}}>
+                <Pressable
+                  style={{marginRight: 10}}
+                  onPress={onNecklbskgsPress}
+                  >
+                    <Text style={[{fontSize: 15}, neckincm ? {color: activeColors.secondary_text} : {color: 'black'}]}>in</Text>
+                  </Pressable>
+                  <Pressable
+                  onPress={onNecklbskgsPress}
+                  >
+                    <Text style={[{fontSize: 15}, neckincm ? { color: 'black'} : {color: activeColors.secondary_text}]}>cm</Text>
+                </Pressable>
               </View>
           </View>
-          <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center',}}>
-            <Pressable
-            style={{marginRight: 10}}
-            onPress={onheightftincmPress}
-            >
-              <Text style={[{fontSize: 15}, heightftincm ? {color: activeColors.secondary_text} : {color: 'black'}]}>ft/in</Text>
-            </Pressable>
-            <Pressable
-            onPress={onheightftincmPress}
-            >
-              <Text style={[{fontSize: 15}, heightftincm ? { color: 'black'} : {color: activeColors.secondary_text}]}>cm</Text>
-            </Pressable>
+          <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
+              <View style={{width: '50%', flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-between', paddingLeft: 20}}>
+                <Text style={{color: activeColors.secondary_text}}>Waist</Text>
+                <View style={styles.inputView}>
+                <TextInput
+                      name='waist'
+                      placeholder="00"
+                      keyboardType='numeric'
+                      maxLength={5}
+                      onEndEditing={handleWaistChange}
+                      defaultValue={waist}
+                      style={{textAlign: 'center'}}
+                  />
+                </View>
+              </View>
+              <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center',alignItems: 'center'}}>
+                <Pressable
+                  style={{marginRight: 10}}
+                  onPress={onWaistlbskgsPress}
+                  >
+                    <Text style={[{fontSize: 15}, waistincm ? { color: activeColors.secondary_text} : {color: 'black'}]}>in</Text>
+                  </Pressable>
+                  <Pressable
+                  onPress={onWaistlbskgsPress}
+                  >
+                    <Text style={[{fontSize: 15}, waistincm ? { color: 'black'} : {color: activeColors.secondary_text}]}>cm</Text>
+                </Pressable>
+              </View>
           </View>
-        </View>
-        
-        <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
-            <View style={{width: '50%', flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-between', paddingLeft: 20}}>
-              <Text style={{color: activeColors.secondary_text}}>Weight</Text>
+          <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
+              <View style={{width: '50%', flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-between', paddingLeft: 20}}>
+                <Text style={{color: activeColors.secondary_text}}>Hip</Text>
                 <View style={styles.inputView}>
-                 <TextInput
-                    name='weight'
-                    placeholder="00"
-                    keyboardType='numeric'
-                    maxLength={5}
-                    onEndEditing={handleWeightChange}
-                    defaultValue={weight}
-                    style={{textAlign: 'center'}}
-                />
-
+                    <TextInput
+                      name='hip'
+                      placeholder="00"
+                      keyboardType='numeric'
+                      maxLength={5}
+                      onEndEditing={handleHipChange}
+                      defaultValue={hip}
+                      style={{textAlign: 'center'}}
+                  />
                 </View>
-            </View>
-            <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center',alignItems: 'center'}}>
-              <Pressable
-                style={{marginRight: 10}}
-                onPress={onWeightlbskgsPress}
-                >
-                  <Text style={[{fontSize: 15}, weightlbskgs ? { color: activeColors.secondary_text} : {color: 'black'}]}>lbs</Text>
-                </Pressable>
-                <Pressable
-                onPress={onWeightlbskgsPress}
-                >
-                  <Text style={[{fontSize: 15}, weightlbskgs ? { color: 'black'} : {color: activeColors.secondary_text}]}>kgs</Text>
-              </Pressable>
-            </View>
-        </View>
-        <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
-            <View style={{width: '50%', flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-between', paddingLeft: 20}}>
-              <Text style={{color: activeColors.secondary_text}}>Neck</Text>
-              <View style={styles.inputView}>
-              <TextInput
-                    name='neck'
-                    placeholder="00"
-                    keyboardType='numeric'
-                    maxLength={5}
-                    onEndEditing={handleNeckChange}
-                    defaultValue={neck}
-                    style={{textAlign: 'center'}}
-                />
               </View>
-            </View>
-            <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center',alignItems: 'center'}}>
-              <Pressable
-                style={{marginRight: 10}}
-                onPress={onNecklbskgsPress}
-                >
-                  <Text style={[{fontSize: 15}, neckincm ? {color: activeColors.secondary_text} : {color: 'black'}]}>in</Text>
-                </Pressable>
+              <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center',alignItems: 'center'}}>
                 <Pressable
-                onPress={onNecklbskgsPress}
-                >
-                  <Text style={[{fontSize: 15}, neckincm ? { color: 'black'} : {color: activeColors.secondary_text}]}>cm</Text>
-              </Pressable>
-            </View>
-        </View>
-        <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
-            <View style={{width: '50%', flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-between', paddingLeft: 20}}>
-              <Text style={{color: activeColors.secondary_text}}>Waist</Text>
-              <View style={styles.inputView}>
-              <TextInput
-                    name='waist'
-                    placeholder="00"
-                    keyboardType='numeric'
-                    maxLength={5}
-                    onEndEditing={handleWaistChange}
-                    defaultValue={waist}
-                    style={{textAlign: 'center'}}
-                />
+                  style={{marginRight: 10}}
+                  onPress={onHiplbskgsPress}
+                  >
+                    <Text style={[{fontSize: 15}, hipincm ? { color: activeColors.secondary_text} : {color: 'black'}]}>in</Text>
+                  </Pressable>
+                  <Pressable
+                  onPress={onHiplbskgsPress}
+                  >
+                    <Text style={[{fontSize: 15}, hipincm ? { color: 'black'} : {color: activeColors.secondary_text}]}>cm</Text>
+                </Pressable>
               </View>
-            </View>
-            <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center',alignItems: 'center'}}>
-              <Pressable
-                style={{marginRight: 10}}
-                onPress={onWaistlbskgsPress}
-                >
-                  <Text style={[{fontSize: 15}, waistincm ? { color: activeColors.secondary_text} : {color: 'black'}]}>in</Text>
-                </Pressable>
-                <Pressable
-                onPress={onWaistlbskgsPress}
-                >
-                  <Text style={[{fontSize: 15}, waistincm ? { color: 'black'} : {color: activeColors.secondary_text}]}>cm</Text>
-              </Pressable>
-            </View>
-        </View>
-        <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
-            <View style={{width: '50%', flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-between', paddingLeft: 20}}>
-              <Text style={{color: activeColors.secondary_text}}>Hip</Text>
-              <View style={styles.inputView}>
-                  <TextInput
-                    name='hip'
-                    placeholder="00"
-                    keyboardType='numeric'
-                    maxLength={5}
-                    onEndEditing={handleHipChange}
-                    defaultValue={hip}
-                    style={{textAlign: 'center'}}
-                />
-              </View>
-            </View>
-            <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center',alignItems: 'center'}}>
-              <Pressable
-                style={{marginRight: 10}}
-                onPress={onHiplbskgsPress}
-                >
-                  <Text style={[{fontSize: 15}, hipincm ? { color: activeColors.secondary_text} : {color: 'black'}]}>in</Text>
-                </Pressable>
-                <Pressable
-                onPress={onHiplbskgsPress}
-                >
-                  <Text style={[{fontSize: 15}, hipincm ? { color: 'black'} : {color: activeColors.secondary_text}]}>cm</Text>
-              </Pressable>
-            </View>
-        </View>
-        {/*
-        <View style={{marginTop: 20, marginBottom: 10}}>
-          <Text style={{fontSize: 18, fontWeight: '300', textAlign: 'center', color: activeColors.secondary_text}}>Not sure of the above measurements? Estimate your body fat % below</Text>
-        </View>
-    */}
-        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly', paddingLeft: 20}}>
-              <Text style={{color: activeColors.secondary_text}}>Body Fat Percentage:</Text>
-              {bodyfatpct ? (
-                <Text style={{color: activeColors.secondary_text}}>{bodyfatpct} %</Text>
-              ) : (
-                <Text style={{color: activeColors.secondary_text}}>- %</Text>
-              )
+          </View>
+          {/*
+          <View style={{marginTop: 20, marginBottom: 10}}>
+            <Text style={{fontSize: 18, fontWeight: '300', textAlign: 'center', color: activeColors.secondary_text}}>Not sure of the above measurements? Estimate your body fat % below</Text>
+          </View>
+      */}
+          <View style={{width: '100%', flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly', paddingLeft: 20}}>
+                <Text style={{color: activeColors.secondary_text}}>Body Fat Percentage:</Text>
+                {bodyfatpct ? (
+                  <Text style={{color: activeColors.secondary_text}}>{bodyfatpct} %</Text>
+                ) : (
+                  <Text style={{color: activeColors.secondary_text}}>- %</Text>
+                )
 
-              }
-              
-                {/*
-                <View style={styles.inputView}>
-                  <TextInput
-                    name='bodyfatpct'
-                    placeholder="00"
-                    keyboardType='numeric'
-                    maxLength={5}
-                    onEndEditing={handleBodyFatChange}
-                    defaultValue={bodyfatpct}
-                    style={{textAlign: 'center'}}
-                />
-                </View>
-               */}
-              
+                }
+                
+                  {/*
+                  <View style={styles.inputView}>
+                    <TextInput
+                      name='bodyfatpct'
+                      placeholder="00"
+                      keyboardType='numeric'
+                      maxLength={5}
+                      onEndEditing={handleBodyFatChange}
+                      defaultValue={bodyfatpct}
+                      style={{textAlign: 'center'}}
+                  />
+                  </View>
+                */}
+                
+          </View>
+
+          
         </View>
 
-        
+      
       </View>
-
-    </ScrollView>
-    </View>
-    <View>
-      <Bubble_Button 
-        text='Save'
-        onPress={saveEditWindowPress}
-        cstyle={{width: '100%'}}
-        bgColor='#F8BE13'
-        fgColor='#363636'
-        />
-    </View>
-  </>
+      <View>
+        <Bubble_Button 
+          text='Save'
+          onPress={saveEditWindowPress}
+          cstyle={{width: '100%'}}
+          bgColor='#F8BE13'
+          fgColor='#363636'
+          />
+      </View>
+      </ScrollView>
     )
   }
 
