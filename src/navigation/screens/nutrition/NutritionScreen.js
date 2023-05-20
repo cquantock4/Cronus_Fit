@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable } from 'react-native';
-import { Dimensions, Modal } from 'react-native';
+import { Dimensions, Modal, Button, Linking } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Constants from 'expo-constants'
 
@@ -192,7 +192,33 @@ export default function NutritionScreen( {navigation} ) {
         
       )
     }
-  
+
+
+
+    const PDFScreen = () => {
+
+      const handleOpenPDF = () => {
+        const pdfURL = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+
+        Linking.openURL(pdfURL)
+          .catch((error) => {
+            console.log('Error opening PDF: ', error);
+            // Handle error if the PDF cannot be opened
+          });
+      };
+
+      return (
+        <Button title="Open PDF" onPress={handleOpenPDF} />
+      );
+
+
+    };
+
+
+
+    
+
+    
   
   
     return(
@@ -201,7 +227,8 @@ export default function NutritionScreen( {navigation} ) {
         <View style={{ width: '100%', backgroundColor: activeColors.primary_bg, padding: 5, height: '100%'}}>
             <Text style={{fontSize: 24, padding: 10, paddingBottom: 15, paddingLeft: 5,  fontWeight: '500', color: activeColors.primary_text, borderBottomColor: '#c9c9c9', borderBottomWidth: 1}}>General eating/lifestyle guidelines</Text>
             <ScrollView style={{backgroundColor: activeColors.primary_bg, width: '100%', marginBottom: 20}}>
-                { articles ? (
+                  <PDFScreen />
+                {/* articles ? (
                     articles.map((item, index) => {
   
                         return (
@@ -212,7 +239,8 @@ export default function NutritionScreen( {navigation} ) {
                     ) : (
                         <></>
                     )
-                }
+                    */}
+
                 <Pressable onPress={() =>  onGoToArticles('all')}>
                   <Text style={{alignSelf: 'center', paddingBottom: 10}} >...</Text>
                 </Pressable>

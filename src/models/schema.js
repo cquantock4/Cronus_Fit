@@ -171,6 +171,27 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "generalnotes": {
+                    "name": "generalnotes",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "photo_1": {
+                    "name": "photo_1",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "photo_2": {
+                    "name": "photo_2",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1489,5 +1510,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.4.3",
-    "version": "3ff80a069efbe8cd859afe4f7e6af22d"
+    "version": "1b78df7d458b3371b7252b6773340e32"
 };

@@ -74,6 +74,9 @@ type EagerCheckin = {
   readonly waist?: string | null;
   readonly neck?: string | null;
   readonly userID: string;
+  readonly generalnotes?: string | null;
+  readonly photo_1?: string | null;
+  readonly photo_2?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -95,6 +98,9 @@ type LazyCheckin = {
   readonly waist?: string | null;
   readonly neck?: string | null;
   readonly userID: string;
+  readonly generalnotes?: string | null;
+  readonly photo_1?: string | null;
+  readonly photo_2?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

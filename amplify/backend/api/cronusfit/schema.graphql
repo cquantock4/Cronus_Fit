@@ -29,6 +29,9 @@ type Checkin @model @auth(rules: [{allow: public}]) {
   waist: String
   neck: String
   userID: ID! @index(name: "byUser")
+  generalnotes: String
+  photo_1: String
+  photo_2: String
 }
 
 type FoodEntry @model @auth(rules: [{allow: public}]) {

@@ -93,18 +93,7 @@ export default function NutritionDetails( {navigation} ) {
   const [viewsnacks, setViewSnacks] = useState(false)
   const [snackslist, setSnacksList] = useState([]);
 
-  //Check in
-  const [checkin, setCheckin] = useState(undefined)
-  const [lowweight, setLowWeight] = useState('')
-  const [somewins, setSomeWins] = useState('')
-  const [setbacks, setSetbacks] = useState('')
-  const [barriers, setBarriers] = useState('')
-  //const [sleepquality, setSleepQuality] = useState(undefined)
-  //const [appetite, setAppetite] = useState(undefined)
-  //const [energylevel, setEnergyLevel] = useState(undefined)
-  const [othernotes, setOtherNotes] = useState('')
-  const [checkinwaist, setCheckinWaist] = useState('')
-  const [checkinneck, setCheckinNeck] = useState('')
+  
 
   //Search Filtering
   const [showSearch, setShowSearch] = useState(true);
@@ -2015,6 +2004,20 @@ that would prevent my participation in the program.
     const [currnumberappetite, setCurrNumberAppetite] = useState(5)
     const [currnumberenergy, setCurrNumberEnergy] = useState(5)
 
+    //Check in
+    const [checkin, setCheckin] = useState(undefined)
+    const [lowweight, setLowWeight] = useState('')
+    const [somewins, setSomeWins] = useState('')
+    const [setbacks, setSetbacks] = useState('')
+    const [barriers, setBarriers] = useState('')
+    //const [sleepquality, setSleepQuality] = useState(undefined)
+    //const [appetite, setAppetite] = useState(undefined)
+    //const [energylevel, setEnergyLevel] = useState(undefined)
+    const [othernotes, setOtherNotes] = useState('')
+    const [generalnotes, setGeneralNotes] = useState('')
+    const [checkinwaist, setCheckinWaist] = useState('')
+    const [checkinneck, setCheckinNeck] = useState('')
+
 
     const saveWeeklyCheckinPress = async () => {
 
@@ -2026,16 +2029,17 @@ that would prevent my participation in the program.
       try {
         await DataStore.save(
           new Checkin({
-            lowestweight: parseFloat(lowweight),
+            lowestweight: lowweight,
             somewins: somewins,
             setbacks: setbacks,
             barriers: barriers,
-            sleepquality: currnumbersleep,
-            appetite: currnumberappetite,
-            energylevel: currnumberenergy,
+            sleepquality: currnumbersleep.toString(),
+            appetite: currnumberappetite.toString(),
+            energylevel: currnumberenergy.toString(),
             othernotes: othernotes,
-            waist: checkinwaist,
-            neck: checkinneck,
+            generalnotes: generalnotes,
+            waist: checkinwaist.toString(),
+            neck: checkinneck.toString(),
             userID: user.id
           })
         );
@@ -2092,6 +2096,13 @@ that would prevent my participation in the program.
       setOtherNotes(input)
     };
 
+    function handleGeneralNotesChange(event) {
+      const input =  event.nativeEvent.text;
+        
+      //setAdditionalComments(input)
+      setGeneralNotes(input)
+    };
+
     function handleCheckinWaistChange(event) {
       const input =  event.nativeEvent.text;
         
@@ -2113,7 +2124,7 @@ that would prevent my participation in the program.
       <ScrollView style={{marginBottom: 0}}>
           <View style={{flexDirection: 'column', alignItems: 'center', padding: 20, paddingBottom: 75}}>
 
-            <Text style={{marginBottom: 20, color: activeColors.secondary_text}}>This past week...</Text>
+            <Text style={{marginBottom: 20, fontSize: 20, color: activeColors.secondary_text}}>This past week...</Text>
             {/* Lowest Weight Checkin */}
             <View style={{width: '100%', flexDirection: 'column', alignItems: 'center', marginBottom: 20}}>
               <Text style={{fontSize: 15, fontWeight: '300', textAlign: 'center', marginBottom: 5, color: activeColors.secondary_text}}>What was your lowest weigh-in?</Text>
@@ -2262,6 +2273,22 @@ that would prevent my participation in the program.
                   placeholder="notes"
                   onEndEditing={handleOtherNotesChange}
                   defaultValue={othernotes}
+                  multiline={true}
+                  numberOfLines={3}
+                  maxLength={200}
+                  style={{textAlign: 'center', borderWidth: 1, borderColor: '#BFBFBF',  paddingTop: 3, paddingBottom: 3, paddingLeft: 5, width: 250, marginBottom: 0, borderRadius: 5, color: activeColors.secondary_text}}
+                  placeholderTextColor={activeColors.primary_text}
+              />
+            </View>
+
+            {/* General Other info */}
+            <View style={{flexDirection: 'column', alignItems: 'center', marginBottom: 20}}>
+              <Text style={{fontSize: 15, fontWeight: '300', textAlign: 'center', marginBottom: 10, color: activeColors.secondary_text}}>Are there any other notes that you would like to share?</Text>
+              <TextInput
+                  name='generalnotes'
+                  placeholder="general notes"
+                  onEndEditing={handleGeneralNotesChange}
+                  defaultValue={generalnotes}
                   multiline={true}
                   numberOfLines={3}
                   maxLength={200}
