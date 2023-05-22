@@ -49,7 +49,7 @@ export default function LeaderboardDetails( {navigation} ) {
   const [showcomments, setShowComments] = useState(false);
   const [commenttext, setCommentText] = useState('');
 
-  const [units, setUnits] = useState('lbs');
+  //const [units, setUnits] = useState('lbs');
   const [userid, setUserID] = useState(undefined);
 
   //Theme
@@ -615,7 +615,7 @@ export default function LeaderboardDetails( {navigation} ) {
         //console.log(user[0])
         //Set state variable
         setUserID(user[0].id)
-        setUnits(user[0].units.toLowerCase())
+        //setUnits(user[0].units.toLowerCase())
         //console.log(user[0])
 
       }

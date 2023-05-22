@@ -2,6 +2,11 @@ import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-
 // @ts-ignore
 import { LazyLoading, LazyLoadingDisabled, AsyncItem, AsyncCollection } from "@aws-amplify/datastore";
 
+export enum WorkoutType {
+  FUNCTIONALFITNESS = "FUNCTIONALFITNESS",
+  MILITARYPREP = "MILITARYPREP"
+}
+
 export enum Foodcategory {
   BREAKFAST = "BREAKFAST",
   LUNCH = "LUNCH",
@@ -12,11 +17,6 @@ export enum Foodcategory {
 export enum Themes {
   LIGHT = "LIGHT",
   DARK = "DARK"
-}
-
-export enum Units {
-  KG = "KG",
-  LBS = "LBS"
 }
 
 export enum ResultCategory {
@@ -197,13 +197,9 @@ type EagerUserInfo = {
   readonly i_trainingactivity?: string | null;
   readonly i_lifestyleactivity?: string | null;
   readonly i_height?: string | null;
-  readonly i_height_units?: string | null;
   readonly i_weight?: string | null;
-  readonly i_weight_units?: string | null;
   readonly i_neck?: string | null;
-  readonly i_neck_units?: string | null;
   readonly i_waist?: string | null;
-  readonly i_waist_units?: string | null;
   readonly i_hip?: string | null;
   readonly i_hip_units?: string | null;
   readonly i_body_fat_pct?: string | null;
@@ -225,13 +221,9 @@ type LazyUserInfo = {
   readonly i_trainingactivity?: string | null;
   readonly i_lifestyleactivity?: string | null;
   readonly i_height?: string | null;
-  readonly i_height_units?: string | null;
   readonly i_weight?: string | null;
-  readonly i_weight_units?: string | null;
   readonly i_neck?: string | null;
-  readonly i_neck_units?: string | null;
   readonly i_waist?: string | null;
-  readonly i_waist_units?: string | null;
   readonly i_hip?: string | null;
   readonly i_hip_units?: string | null;
   readonly i_body_fat_pct?: string | null;
@@ -259,6 +251,7 @@ type EagerArticles = {
   readonly date?: string | null;
   readonly video_YN?: boolean | null;
   readonly video_url?: string | null;
+  readonly pdf_url?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -275,6 +268,7 @@ type LazyArticles = {
   readonly date?: string | null;
   readonly video_YN?: boolean | null;
   readonly video_url?: string | null;
+  readonly pdf_url?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -434,10 +428,10 @@ type EagerWorkouts = {
   readonly title?: string | null;
   readonly desc?: string | null;
   readonly date?: string | null;
-  readonly type?: string | null;
   readonly SubWorkouts?: (SubWorkouts | null)[] | null;
   readonly Comments?: (Comments | null)[] | null;
   readonly SavedWorkouts?: (SavedWorkouts | null)[] | null;
+  readonly workout_type?: WorkoutType | keyof typeof WorkoutType | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -451,10 +445,10 @@ type LazyWorkouts = {
   readonly title?: string | null;
   readonly desc?: string | null;
   readonly date?: string | null;
-  readonly type?: string | null;
   readonly SubWorkouts: AsyncCollection<SubWorkouts>;
   readonly Comments: AsyncCollection<Comments>;
   readonly SavedWorkouts: AsyncCollection<SavedWorkouts>;
+  readonly workout_type?: WorkoutType | keyof typeof WorkoutType | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -474,7 +468,6 @@ type EagerUser = {
   readonly name?: string | null;
   readonly email?: string | null;
   readonly sub?: string | null;
-  readonly units?: Units | keyof typeof Units | null;
   readonly nutrition_info?: boolean | null;
   readonly nutrition_coaching?: boolean | null;
   readonly q_experience?: string | null;
@@ -491,6 +484,7 @@ type EagerUser = {
   readonly SavedWorkouts?: (SavedWorkouts | null)[] | null;
   readonly coach_yn?: boolean | null;
   readonly updatedAt?: string | null;
+  readonly default_workout_type?: WorkoutType | keyof typeof WorkoutType | null;
   readonly createdAt?: string | null;
 }
 
@@ -503,7 +497,6 @@ type LazyUser = {
   readonly name?: string | null;
   readonly email?: string | null;
   readonly sub?: string | null;
-  readonly units?: Units | keyof typeof Units | null;
   readonly nutrition_info?: boolean | null;
   readonly nutrition_coaching?: boolean | null;
   readonly q_experience?: string | null;
@@ -520,6 +513,7 @@ type LazyUser = {
   readonly SavedWorkouts: AsyncCollection<SavedWorkouts>;
   readonly coach_yn?: boolean | null;
   readonly updatedAt?: string | null;
+  readonly default_workout_type?: WorkoutType | keyof typeof WorkoutType | null;
   readonly createdAt?: string | null;
 }
 

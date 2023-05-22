@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {  Modal, Pressable, StyleSheet,
+import {  Modal, Pressable, StyleSheet, Image, Linking,
   Text, View, ScrollView, ImageBackground, ActivityIndicator, Dimensions
 } from 'react-native';
 import Constants from 'expo-constants'
@@ -47,6 +47,8 @@ export default function HomeScreen( props, {navigation } ) {
   const [newuser, setNewUser] = useState(false);
   const [name, setName] = useState(undefined);
   const [sub, setAuthSub] = useState(undefined);
+
+  const discordLogo = require('./../../../assets/images/discord-logo-white.png');
 
   //theming
   //const theme = {mode: "dark"}
@@ -208,6 +210,13 @@ export default function HomeScreen( props, {navigation } ) {
   
   }
 
+  const openDiscord = () => {
+    // Replace 'YOUR_DISCORD_SERVER_URL' with the actual URL of your Discord server
+    console.log('pressed')
+    const discordServerURL = 'https://discord.gg/s84FFvkE';
+    Linking.openURL(discordServerURL);
+  };
+
   //Activity loading trigger
   
   if (name === undefined) {
@@ -223,6 +232,8 @@ export default function HomeScreen( props, {navigation } ) {
   {/*<View style={styles.container}></View>*/}
   return(
     <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
+
+     
       <FirstTimeUserWelcome />
       <ImageBackground source={require('../../../assets/images/CenteredBackgroundImage_Large.png')} style={styles.image}>
       
@@ -241,6 +252,7 @@ export default function HomeScreen( props, {navigation } ) {
               </View>
             </View>
 
+           
             {/*
             <Home_Block_Button title_text='Workout of the day' bgColor = 'rgba(36, 39, 41, 0.6)' fgColor='#fff' cstyle={{padding: 40, paddingTop: 50, paddingBottom: 50, marginBottom: 5}}/>
             <Home_Block_Button title_text='My Programs' bgColor = 'rgba(248, 190, 19, 0.6)' fgColor='#000' cstyle={{padding: 40, paddingTop: 50, paddingBottom: 50, marginBottom: 5}}/>
@@ -248,6 +260,12 @@ export default function HomeScreen( props, {navigation } ) {
   */}
           
             </ScrollView>
+
+            <Pressable style={styles.iconContainer} onPress={openDiscord}>
+              <Text style={{color: 'white', fontWeight: '600', fontSize: 16}}>Find us on</Text>
+              <Image source={discordLogo} style={styles.icon} />
+            </Pressable>
+
 
       </ImageBackground>
 
@@ -265,11 +283,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    //justifyContent: 'space-between',
     alignItems: 'center',
     //marginTop: statusBarHeight,
     //backgroundColor: activeColors.primary
   },  
+  icon: {
+    width: '45%',
+    height: 30,
+    marginRight: 8,
+    //tintColor: '#FEE75C', 
+  },
+  link: {
+    color: 'blue',
+    textDecorationLine: 'underline',
+  },
+  iconContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    marginBottom: 50
+  },
   marginTop: {
     marginTop: statusBarHeight,
   },

@@ -277,6 +277,8 @@ export default function WorkoutDetails( {navigation} ) {
             const formattedDate = localIsoDate.substring(0, 9); // remove time part
             
             */
+            
+            
             //let result = new Date(isoDate)
             setNewDate(item.date);
 
@@ -382,6 +384,7 @@ export default function WorkoutDetails( {navigation} ) {
           } else {
   
             res[grouptitle].info.push(info);
+           
             //res[grouptitle].id.push(el.subWorkouts.id);
   
           }
@@ -389,7 +392,9 @@ export default function WorkoutDetails( {navigation} ) {
           
         }, {});
     
-        //console.log('HEre is this full dataset: ' + JSON.stringify(res["A. Functional maybe"]))
+        //console.log('Here she is: ' + JSON.stringify(res))
+
+        res.sort();
     
         setSubWorkouts(res);
     

@@ -38,6 +38,10 @@ export default function ProfileEditScreen( { navigation } ) {
   //Settings State Variables
   const [showMetric, setShowMetric] = useState(true);
   const [showImperial, setShowImperial] = useState(false);
+
+  const [showFunctionalFitness, setShowFunctionalFitness] = useState(true);
+  const [showMilitaryPrep, setShowMilitaryPrep] = useState(false);
+
   const [showLight, setShowLight] = useState(true);
   const [showDark, setShowDark] = useState(false);
 
@@ -90,6 +94,14 @@ export default function ProfileEditScreen( { navigation } ) {
             setShowImperial(true)
           }
           */
+
+          if (dbUser.default_workout_type === 'FUNCTIONALFITNESS') {
+            setShowFunctionalFitness(true)
+            setShowMilitaryPrep(false)
+          } else {
+            setShowFunctionalFitness(false)
+            setShowMilitaryPrep(true)
+          }
 
 
           if (dbUser.theme === 'DARK') {
@@ -186,6 +198,7 @@ export default function ProfileEditScreen( { navigation } ) {
 
         let temp_units = 'LBS'
         let temp_theme = 'LIGHT'
+        let temp_type = 'FUNCTIONALFITNESS'
 
         //if (showMetric) {
           //temp_units = 'KG'
@@ -194,6 +207,10 @@ export default function ProfileEditScreen( { navigation } ) {
         if (showDark) {
           temp_theme = 'DARK'
         } 
+
+        if (showMilitaryPrep) {
+          temp_type = 'MILITARYPREP'
+        }
 
         //Set theme context
         if (temp_theme == "DARK")
@@ -204,6 +221,7 @@ export default function ProfileEditScreen( { navigation } ) {
         const updatedUser = User.copyOf(user, updated => {
           //updated.units = temp_units;
           updated.theme = temp_theme;
+          updated.default_workout_type = temp_type;
        })
   
         DataStore.save(updatedUser)
@@ -224,10 +242,23 @@ export default function ProfileEditScreen( { navigation } ) {
     setShowMetric(true)
     setShowImperial(false)
   };
+
   const onImperialPress = async () => {
     //console.log('Imperial button pressed')
     setShowMetric(false)
     setShowImperial(true)
+  };
+
+  const onFunctionalFitnessPress = async () => {
+    //console.log('Daily button pressed')
+    setShowFunctionalFitness(true)
+    setShowMilitaryPrep(false)
+  };
+  
+  const onMilitaryPrepPress = async () => {
+    //console.log('Imperial button pressed')
+    setShowFunctionalFitness(false)
+    setShowMilitaryPrep(true)
   };
 
   const onLightPress = async () => {
@@ -307,8 +338,28 @@ export default function ProfileEditScreen( { navigation } ) {
             </View>
       */}
 
+          <View style={styles.catcontainer}>
+              <Text style={{marginBottom: 10, fontSize: 18, fontWeight: '400', color: activeColors.primary_text}}>Select default workout path</Text>
+              <View style={styles.catcontainerbuttons}>
+                  <Bubble_Button_Small 
+                    onPress={onFunctionalFitnessPress}
+                    text='Functional Fitness'
+                    bgColor= {showFunctionalFitness ? activeColors.button_active : activeColors.button_inactive }
+                    fgColor= {showFunctionalFitness ? activeColors.accent_text : activeColors.button_inactive_text }
+                    cstyle={{paddingTop: 20, paddingBottom: 20}}
+                  />
+                  <Bubble_Button_Small 
+                    onPress={onMilitaryPrepPress}
+                    text='Military Prep'
+                    bgColor= {showMilitaryPrep ? activeColors.button_active : activeColors.button_inactive }
+                    fgColor= {showMilitaryPrep ? activeColors.accent_text : activeColors.button_inactive_text }
+                    cstyle={{paddingTop: 20, paddingBottom: 20}}
+                  />
+              </View>
+            </View>
+
             <View style={styles.catcontainer}>
-              <Text style={{marginBottom: 10, fontSize: 15, fontWeight: '300', color: activeColors.primary_text}}>Please Select Default Theme</Text>
+              <Text style={{marginBottom: 10, fontSize: 18, fontWeight: '400', color: activeColors.primary_text}}>Please Select Default Theme</Text>
               <View style={styles.catcontainerbuttons}>
                   <Bubble_Button_Small 
                     onPress={onLightPress}

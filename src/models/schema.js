@@ -492,22 +492,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "i_height_units": {
-                    "name": "i_height_units",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "i_weight": {
                     "name": "i_weight",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "i_weight_units": {
-                    "name": "i_weight_units",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -520,22 +506,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "i_neck_units": {
-                    "name": "i_neck_units",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "i_waist": {
                     "name": "i_waist",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "i_waist_units": {
-                    "name": "i_waist_units",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -676,6 +648,13 @@ export const schema = {
                 },
                 "video_url": {
                     "name": "video_url",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "pdf_url": {
+                    "name": "pdf_url",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -1144,13 +1123,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "type": {
-                    "name": "type",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "SubWorkouts": {
                     "name": "SubWorkouts",
                     "isArray": true,
@@ -1198,6 +1170,15 @@ export const schema = {
                             "workoutsID"
                         ]
                     }
+                },
+                "workout_type": {
+                    "name": "workout_type",
+                    "isArray": false,
+                    "type": {
+                        "enum": "WorkoutType"
+                    },
+                    "isRequired": false,
+                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -1269,15 +1250,6 @@ export const schema = {
                     "name": "sub",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "units": {
-                    "name": "units",
-                    "isArray": false,
-                    "type": {
-                        "enum": "Units"
-                    },
                     "isRequired": false,
                     "attributes": []
                 },
@@ -1440,6 +1412,15 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "default_workout_type": {
+                    "name": "default_workout_type",
+                    "isArray": false,
+                    "type": {
+                        "enum": "WorkoutType"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1476,6 +1457,13 @@ export const schema = {
         }
     },
     "enums": {
+        "WorkoutType": {
+            "name": "WorkoutType",
+            "values": [
+                "FUNCTIONALFITNESS",
+                "MILITARYPREP"
+            ]
+        },
         "Foodcategory": {
             "name": "Foodcategory",
             "values": [
@@ -1492,13 +1480,6 @@ export const schema = {
                 "DARK"
             ]
         },
-        "Units": {
-            "name": "Units",
-            "values": [
-                "KG",
-                "LBS"
-            ]
-        },
         "ResultCategory": {
             "name": "ResultCategory",
             "values": [
@@ -1510,5 +1491,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.4.3",
-    "version": "1b78df7d458b3371b7252b6773340e32"
+    "version": "5983208c2cd92fdea6b6e0de0ccde800"
 };

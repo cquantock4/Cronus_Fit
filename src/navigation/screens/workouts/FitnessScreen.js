@@ -3,9 +3,9 @@ import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
 import Constants from 'expo-constants'
 
 import { Amplify, Auth, DataStore, Hub } from 'aws-amplify';
-import { Workouts } from '../../../models';
+import { Workouts, User} from '../../../models';
 
-import { parseISO,  format } from 'date-fns';
+import { parseISO,  format, parse ,compareDesc} from 'date-fns';
 
 //Themes
 import ThemeContext from '../../../components/ThemeContext'
@@ -31,23 +31,60 @@ const WorkoutsCard = ( { navigation }) => {
 
 
     useEffect(() => {
-
-      const sub = DataStore.observeQuery(Workouts).subscribe(({ items }) => {
-        //console.log(items)
-
-        items.sort((a, b) => (a.date > b.date) ? -1 : 1)
-
-        setWorkout(items[0]);
+       const fetchWorkouts = async () => {
         
-      });
+        try {
 
-      return () => {
-        sub.unsubscribe();
-      };
-      
-      
+          const authUser = await Auth.currentAuthenticatedUser({bypassCache: true});
+          //console.log(authUser.attributes.sub)
+          //setAuthSub(authUser.attributes.sub)
+  
+         
+          //Get local User Id for Query
+          const user = await DataStore.query(User, sw =>
+            sw.sub.eq(authUser.attributes.sub)
+          )
+        
+  
+          //Query Matrix Table to find list of ids  
+          if (user[0]) {
 
-     }, []);
+        
+          const sub = DataStore.observeQuery(Workouts).subscribe(({ items }) => {
+
+            const filteredItems = items.filter(
+              (item) =>
+                item.workout_type === user[0].default_workout_type
+            );
+
+            console.log('filtered items: ' + filteredItems)
+        
+            filteredItems.sort((a, b) => {
+              const dateA = parse(a.date, 'MM/dd/yyyy', new Date());
+              const dateB = parse(b.date, 'MM/dd/yyyy', new Date());
+              return compareDesc(dateA, dateB);
+            });
+        
+            setWorkout(filteredItems[0]);
+          });
+        
+          return () => {
+            sub.unsubscribe();
+          };
+
+        }
+
+
+        } catch (error) {
+          console.log('Error: ' + error)
+        }
+
+
+       }
+
+       fetchWorkouts()
+      
+    }, []);
   
 
   return(
@@ -60,7 +97,7 @@ const WorkoutsCard = ( { navigation }) => {
           <ScrollView nestedScrollEnabled = {true}>
           {workout ? (
             <>
-              <Text style={{color: '#969696', marginBottom: 5}}>{workout.type}</Text>
+              <Text style={{color: '#969696', marginBottom: 5}}>{workout.workout_type === 'FUNCTIONALFITNESS' ? ('Functional Fitness') : ('Military Prep')}</Text>
               <Text style={{color: '#969696', marginBottom: 5}}>{workout.date}</Text>
               <Text style={{color: '#969696', lineHeight: 25, marginBottom: 50}}>{workout.desc}</Text>
             </>

@@ -1,3 +1,8 @@
+enum WorkoutType {
+  FUNCTIONALFITNESS
+  MILITARYPREP
+}
+
 type SavedWorkouts @model @auth(rules: [{allow: public}]) {
   id: ID!
   userID: ID! @index(name: "byUser")
@@ -64,13 +69,9 @@ type UserInfo @model @auth(rules: [{allow: public}]) {
   i_trainingactivity: String
   i_lifestyleactivity: String
   i_height: String
-  i_height_units: String
   i_weight: String
-  i_weight_units: String
   i_neck: String
-  i_neck_units: String
   i_waist: String
-  i_waist_units: String
   i_hip: String
   i_hip_units: String
   i_body_fat_pct: String
@@ -85,6 +86,7 @@ type Articles @model @auth(rules: [{allow: public}]) {
   date: String
   video_YN: Boolean
   video_url: String
+  pdf_url: String
 }
 
 type Programs @model @auth(rules: [{allow: public}]) {
@@ -93,11 +95,6 @@ type Programs @model @auth(rules: [{allow: public}]) {
   desc: String
   free: Boolean
   price: String
-}
-
-enum Units {
-  KG
-  LBS
 }
 
 type Comments @model @auth(rules: [{allow: public}]) {
@@ -137,10 +134,10 @@ type Workouts @model @auth(rules: [{allow: public}]) {
   title: String
   desc: String
   date: String
-  type: String
   SubWorkouts: [SubWorkouts] @hasMany(indexName: "byWorkouts", fields: ["id"])
   Comments: [Comments] @hasMany(indexName: "byWorkouts", fields: ["id"])
   SavedWorkouts: [SavedWorkouts] @hasMany(indexName: "byWorkouts", fields: ["id"])
+  workout_type: WorkoutType
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -148,7 +145,6 @@ type User @model @auth(rules: [{allow: public}]) {
   name: String
   email: String
   sub: String
-  units: Units
   nutrition_info: Boolean
   nutrition_coaching: Boolean
   q_experience: String
@@ -165,5 +161,6 @@ type User @model @auth(rules: [{allow: public}]) {
   SavedWorkouts: [SavedWorkouts] @hasMany(indexName: "byUser", fields: ["id"])
   coach_yn: Boolean
   updatedAt: AWSDateTime
+  default_workout_type: WorkoutType
 }
  
