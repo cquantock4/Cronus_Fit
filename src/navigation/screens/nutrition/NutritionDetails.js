@@ -790,15 +790,10 @@ that would prevent my participation in the program.
     const [exercise, setExercise] = useState('Moderate Exercise');
     const [lifestyle, setLifestyle] = useState('Moderate Activity');
     const [height, setHeight] = useState('');
-    const [heightunits, setHeightUnits] = useState('');
     const [weight, setWeight] = useState('');
-    const [weightunits, setWeightUnits] = useState('');
     const [neck, setNeck] = useState('');
-    const [neckunits, setNeckUnits] = useState('');
     const [waist, setWaist] = useState('');
-    const [waistunits, setWaistUnits] = useState('');
     const [hip, setHip] = useState('');
-    const [hiptunits, setHipUnits] = useState('');
     const [bodyfatpct, setBodyFatPct] = useState('');
 
     const [showMale, setShowMale] = useState(undefined);
@@ -923,17 +918,17 @@ that would prevent my participation in the program.
               i_gender: i_gender,
               i_goals: goal,
               i_height: height,
-              i_height_units: '',
+              //i_height_units: '',
               i_hip: hip,
-              i_hip_units: '',
+              //i_hip_units: '',
               i_lifestyleactivity: lifestyle,
               i_neck: neck,
-              i_neck_units: 'sd',
+              //i_neck_units: 'sd',
               i_trainingactivity: exercise,
               i_waist: waist,
-              i_waist_units: '',
+              //i_waist_units: '',
               i_weight: weight,
-              i_weight_units: ''
+              //i_weight_units: ''
               //i_body_fat_pct: bodyfatpct,
             })
           );
@@ -1178,17 +1173,7 @@ that would prevent my participation in the program.
                 </View>
             </View>
             <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center',}}>
-              <Pressable
-              style={{marginRight: 10}}
-              onPress={onheightftincmPress}
-              >
-                <Text style={[{fontSize: 15}, heightftincm ? {color: activeColors.secondary_text} : {color: 'black'}]}>ft/in</Text>
-              </Pressable>
-              <Pressable
-              onPress={onheightftincmPress}
-              >
-                <Text style={[{fontSize: 15}, heightftincm ? { color: 'black'} : {color: activeColors.secondary_text}]}>cm</Text>
-              </Pressable>
+                <Text style={[{fontSize: 15}, heightftincm ? {color: activeColors.secondary_text} : {color: activeColors.secondary_text}]}>ft/in</Text>
             </View>
           </View>
           
@@ -1209,17 +1194,7 @@ that would prevent my participation in the program.
                   </View>
               </View>
               <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center',alignItems: 'center'}}>
-                <Pressable
-                  style={{marginRight: 10}}
-                  onPress={onWeightlbskgsPress}
-                  >
-                    <Text style={[{fontSize: 15}, weightlbskgs ? { color: activeColors.secondary_text} : {color: 'black'}]}>lbs</Text>
-                  </Pressable>
-                  <Pressable
-                  onPress={onWeightlbskgsPress}
-                  >
-                    <Text style={[{fontSize: 15}, weightlbskgs ? { color: 'black'} : {color: activeColors.secondary_text}]}>kgs</Text>
-                </Pressable>
+                    <Text style={[{fontSize: 15}, weightlbskgs ? { color: activeColors.secondary_text} : {color: activeColors.secondary_text}]}>lbs</Text>
               </View>
           </View>
           <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
@@ -1238,17 +1213,7 @@ that would prevent my participation in the program.
                 </View>
               </View>
               <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center',alignItems: 'center'}}>
-                <Pressable
-                  style={{marginRight: 10}}
-                  onPress={onNecklbskgsPress}
-                  >
-                    <Text style={[{fontSize: 15}, neckincm ? {color: activeColors.secondary_text} : {color: 'black'}]}>in</Text>
-                  </Pressable>
-                  <Pressable
-                  onPress={onNecklbskgsPress}
-                  >
-                    <Text style={[{fontSize: 15}, neckincm ? { color: 'black'} : {color: activeColors.secondary_text}]}>cm</Text>
-                </Pressable>
+                    <Text style={[{fontSize: 15}, neckincm ? {color: activeColors.secondary_text} : {color: activeColors.secondary_text}]}>in</Text>
               </View>
           </View>
           <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
@@ -1267,17 +1232,7 @@ that would prevent my participation in the program.
                 </View>
               </View>
               <View style={{width: '50%', flexDirection: 'row', justifyContent: 'center',alignItems: 'center'}}>
-                <Pressable
-                  style={{marginRight: 10}}
-                  onPress={onWaistlbskgsPress}
-                  >
-                    <Text style={[{fontSize: 15}, waistincm ? { color: activeColors.secondary_text} : {color: 'black'}]}>in</Text>
-                  </Pressable>
-                  <Pressable
-                  onPress={onWaistlbskgsPress}
-                  >
-                    <Text style={[{fontSize: 15}, waistincm ? { color: 'black'} : {color: activeColors.secondary_text}]}>cm</Text>
-                </Pressable>
+                    <Text style={[{fontSize: 15}, waistincm ? { color: activeColors.secondary_text} : {color: activeColors.secondary_text}]}>in</Text>
               </View>
           </View>
           <View style={{flexDirection: 'row', width: '100%', marginBottom: 10}}>
@@ -1300,13 +1255,8 @@ that would prevent my participation in the program.
                   style={{marginRight: 10}}
                   onPress={onHiplbskgsPress}
                   >
-                    <Text style={[{fontSize: 15}, hipincm ? { color: activeColors.secondary_text} : {color: 'black'}]}>in</Text>
+                    <Text style={[{fontSize: 15}, hipincm ? { color: activeColors.secondary_text} : {color: activeColors.secondary_text}]}>in</Text>
                   </Pressable>
-                  <Pressable
-                  onPress={onHiplbskgsPress}
-                  >
-                    <Text style={[{fontSize: 15}, hipincm ? { color: 'black'} : {color: activeColors.secondary_text}]}>cm</Text>
-                </Pressable>
               </View>
           </View>
           {/*

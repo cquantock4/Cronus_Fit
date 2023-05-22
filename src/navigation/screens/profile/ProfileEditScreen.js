@@ -81,6 +81,7 @@ export default function ProfileEditScreen( { navigation } ) {
     
           setNavValue(dbUser.country)
 
+          /*
           if (dbUser.units === 'KG') {
             setShowMetric(true)
             setShowImperial(false)
@@ -88,6 +89,8 @@ export default function ProfileEditScreen( { navigation } ) {
             setShowMetric(false)
             setShowImperial(true)
           }
+          */
+
 
           if (dbUser.theme === 'DARK') {
             setShowLight(false)
@@ -184,9 +187,9 @@ export default function ProfileEditScreen( { navigation } ) {
         let temp_units = 'LBS'
         let temp_theme = 'LIGHT'
 
-        if (showMetric) {
-          temp_units = 'KG'
-        } 
+        //if (showMetric) {
+          //temp_units = 'KG'
+        //} 
 
         if (showDark) {
           temp_theme = 'DARK'
@@ -199,7 +202,7 @@ export default function ProfileEditScreen( { navigation } ) {
           theme.dispatch({ type: "LIGHTMODE" });
   
         const updatedUser = User.copyOf(user, updated => {
-          updated.units = temp_units;
+          //updated.units = temp_units;
           updated.theme = temp_theme;
        })
   
@@ -282,6 +285,7 @@ export default function ProfileEditScreen( { navigation } ) {
           
           <View style={{marginBottom: 30}}>
 
+      {/*
             <View style={styles.catcontainer}>
               <Text style={{marginBottom: 10, fontSize: 15, fontWeight: '300', color: activeColors.primary_text}}>Please Select Default Units</Text>
               <View style={styles.catcontainerbuttons}>
@@ -301,6 +305,7 @@ export default function ProfileEditScreen( { navigation } ) {
                   />
               </View>
             </View>
+      */}
 
             <View style={styles.catcontainer}>
               <Text style={{marginBottom: 10, fontSize: 15, fontWeight: '300', color: activeColors.primary_text}}>Please Select Default Theme</Text>

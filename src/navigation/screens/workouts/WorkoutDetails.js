@@ -68,7 +68,7 @@ export default function WorkoutDetails( {navigation} ) {
   const [refresh, setRefresh] = useState(false);
   const [savecategory, setSaveCategory] = useState('');
   const [modalsisiblesave, setModalVisibleSave] = useState(false);
-  const [units, setUnits] = useState('lbs');
+  //const [units, setUnits] = useState('lbs');
 
   //Theme
   const theme = useContext(ThemeContext)
@@ -725,7 +725,7 @@ export default function WorkoutDetails( {navigation} ) {
           if (user[0]) {
             //Set state variable
             setUserID(user[0].id)
-            setUnits(user[0].units.toLowerCase())
+            //setUnits(user[0].units.toLowerCase())
             //console.log(user[0])
   
           }
@@ -1088,7 +1088,7 @@ export default function WorkoutDetails( {navigation} ) {
                       onChange={handleChange}
                   />
                   <Text  style={{color: activeColors.primary_text}}>
-                    {units}
+                    lbs
                   </Text>
                 </View>
       } else if (props.resultcat === 'SETSREPS')  {

@@ -194,32 +194,16 @@ export default function NutritionScreen( {navigation} ) {
     }
 
 
+    const handleOpenPDF = () => {
+      const pdfURL = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
-    const PDFScreen = () => {
-
-      const handleOpenPDF = () => {
-        const pdfURL = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
-
-        Linking.openURL(pdfURL)
-          .catch((error) => {
-            console.log('Error opening PDF: ', error);
-            // Handle error if the PDF cannot be opened
-          });
-      };
-
-      return (
-        <Button title="Open PDF" onPress={handleOpenPDF} />
-      );
-
-
+      Linking.openURL(pdfURL)
+        .catch((error) => {
+          console.log('Error opening PDF: ', error);
+          // Handle error if the PDF cannot be opened
+        });
     };
 
-
-
-    
-
-    
-  
   
     return(
       <View style={styles.displayCardContainerArticles}>
@@ -227,8 +211,9 @@ export default function NutritionScreen( {navigation} ) {
         <View style={{ width: '100%', backgroundColor: activeColors.primary_bg, padding: 5, height: '100%'}}>
             <Text style={{fontSize: 24, padding: 10, paddingBottom: 15, paddingLeft: 5,  fontWeight: '500', color: activeColors.primary_text, borderBottomColor: '#c9c9c9', borderBottomWidth: 1}}>General eating/lifestyle guidelines</Text>
             <ScrollView style={{backgroundColor: activeColors.primary_bg, width: '100%', marginBottom: 20}}>
-                  <PDFScreen />
-                {/* articles ? (
+                  <Button title="Open PDF" onPress={handleOpenPDF} />
+                    {/* 
+                    articles ? (
                     articles.map((item, index) => {
   
                         return (
@@ -335,6 +320,8 @@ export default function NutritionScreen( {navigation} ) {
         <ArticlesCard navigation={navigation} />
       </View>
     );
+
+
 }
 
 const statusBarHeight = Constants.statusBarHeight
