@@ -1,6 +1,6 @@
 import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-amplify/datastore";
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncItem, AsyncCollection } from "@aws-amplify/datastore";
+import { LazyLoading, LazyLoadingDisabled, AsyncCollection, AsyncItem } from "@aws-amplify/datastore";
 
 export enum WorkoutType {
   FUNCTIONALFITNESS = "FUNCTIONALFITNESS",
@@ -26,6 +26,40 @@ export enum ResultCategory {
 }
 
 
+
+type EagerCheckListItems = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<CheckListItems, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly key?: string | null;
+  readonly value?: string | null;
+  readonly frequency?: string | null;
+  readonly users?: (UserCheckListItems | null)[] | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyCheckListItems = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<CheckListItems, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly key?: string | null;
+  readonly value?: string | null;
+  readonly frequency?: string | null;
+  readonly users: AsyncCollection<UserCheckListItems>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type CheckListItems = LazyLoading extends LazyLoadingDisabled ? EagerCheckListItems : LazyCheckListItems
+
+export declare const CheckListItems: (new (init: ModelInit<CheckListItems>) => CheckListItems) & {
+  copyOf(source: CheckListItems, mutator: (draft: MutableModel<CheckListItems>) => MutableModel<CheckListItems> | void): CheckListItems;
+}
 
 type EagerSavedWorkouts = {
   readonly [__modelMeta__]: {
@@ -188,7 +222,7 @@ export declare const Messages: (new (init: ModelInit<Messages>) => Messages) & {
 type EagerUserInfo = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<UserInfo, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
+    readOnlyFields: 'createdAt';
   };
   readonly id: string;
   readonly type?: string | null;
@@ -204,15 +238,19 @@ type EagerUserInfo = {
   readonly i_hip_units?: string | null;
   readonly i_body_fat_pct?: string | null;
   readonly User?: User | null;
-  readonly createdAt?: string | null;
+  readonly goal_protein?: string | null;
+  readonly goal_carb?: string | null;
+  readonly goal_fat?: string | null;
+  readonly goal_fiber?: string | null;
   readonly updatedAt?: string | null;
+  readonly createdAt?: string | null;
   readonly userInfoUserId?: string | null;
 }
 
 type LazyUserInfo = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<UserInfo, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
+    readOnlyFields: 'createdAt';
   };
   readonly id: string;
   readonly type?: string | null;
@@ -228,8 +266,12 @@ type LazyUserInfo = {
   readonly i_hip_units?: string | null;
   readonly i_body_fat_pct?: string | null;
   readonly User: AsyncItem<User | undefined>;
-  readonly createdAt?: string | null;
+  readonly goal_protein?: string | null;
+  readonly goal_carb?: string | null;
+  readonly goal_fat?: string | null;
+  readonly goal_fiber?: string | null;
   readonly updatedAt?: string | null;
+  readonly createdAt?: string | null;
   readonly userInfoUserId?: string | null;
 }
 
@@ -246,12 +288,10 @@ type EagerArticles = {
   };
   readonly id: string;
   readonly title?: string | null;
-  readonly author?: string | null;
   readonly desc?: string | null;
+  readonly storage_path?: string | null;
   readonly date?: string | null;
-  readonly video_YN?: boolean | null;
-  readonly video_url?: string | null;
-  readonly pdf_url?: string | null;
+  readonly data_type?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -263,12 +303,10 @@ type LazyArticles = {
   };
   readonly id: string;
   readonly title?: string | null;
-  readonly author?: string | null;
   readonly desc?: string | null;
+  readonly storage_path?: string | null;
   readonly date?: string | null;
-  readonly video_YN?: boolean | null;
-  readonly video_url?: string | null;
-  readonly pdf_url?: string | null;
+  readonly data_type?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -485,6 +523,7 @@ type EagerUser = {
   readonly coach_yn?: boolean | null;
   readonly updatedAt?: string | null;
   readonly default_workout_type?: WorkoutType | keyof typeof WorkoutType | null;
+  readonly CheckListItems?: (UserCheckListItems | null)[] | null;
   readonly createdAt?: string | null;
 }
 
@@ -514,6 +553,7 @@ type LazyUser = {
   readonly coach_yn?: boolean | null;
   readonly updatedAt?: string | null;
   readonly default_workout_type?: WorkoutType | keyof typeof WorkoutType | null;
+  readonly CheckListItems: AsyncCollection<UserCheckListItems>;
   readonly createdAt?: string | null;
 }
 
@@ -521,4 +561,38 @@ export declare type User = LazyLoading extends LazyLoadingDisabled ? EagerUser :
 
 export declare const User: (new (init: ModelInit<User>) => User) & {
   copyOf(source: User, mutator: (draft: MutableModel<User>) => MutableModel<User> | void): User;
+}
+
+type EagerUserCheckListItems = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UserCheckListItems, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly checkListItemsId?: string | null;
+  readonly userId?: string | null;
+  readonly checkListItems: CheckListItems;
+  readonly user: User;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyUserCheckListItems = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UserCheckListItems, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly checkListItemsId?: string | null;
+  readonly userId?: string | null;
+  readonly checkListItems: AsyncItem<CheckListItems>;
+  readonly user: AsyncItem<User>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type UserCheckListItems = LazyLoading extends LazyLoadingDisabled ? EagerUserCheckListItems : LazyUserCheckListItems
+
+export declare const UserCheckListItems: (new (init: ModelInit<UserCheckListItems>) => UserCheckListItems) & {
+  copyOf(source: UserCheckListItems, mutator: (draft: MutableModel<UserCheckListItems>) => MutableModel<UserCheckListItems> | void): UserCheckListItems;
 }

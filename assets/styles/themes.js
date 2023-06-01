@@ -15,6 +15,7 @@ export const colors = {
     secondary_text: "#000",
     accent_text: "#E1AB09",
     inverted_text: 'white',
+    whiteblack: '#363636',
 
     //buttons
     tab_bar_inactive: "#252a2e",
@@ -23,7 +24,7 @@ export const colors = {
     button_inactive: "#fff",
     
     //status bar
-    status_bar_bg: '#f3f4f6'
+    status_bar_bg: '#f3f4f6',
   },
 
   dark: {
@@ -39,6 +40,7 @@ export const colors = {
     secondary_text: "#E1E1E1",
     accent_text: "#E1AB09",
     inverted_text: '#363636',
+    whiteblack: '#fff',
 
     //buttons
     tab_bar_inactive: "#fff",
@@ -47,7 +49,7 @@ export const colors = {
     button_inactive: "#050605",
 
     //status bar
-    status_bar_bg: '#7a7979'
+    status_bar_bg: '#7a7979',
   },
 
   primary_bg: "#f3f4f6",

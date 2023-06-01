@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl, FlatList, Button, BackHandler} from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl, FlatList, Button, TouchableOpacity} from 'react-native';
 import { TextInput, Pressable, Modal, Dimensions,ActivityIndicator, KeyboardAvoidingView,SafeAreaView} from 'react-native';
 
 import axios from 'axios';
@@ -18,8 +18,8 @@ import {useRoute} from '@react-navigation/native';
 
 import ModalSelector from 'react-native-modal-selector'
 
-import { Auth, DataStore } from 'aws-amplify';
-import { User, UserInfo, Messages, Checkin, FoodEntry} from '../../../models';
+import { Auth, DataStore, Storage } from 'aws-amplify';
+import { Articles, User, UserInfo, Messages, Checkin, FoodEntry} from '../../../models';
 
 //import Header from '../../../ui/components/headers/header'
 //import moment from 'moment';
@@ -33,6 +33,7 @@ import FoodInputField from '../../../components/ui/inputs/foodinputfield';
 //Themes
 import ThemeContext from '../../../components/ThemeContext'
 import {colors} from '../../../../assets/styles/themes'
+import { ar } from 'date-fns/locale';
 
 
 const window = Dimensions.get("window");
@@ -47,8 +48,8 @@ export default function NutritionDetails( {navigation} ) {
   const route = useRoute();
   //const {control, handleSubmit, formState: {errors}} = useForm();
   const tabBarHeight = useBottomTabBarHeight();
-  const[user, setUser] = useState(route?.params?.user_id);
-  const[userinfo, setUserInfo] = useState(null)
+  const [user, setUser] = useState(route?.params?.user_id);
+  const [userinfo, setUserInfo] = useState(null)
   const [users, setUsers] = useState(undefined);
   const[headertitle, setHeaderTitle] = useState('Nutrition');
 
@@ -76,6 +77,10 @@ export default function NutritionDetails( {navigation} ) {
 
   const [showquestionaire, setShowQuestionaire] = useState(false);
   const [showeditwindow, setShowEditWindow] = useState(false);
+
+  const [articles, setArticles] = useState(undefined);
+  const [showarticles, setShowArticles] = useState(false);
+  const [pdfFiles, setPDFFiles] = useState([]);
 
   //Food
   const [viewentryscreen, setViewEntryScreen] = useState(false)
@@ -131,6 +136,7 @@ export default function NutritionDetails( {navigation} ) {
   
   const [date, setNewDate] = useState(new Date());
 
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
 
@@ -159,6 +165,8 @@ export default function NutritionDetails( {navigation} ) {
         }
       } else if (nutritionNav === 'myinfo'){
         setShowEditWindow(true)
+      } else if (nutritionNav === 'articles'){
+        setShowArticles(true)
       }
 
     });
@@ -167,6 +175,34 @@ export default function NutritionDetails( {navigation} ) {
     return unsubscribe;
   }, [navigation]);
 
+
+  useEffect(() => {
+    const articlesub = DataStore.observeQuery(Articles).subscribe(() => loadData());
+    
+    return () => {
+      articlesub.unsubscribe();
+    };
+  }, [navigation]);
+
+  async function loadData() {
+    const articles = await DataStore.query(Articles);
+
+    console.log('here we are: ' + JSON.stringify(articles))
+    setArticles(articles);
+    const storagePaths = articles.map((item) => item.storage_path);
+    listPDFFiles('nutritionpdfs', storagePaths);
+  }
+
+  async function listPDFFiles(folderPath, storagePaths) {
+    try {
+      const fileList = await Storage.list(folderPath, { level: 'public', pageSize: 10 });
+      const pdfFiles = fileList.results.filter((file) => storagePaths.includes(file.key));
+      setPDFFiles(pdfFiles);
+      console.log('PDF files:', pdfFiles);
+    } catch (error) {
+      console.error('Error listing PDF files:', error);
+    }
+  }
   
   useEffect(() => {
     const subscription = Dimensions.addEventListener(
@@ -182,8 +218,6 @@ export default function NutritionDetails( {navigation} ) {
   }, [Dimensions]);
 
    
-
-
   useEffect(() => {
 
     const getCurrentuser = async () => {
@@ -192,8 +226,6 @@ export default function NutritionDetails( {navigation} ) {
         //console.log(curr_user.attributes.sub)
 
         const dbUsers = await DataStore.query(User, c => c.sub.eq(curr_user.attributes.sub));
-
-        console.log('Current User: ' + JSON.stringify(dbUsers))
 
         if (dbUsers.length < 0){
           return;
@@ -212,10 +244,6 @@ export default function NutritionDetails( {navigation} ) {
 
         //const userinfo_query = await DataStore.query(UserInfo, c => c.Users.User.id("eq", dbUser.id));
         //console.log(userinfo_query)
-
-        const testing = (await DataStore.query(UserInfo))
-        //console.log(testing)
-
         
         const userinfo_results = (await DataStore.query(UserInfo)).filter(
           pe => pe.userInfoUserId === dbUser.id
@@ -234,22 +262,36 @@ export default function NutritionDetails( {navigation} ) {
           setUserInfo(userinfo)
           //console.log(userinfo)
           
-
-
         }
 
-        const messages = (await DataStore.query(Messages)).filter(
-          pe => pe.sender_userid === dbUser.id || (pe.receiver_userid === dbUser.id && pe.sender_userid === dbUser.coach_userid)
-        )
+
+        if (dbUser.coach_userid) {
+
+          const coach_user_id = dbUser.coach_userid
+
+          /*
+          const messages = (await DataStore.query(Messages)).filter(
+            pe => pe.sender_userid === dbUser.id || 
+            (pe.receiver_userid === dbUser.id && pe.sender_userid === dbUser.coach_userid)
+          )
+           */
+
+          const allMessages = await DataStore.query(Messages);
+
+          // Filter messages based on user and coach criteria
+          const messages = allMessages.filter(message =>
+            (message.sender_userid === dbUser.id && message.receiver_userid === coach_user_id) ||
+            (message.sender_userid === coach_user_id && message.receiver_userid === dbUser.id)
+          );
+
+      
+          //Sort the list
+          messages.sort((a, b) => (a.createdAt > b.createdAt) ? 1 : -1)
           
-        
-    
-        //Sort the list
-        messages.sort((a, b) => (a.createdAt > b.createdAt) ? 1 : -1)
-        
-        //console.log('Messages: ' + JSON.stringify(messages))
-    
-        setMessages(messages)
+      
+          setMessages(messages)
+
+        }
 
 
         
@@ -259,13 +301,13 @@ export default function NutritionDetails( {navigation} ) {
 
   }, [commentrefresh]);
 
- 
 
   useEffect(() => {
 
     getFoodEntries();
 
   }, [date]);
+
 
   
   /*
@@ -2587,29 +2629,6 @@ that would prevent my participation in the program.
       <Header navigation={navigation} title={currentTitle} navlocation='NutritionScreen' showbackbutton={true} showbuttons={false}/>
     */}
       <View style={{padding: 5, flex: 1}}>
-        {/*!addfood && !weeklycheckin && !messagecoach ? (
-          <View style={{width: '100%'}}>
-
-            <Pressable onPress={weeklyCheckinPress} style={{backgroundColor: 'white', borderBottomColor: '#c9c9c9', borderBottomWidth: 1, padding: 20,  flexDirection:'row', justifyContent: 'space-between'}}>
-              <Text style={{color: '#363636'}}> Weekly Check-in </Text>
-              <Ionicons name='chevron-forward-outline' style={{fontSize: 20}}/>
-            </Pressable>
-        
-            <Pressable onPress={addFoodPress} style={{backgroundColor: 'white', borderBottomColor: '#c9c9c9', borderBottomWidth: 1, padding: 20, flexDirection:'row', justifyContent: 'space-between'}}>
-              <Text style={{color: '#363636'}}> Add Meal/Snack </Text>
-              <Ionicons name='chevron-forward-outline' style={{fontSize: 20}}/>
-            </Pressable>
-
-            <Pressable onPress={messageCoachPress} style={{backgroundColor: 'white', borderBottomColor: '#c9c9c9', borderBottomWidth: 1, padding: 20,  flexDirection:'row', justifyContent: 'space-between'}}>
-              <Text style={{ color: '#363636'}}> Message Coach </Text>
-              <Ionicons name='chevron-forward-outline' style={{fontSize: 20}}/>
-            </Pressable>
-          </View>
-        ) : (
-          <>
-          </>
-        )*/}
-        
 
         {addfood ? (
             <AddMealSnack />
@@ -2642,6 +2661,83 @@ that would prevent my participation in the program.
     )
   }
 
+  const ArticlesWindow= () => {
+    
+    
+
+    const handlePDFPress = async (pdfKey) => {
+
+      try {
+        const url = await Storage.get(pdfKey);
+        Linking.openURL(url)
+          .catch((error) => {
+            console.log('Error opening PDF: ', error);
+            // Handle error if the PDF cannot be opened
+          });
+      } catch (error) {
+        console.log('Error getting file URL: ', error);
+        // Handle error if the file URL cannot be retrieved
+      }
+    };
+
+    const PDFList = ({ pdfFiles, onPDFPress }) => {
+
+      if (pdfFiles.length === 0) {
+        return <Text>No PDF files available.</Text>;
+      }
+
+
+
+      return (
+        <View>
+          {pdfFiles.map((pdf, index) => (
+            <View style={{padding: 10}}>
+              <TouchableOpacity key={pdf.storage_path} onPress={() => onPDFPress(pdf.storage_path)} style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <View style={{justifyContent: 'space-around'}}>
+                  <Text style={{color: activeColors.whiteblack}}>{pdf.title}</Text>
+                  <Text style={{color: activeColors.primary_text}}>{pdf.desc}</Text>
+                </View>
+                <View style={{justifyContent: 'center'}}>
+                  <Ionicons name='cloud-download-outline' style={{fontSize: 24, color: activeColors.primary_text}}/>
+                </View>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      );
+
+            
+      
+
+    };
+
+    return(
+      <View style={{ width: '100%', backgroundColor: activeColors.primary_bg, padding: 5, height: '100%'}}>
+            <Text style={{fontSize: 24, padding: 10, paddingBottom: 15, paddingLeft: 5,  fontWeight: '500', color: activeColors.primary_text, borderBottomColor: '#c9c9c9', borderBottomWidth: 1}}>Articles</Text>
+            <ScrollView style={{backgroundColor: activeColors.primary_bg, width: '100%', marginBottom: 20}}>
+                  {/*<Button title="Open PDF" onPress={handleOpenPDF} />*/}
+
+                  {articles ? (
+                    <PDFList pdfFiles={articles} onPDFPress={handlePDFPress} />
+                    
+                  ) : (
+                    <Text>Loading articles...</Text>
+                  )}
+
+                <Pressable onPress={() =>  onGoToArticles('all')}>
+                  <Text style={{alignSelf: 'center', paddingBottom: 10}} >...</Text>
+                </Pressable>
+            </ScrollView>
+          {/*<Pressable 
+            onPress={() => onGoToArticles('all')}
+            style={{ width: '100%', backgroundColor: activeColors.primary_bg, color: 'white', alignItems: 'center', marginBottom: 10}}
+           >
+            <Text style={{fontWeight: '500', color: activeColors.primary_text}}>Click to view all articles</Text>
+          </Pressable>*/}
+        </View>
+    )
+  }
+
   const Controller = () => {
     
     if (showquestionaire) {
@@ -2662,11 +2758,11 @@ that would prevent my participation in the program.
       */
         return <EditWindow />;
     
+    } else if (showarticles) {
 
-        
-
-      
+      return <ArticlesWindow />;
     } else {
+
       return <HomeScreen />;
     }
   }
@@ -2720,21 +2816,21 @@ that would prevent my participation in the program.
     return(
       
       <SafeAreaView style={[Platform.OS === 'ios' && styles.marginTop, {flex: 1, backgroundColor: activeColors.primary_bg }]}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : ''}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
-        style={{
-          borderRadius: 10,
-          flex: 1,
-          marginHorizontal: 10,
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : ''}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
+          style={{
+            borderRadius: 10,
+            flex: 1,
+            marginHorizontal: 10,
 
-        }}>
-          
-        <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
-          <Header />
-          <Controller />
-        </View>
-      </KeyboardAvoidingView>      
+          }}>
+            
+          <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+            <Header />
+            <Controller />
+          </View>
+        </KeyboardAvoidingView>      
       </SafeAreaView>
     );
 }

@@ -48,7 +48,8 @@ export default function HomeScreen( props, {navigation } ) {
   const [name, setName] = useState(undefined);
   const [sub, setAuthSub] = useState(undefined);
 
-  const discordLogo = require('./../../../assets/images/discord-logo-white.png');
+  const discordLogoWhite = require('./../../../assets/images/discord-logo-white.png');
+  const discordLogoBlack = require('./../../../assets/images/discord-logo-black.png');
 
   //theming
   //const theme = {mode: "dark"}
@@ -262,8 +263,13 @@ export default function HomeScreen( props, {navigation } ) {
             </ScrollView>
 
             <Pressable style={styles.iconContainer} onPress={openDiscord}>
-              <Text style={{color: 'white', fontWeight: '600', fontSize: 16}}>Find us on</Text>
-              <Image source={discordLogo} style={styles.icon} />
+              <Text style={{color: activeColors.primary_text, fontWeight: '600', fontSize: 16}}>Find us on</Text>
+              {darkMode ? ( 
+                <Image source={discordLogoWhite} style={styles.icon} />
+              ) : (
+                <Image source={discordLogoBlack} style={styles.icon} />
+              )}
+              
             </Pressable>
 
 

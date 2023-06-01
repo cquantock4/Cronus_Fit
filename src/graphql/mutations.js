@@ -1,6 +1,102 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const createCheckListItems = /* GraphQL */ `
+  mutation CreateCheckListItems(
+    $input: CreateCheckListItemsInput!
+    $condition: ModelCheckListItemsConditionInput
+  ) {
+    createCheckListItems(input: $input, condition: $condition) {
+      id
+      key
+      value
+      frequency
+      users {
+        items {
+          id
+          checkListItemsId
+          userId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const updateCheckListItems = /* GraphQL */ `
+  mutation UpdateCheckListItems(
+    $input: UpdateCheckListItemsInput!
+    $condition: ModelCheckListItemsConditionInput
+  ) {
+    updateCheckListItems(input: $input, condition: $condition) {
+      id
+      key
+      value
+      frequency
+      users {
+        items {
+          id
+          checkListItemsId
+          userId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const deleteCheckListItems = /* GraphQL */ `
+  mutation DeleteCheckListItems(
+    $input: DeleteCheckListItemsInput!
+    $condition: ModelCheckListItemsConditionInput
+  ) {
+    deleteCheckListItems(input: $input, condition: $condition) {
+      id
+      key
+      value
+      frequency
+      users {
+        items {
+          id
+          checkListItemsId
+          userId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
 export const createSavedWorkouts = /* GraphQL */ `
   mutation CreateSavedWorkouts(
     $input: CreateSavedWorkoutsInput!
@@ -52,78 +148,6 @@ export const deleteSavedWorkouts = /* GraphQL */ `
     }
   }
 `;
-export const createFoodentry = /* GraphQL */ `
-  mutation CreateFoodentry(
-    $input: CreateFoodentryInput!
-    $condition: ModelFoodentryConditionInput
-  ) {
-    createFoodentry(input: $input, condition: $condition) {
-      id
-      date
-      category
-      userID
-      desc
-      protein
-      carbs
-      fat
-      fiber
-      calories
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const updateFoodentry = /* GraphQL */ `
-  mutation UpdateFoodentry(
-    $input: UpdateFoodentryInput!
-    $condition: ModelFoodentryConditionInput
-  ) {
-    updateFoodentry(input: $input, condition: $condition) {
-      id
-      date
-      category
-      userID
-      desc
-      protein
-      carbs
-      fat
-      fiber
-      calories
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const deleteFoodentry = /* GraphQL */ `
-  mutation DeleteFoodentry(
-    $input: DeleteFoodentryInput!
-    $condition: ModelFoodentryConditionInput
-  ) {
-    deleteFoodentry(input: $input, condition: $condition) {
-      id
-      date
-      category
-      userID
-      desc
-      protein
-      carbs
-      fat
-      fiber
-      calories
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
 export const createCheckin = /* GraphQL */ `
   mutation CreateCheckin(
     $input: CreateCheckinInput!
@@ -142,6 +166,9 @@ export const createCheckin = /* GraphQL */ `
       waist
       neck
       userID
+      generalnotes
+      photo_1
+      photo_2
       createdAt
       updatedAt
       _version
@@ -168,6 +195,9 @@ export const updateCheckin = /* GraphQL */ `
       waist
       neck
       userID
+      generalnotes
+      photo_1
+      photo_2
       createdAt
       updatedAt
       _version
@@ -193,6 +223,81 @@ export const deleteCheckin = /* GraphQL */ `
       othernotes
       waist
       neck
+      userID
+      generalnotes
+      photo_1
+      photo_2
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const createFoodEntry = /* GraphQL */ `
+  mutation CreateFoodEntry(
+    $input: CreateFoodEntryInput!
+    $condition: ModelFoodEntryConditionInput
+  ) {
+    createFoodEntry(input: $input, condition: $condition) {
+      id
+      date
+      category
+      desc
+      protein
+      carbs
+      fat
+      fiber
+      calories
+      userID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const updateFoodEntry = /* GraphQL */ `
+  mutation UpdateFoodEntry(
+    $input: UpdateFoodEntryInput!
+    $condition: ModelFoodEntryConditionInput
+  ) {
+    updateFoodEntry(input: $input, condition: $condition) {
+      id
+      date
+      category
+      desc
+      protein
+      carbs
+      fat
+      fiber
+      calories
+      userID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const deleteFoodEntry = /* GraphQL */ `
+  mutation DeleteFoodEntry(
+    $input: DeleteFoodEntryInput!
+    $condition: ModelFoodEntryConditionInput
+  ) {
+    deleteFoodEntry(input: $input, condition: $condition) {
+      id
+      date
+      category
+      desc
+      protein
+      carbs
+      fat
+      fiber
+      calories
       userID
       createdAt
       updatedAt
@@ -269,28 +374,26 @@ export const createUserInfo = /* GraphQL */ `
       i_trainingactivity
       i_lifestyleactivity
       i_height
-      i_height_units
       i_weight
-      i_weight_units
       i_neck
-      i_neck_units
       i_waist
-      i_waist_units
       i_hip
       i_hip_units
       i_body_fat_pct
-      Users {
+      User {
         id
         name
         email
         sub
-        units
         nutrition_info
         nutrition_coaching
         q_experience
         q_medical
-        q_calsmacros
+        q_calcmacros
         coach_userid
+        theme
+        image
+        image_uri
         Checkins {
           nextToken
           startedAt
@@ -299,9 +402,6 @@ export const createUserInfo = /* GraphQL */ `
           nextToken
           startedAt
         }
-        theme
-        image
-        image_uri
         WorkoutResults {
           nextToken
           startedAt
@@ -314,18 +414,28 @@ export const createUserInfo = /* GraphQL */ `
           nextToken
           startedAt
         }
-        createdAt
+        coach_yn
         updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+        }
+        createdAt
         _version
         _deleted
         _lastChangedAt
       }
-      createdAt
+      goal_protein
+      goal_carb
+      goal_fat
+      goal_fiber
       updatedAt
+      createdAt
       _version
       _deleted
       _lastChangedAt
-      userInfoUsersId
+      userInfoUserId
     }
   }
 `;
@@ -342,28 +452,26 @@ export const updateUserInfo = /* GraphQL */ `
       i_trainingactivity
       i_lifestyleactivity
       i_height
-      i_height_units
       i_weight
-      i_weight_units
       i_neck
-      i_neck_units
       i_waist
-      i_waist_units
       i_hip
       i_hip_units
       i_body_fat_pct
-      Users {
+      User {
         id
         name
         email
         sub
-        units
         nutrition_info
         nutrition_coaching
         q_experience
         q_medical
-        q_calsmacros
+        q_calcmacros
         coach_userid
+        theme
+        image
+        image_uri
         Checkins {
           nextToken
           startedAt
@@ -372,9 +480,6 @@ export const updateUserInfo = /* GraphQL */ `
           nextToken
           startedAt
         }
-        theme
-        image
-        image_uri
         WorkoutResults {
           nextToken
           startedAt
@@ -387,18 +492,28 @@ export const updateUserInfo = /* GraphQL */ `
           nextToken
           startedAt
         }
-        createdAt
+        coach_yn
         updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+        }
+        createdAt
         _version
         _deleted
         _lastChangedAt
       }
-      createdAt
+      goal_protein
+      goal_carb
+      goal_fat
+      goal_fiber
       updatedAt
+      createdAt
       _version
       _deleted
       _lastChangedAt
-      userInfoUsersId
+      userInfoUserId
     }
   }
 `;
@@ -415,28 +530,26 @@ export const deleteUserInfo = /* GraphQL */ `
       i_trainingactivity
       i_lifestyleactivity
       i_height
-      i_height_units
       i_weight
-      i_weight_units
       i_neck
-      i_neck_units
       i_waist
-      i_waist_units
       i_hip
       i_hip_units
       i_body_fat_pct
-      Users {
+      User {
         id
         name
         email
         sub
-        units
         nutrition_info
         nutrition_coaching
         q_experience
         q_medical
-        q_calsmacros
+        q_calcmacros
         coach_userid
+        theme
+        image
+        image_uri
         Checkins {
           nextToken
           startedAt
@@ -445,9 +558,6 @@ export const deleteUserInfo = /* GraphQL */ `
           nextToken
           startedAt
         }
-        theme
-        image
-        image_uri
         WorkoutResults {
           nextToken
           startedAt
@@ -460,18 +570,28 @@ export const deleteUserInfo = /* GraphQL */ `
           nextToken
           startedAt
         }
-        createdAt
+        coach_yn
         updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+        }
+        createdAt
         _version
         _deleted
         _lastChangedAt
       }
-      createdAt
+      goal_protein
+      goal_carb
+      goal_fat
+      goal_fiber
       updatedAt
+      createdAt
       _version
       _deleted
       _lastChangedAt
-      userInfoUsersId
+      userInfoUserId
     }
   }
 `;
@@ -483,11 +603,10 @@ export const createArticles = /* GraphQL */ `
     createArticles(input: $input, condition: $condition) {
       id
       title
-      author
       desc
+      storage_path
       date
-      video_YN
-      video_url
+      data_type
       createdAt
       updatedAt
       _version
@@ -504,11 +623,10 @@ export const updateArticles = /* GraphQL */ `
     updateArticles(input: $input, condition: $condition) {
       id
       title
-      author
       desc
+      storage_path
       date
-      video_YN
-      video_url
+      data_type
       createdAt
       updatedAt
       _version
@@ -525,11 +643,10 @@ export const deleteArticles = /* GraphQL */ `
     deleteArticles(input: $input, condition: $condition) {
       id
       title
-      author
       desc
+      storage_path
       date
-      video_YN
-      video_url
+      data_type
       createdAt
       updatedAt
       _version
@@ -603,8 +720,8 @@ export const createComments = /* GraphQL */ `
     createComments(input: $input, condition: $condition) {
       id
       comment
-      workoutsID
       userID
+      workoutsID
       createdAt
       updatedAt
       _version
@@ -621,8 +738,8 @@ export const updateComments = /* GraphQL */ `
     updateComments(input: $input, condition: $condition) {
       id
       comment
-      workoutsID
       userID
+      workoutsID
       createdAt
       updatedAt
       _version
@@ -639,62 +756,8 @@ export const deleteComments = /* GraphQL */ `
     deleteComments(input: $input, condition: $condition) {
       id
       comment
+      userID
       workoutsID
-      userID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const createWorkoutResults = /* GraphQL */ `
-  mutation CreateWorkoutResults(
-    $input: CreateWorkoutResultsInput!
-    $condition: ModelWorkoutResultsConditionInput
-  ) {
-    createWorkoutResults(input: $input, condition: $condition) {
-      id
-      value
-      subworkoutsID
-      userID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const updateWorkoutResults = /* GraphQL */ `
-  mutation UpdateWorkoutResults(
-    $input: UpdateWorkoutResultsInput!
-    $condition: ModelWorkoutResultsConditionInput
-  ) {
-    updateWorkoutResults(input: $input, condition: $condition) {
-      id
-      value
-      subworkoutsID
-      userID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const deleteWorkoutResults = /* GraphQL */ `
-  mutation DeleteWorkoutResults(
-    $input: DeleteWorkoutResultsInput!
-    $condition: ModelWorkoutResultsConditionInput
-  ) {
-    deleteWorkoutResults(input: $input, condition: $condition) {
-      id
-      value
-      subworkoutsID
-      userID
       createdAt
       updatedAt
       _version
@@ -714,12 +777,15 @@ export const createSubWorkouts = /* GraphQL */ `
       grouptitle
       desc
       resultcategory
-      workoutresultss {
+      required
+      timecap
+      workoutsID
+      WorkoutResults {
         items {
           id
           value
-          subworkoutsID
           userID
+          subworkoutsID
           createdAt
           updatedAt
           _version
@@ -729,9 +795,6 @@ export const createSubWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
-      required
-      timecap
-      workoutsID
       createdAt
       updatedAt
       _version
@@ -751,12 +814,15 @@ export const updateSubWorkouts = /* GraphQL */ `
       grouptitle
       desc
       resultcategory
-      workoutresultss {
+      required
+      timecap
+      workoutsID
+      WorkoutResults {
         items {
           id
           value
-          subworkoutsID
           userID
+          subworkoutsID
           createdAt
           updatedAt
           _version
@@ -766,9 +832,6 @@ export const updateSubWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
-      required
-      timecap
-      workoutsID
       createdAt
       updatedAt
       _version
@@ -788,12 +851,15 @@ export const deleteSubWorkouts = /* GraphQL */ `
       grouptitle
       desc
       resultcategory
-      workoutresultss {
+      required
+      timecap
+      workoutsID
+      WorkoutResults {
         items {
           id
           value
-          subworkoutsID
           userID
+          subworkoutsID
           createdAt
           updatedAt
           _version
@@ -803,9 +869,60 @@ export const deleteSubWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
-      required
-      timecap
-      workoutsID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const createWorkoutResults = /* GraphQL */ `
+  mutation CreateWorkoutResults(
+    $input: CreateWorkoutResultsInput!
+    $condition: ModelWorkoutResultsConditionInput
+  ) {
+    createWorkoutResults(input: $input, condition: $condition) {
+      id
+      value
+      userID
+      subworkoutsID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const updateWorkoutResults = /* GraphQL */ `
+  mutation UpdateWorkoutResults(
+    $input: UpdateWorkoutResultsInput!
+    $condition: ModelWorkoutResultsConditionInput
+  ) {
+    updateWorkoutResults(input: $input, condition: $condition) {
+      id
+      value
+      userID
+      subworkoutsID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const deleteWorkoutResults = /* GraphQL */ `
+  mutation DeleteWorkoutResults(
+    $input: DeleteWorkoutResultsInput!
+    $condition: ModelWorkoutResultsConditionInput
+  ) {
+    deleteWorkoutResults(input: $input, condition: $condition) {
+      id
+      value
+      userID
+      subworkoutsID
       createdAt
       updatedAt
       _version
@@ -824,7 +941,6 @@ export const createWorkouts = /* GraphQL */ `
       title
       desc
       date
-      type
       SubWorkouts {
         items {
           id
@@ -844,12 +960,12 @@ export const createWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
-      commentss {
+      Comments {
         items {
           id
           comment
-          workoutsID
           userID
+          workoutsID
           createdAt
           updatedAt
           _version
@@ -873,6 +989,7 @@ export const createWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
+      workout_type
       createdAt
       updatedAt
       _version
@@ -891,7 +1008,6 @@ export const updateWorkouts = /* GraphQL */ `
       title
       desc
       date
-      type
       SubWorkouts {
         items {
           id
@@ -911,12 +1027,12 @@ export const updateWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
-      commentss {
+      Comments {
         items {
           id
           comment
-          workoutsID
           userID
+          workoutsID
           createdAt
           updatedAt
           _version
@@ -940,6 +1056,7 @@ export const updateWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
+      workout_type
       createdAt
       updatedAt
       _version
@@ -958,7 +1075,6 @@ export const deleteWorkouts = /* GraphQL */ `
       title
       desc
       date
-      type
       SubWorkouts {
         items {
           id
@@ -978,12 +1094,12 @@ export const deleteWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
-      commentss {
+      Comments {
         items {
           id
           comment
-          workoutsID
           userID
+          workoutsID
           createdAt
           updatedAt
           _version
@@ -1007,6 +1123,7 @@ export const deleteWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
+      workout_type
       createdAt
       updatedAt
       _version
@@ -1025,13 +1142,15 @@ export const createUser = /* GraphQL */ `
       name
       email
       sub
-      units
       nutrition_info
       nutrition_coaching
       q_experience
       q_medical
-      q_calsmacros
+      q_calcmacros
       coach_userid
+      theme
+      image
+      image_uri
       Checkins {
         items {
           id
@@ -1046,6 +1165,9 @@ export const createUser = /* GraphQL */ `
           waist
           neck
           userID
+          generalnotes
+          photo_1
+          photo_2
           createdAt
           updatedAt
           _version
@@ -1060,13 +1182,13 @@ export const createUser = /* GraphQL */ `
           id
           date
           category
-          userID
           desc
           protein
           carbs
           fat
           fiber
           calories
+          userID
           createdAt
           updatedAt
           _version
@@ -1076,15 +1198,12 @@ export const createUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      theme
-      image
-      image_uri
       WorkoutResults {
         items {
           id
           value
-          subworkoutsID
           userID
+          subworkoutsID
           createdAt
           updatedAt
           _version
@@ -1098,8 +1217,8 @@ export const createUser = /* GraphQL */ `
         items {
           id
           comment
-          workoutsID
           userID
+          workoutsID
           createdAt
           updatedAt
           _version
@@ -1123,8 +1242,24 @@ export const createUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      createdAt
+      coach_yn
       updatedAt
+      default_workout_type
+      CheckListItems {
+        items {
+          id
+          checkListItemsId
+          userId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
       _version
       _deleted
       _lastChangedAt
@@ -1141,13 +1276,15 @@ export const updateUser = /* GraphQL */ `
       name
       email
       sub
-      units
       nutrition_info
       nutrition_coaching
       q_experience
       q_medical
-      q_calsmacros
+      q_calcmacros
       coach_userid
+      theme
+      image
+      image_uri
       Checkins {
         items {
           id
@@ -1162,6 +1299,9 @@ export const updateUser = /* GraphQL */ `
           waist
           neck
           userID
+          generalnotes
+          photo_1
+          photo_2
           createdAt
           updatedAt
           _version
@@ -1176,13 +1316,13 @@ export const updateUser = /* GraphQL */ `
           id
           date
           category
-          userID
           desc
           protein
           carbs
           fat
           fiber
           calories
+          userID
           createdAt
           updatedAt
           _version
@@ -1192,15 +1332,12 @@ export const updateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      theme
-      image
-      image_uri
       WorkoutResults {
         items {
           id
           value
-          subworkoutsID
           userID
+          subworkoutsID
           createdAt
           updatedAt
           _version
@@ -1214,8 +1351,8 @@ export const updateUser = /* GraphQL */ `
         items {
           id
           comment
-          workoutsID
           userID
+          workoutsID
           createdAt
           updatedAt
           _version
@@ -1239,8 +1376,24 @@ export const updateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      createdAt
+      coach_yn
       updatedAt
+      default_workout_type
+      CheckListItems {
+        items {
+          id
+          checkListItemsId
+          userId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
       _version
       _deleted
       _lastChangedAt
@@ -1257,13 +1410,15 @@ export const deleteUser = /* GraphQL */ `
       name
       email
       sub
-      units
       nutrition_info
       nutrition_coaching
       q_experience
       q_medical
-      q_calsmacros
+      q_calcmacros
       coach_userid
+      theme
+      image
+      image_uri
       Checkins {
         items {
           id
@@ -1278,6 +1433,9 @@ export const deleteUser = /* GraphQL */ `
           waist
           neck
           userID
+          generalnotes
+          photo_1
+          photo_2
           createdAt
           updatedAt
           _version
@@ -1292,13 +1450,13 @@ export const deleteUser = /* GraphQL */ `
           id
           date
           category
-          userID
           desc
           protein
           carbs
           fat
           fiber
           calories
+          userID
           createdAt
           updatedAt
           _version
@@ -1308,15 +1466,12 @@ export const deleteUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      theme
-      image
-      image_uri
       WorkoutResults {
         items {
           id
           value
-          subworkoutsID
           userID
+          subworkoutsID
           createdAt
           updatedAt
           _version
@@ -1330,8 +1485,8 @@ export const deleteUser = /* GraphQL */ `
         items {
           id
           comment
-          workoutsID
           userID
+          workoutsID
           createdAt
           updatedAt
           _version
@@ -1354,6 +1509,256 @@ export const deleteUser = /* GraphQL */ `
         }
         nextToken
         startedAt
+      }
+      coach_yn
+      updatedAt
+      default_workout_type
+      CheckListItems {
+        items {
+          id
+          checkListItemsId
+          userId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const createUserCheckListItems = /* GraphQL */ `
+  mutation CreateUserCheckListItems(
+    $input: CreateUserCheckListItemsInput!
+    $condition: ModelUserCheckListItemsConditionInput
+  ) {
+    createUserCheckListItems(input: $input, condition: $condition) {
+      id
+      checkListItemsId
+      userId
+      checkListItems {
+        id
+        key
+        value
+        frequency
+        users {
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      user {
+        id
+        name
+        email
+        sub
+        nutrition_info
+        nutrition_coaching
+        q_experience
+        q_medical
+        q_calcmacros
+        coach_userid
+        theme
+        image
+        image_uri
+        Checkins {
+          nextToken
+          startedAt
+        }
+        Foodentries {
+          nextToken
+          startedAt
+        }
+        WorkoutResults {
+          nextToken
+          startedAt
+        }
+        Comments {
+          nextToken
+          startedAt
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+        }
+        coach_yn
+        updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+        }
+        createdAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const updateUserCheckListItems = /* GraphQL */ `
+  mutation UpdateUserCheckListItems(
+    $input: UpdateUserCheckListItemsInput!
+    $condition: ModelUserCheckListItemsConditionInput
+  ) {
+    updateUserCheckListItems(input: $input, condition: $condition) {
+      id
+      checkListItemsId
+      userId
+      checkListItems {
+        id
+        key
+        value
+        frequency
+        users {
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      user {
+        id
+        name
+        email
+        sub
+        nutrition_info
+        nutrition_coaching
+        q_experience
+        q_medical
+        q_calcmacros
+        coach_userid
+        theme
+        image
+        image_uri
+        Checkins {
+          nextToken
+          startedAt
+        }
+        Foodentries {
+          nextToken
+          startedAt
+        }
+        WorkoutResults {
+          nextToken
+          startedAt
+        }
+        Comments {
+          nextToken
+          startedAt
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+        }
+        coach_yn
+        updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+        }
+        createdAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const deleteUserCheckListItems = /* GraphQL */ `
+  mutation DeleteUserCheckListItems(
+    $input: DeleteUserCheckListItemsInput!
+    $condition: ModelUserCheckListItemsConditionInput
+  ) {
+    deleteUserCheckListItems(input: $input, condition: $condition) {
+      id
+      checkListItemsId
+      userId
+      checkListItems {
+        id
+        key
+        value
+        frequency
+        users {
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      user {
+        id
+        name
+        email
+        sub
+        nutrition_info
+        nutrition_coaching
+        q_experience
+        q_medical
+        q_calcmacros
+        coach_userid
+        theme
+        image
+        image_uri
+        Checkins {
+          nextToken
+          startedAt
+        }
+        Foodentries {
+          nextToken
+          startedAt
+        }
+        WorkoutResults {
+          nextToken
+          startedAt
+        }
+        Comments {
+          nextToken
+          startedAt
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+        }
+        coach_yn
+        updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+        }
+        createdAt
+        _version
+        _deleted
+        _lastChangedAt
       }
       createdAt
       updatedAt

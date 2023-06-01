@@ -1,3 +1,11 @@
+type CheckListItems @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  key: String
+  value: String
+  frequency: String
+  users: [User] @manyToMany(relationName: "UserCheckListItems")
+}
+
 enum WorkoutType {
   FUNCTIONALFITNESS
   MILITARYPREP
@@ -76,17 +84,20 @@ type UserInfo @model @auth(rules: [{allow: public}]) {
   i_hip_units: String
   i_body_fat_pct: String
   User: User @hasOne
+  goal_protein: String
+  goal_carb: String
+  goal_fat: String
+  goal_fiber: String
+  updatedAt: AWSDateTime
 }
 
 type Articles @model @auth(rules: [{allow: public}]) {
   id: ID!
   title: String
-  author: String
   desc: String
+  storage_path: String
   date: String
-  video_YN: Boolean
-  video_url: String
-  pdf_url: String
+  data_type: String
 }
 
 type Programs @model @auth(rules: [{allow: public}]) {
@@ -162,5 +173,6 @@ type User @model @auth(rules: [{allow: public}]) {
   coach_yn: Boolean
   updatedAt: AWSDateTime
   default_workout_type: WorkoutType
+  CheckListItems: [CheckListItems] @manyToMany(relationName: "UserCheckListItems")
 }
  
