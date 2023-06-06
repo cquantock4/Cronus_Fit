@@ -177,7 +177,8 @@ export default function NutritionScreen( {navigation} ) {
     }
 
   }
-  
+
+  /*
   const ArticlesCard = ({ navigation }) => {
   
     
@@ -341,7 +342,6 @@ export default function NutritionScreen( {navigation} ) {
         <View style={{ width: '100%', backgroundColor: activeColors.primary_bg, padding: 5, height: '100%'}}>
             <Text style={{fontSize: 24, padding: 10, paddingBottom: 15, paddingLeft: 5,  fontWeight: '500', color: activeColors.primary_text, borderBottomColor: '#c9c9c9', borderBottomWidth: 1}}>General eating/lifestyle guidelines</Text>
             <ScrollView style={{backgroundColor: activeColors.primary_bg, width: '100%', marginBottom: 20}}>
-                  {/*<Button title="Open PDF" onPress={handleOpenPDF} />*/}
 
                   {articles.length === 0 ? (
                     <Text>Loading articles...</Text>
@@ -353,29 +353,20 @@ export default function NutritionScreen( {navigation} ) {
                   <Text style={{alignSelf: 'center', paddingBottom: 10}} >...</Text>
                 </Pressable>
             </ScrollView>
-          {/*<Pressable 
-            onPress={() => onGoToArticles('all')}
-            style={{ width: '100%', backgroundColor: activeColors.primary_bg, color: 'white', alignItems: 'center', marginBottom: 10}}
-           >
-            <Text style={{fontWeight: '500', color: activeColors.primary_text}}>Click to view all articles</Text>
-          </Pressable>*/}
         </View>
       </View>
     );
   
   }
+  */
   
   const NutritionCard = ({ navigation }) => {
-    
-  
     
     const onGoToCoachingPress = async () => {
       navigation.navigate('NutritionDetails', {value: 'newcoaching'})
       //console.log('Go to Nutrition Details Screen')
     };
   
-  
-    
   
     return(
       <View style={styles.displayCardContainer}>
@@ -629,7 +620,9 @@ export default function NutritionScreen( {navigation} ) {
           )}
         </View>  
 
-        {(nutritioncoaching === undefined) ? (
+        <Dashboard />
+
+        {/*(nutritioncoaching === undefined) ? (
           <View>
             <Text style={{color: activeColors.primary_text}}>Loading...</Text>
             <ArticlesCard navigation={navigation} />
@@ -639,7 +632,7 @@ export default function NutritionScreen( {navigation} ) {
           <Dashboard />
           
 
-        )}
+        )*/}
          
 
        

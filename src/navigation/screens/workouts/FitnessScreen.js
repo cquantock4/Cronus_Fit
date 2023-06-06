@@ -50,22 +50,22 @@ const WorkoutsCard = ( { navigation }) => {
           if (user[0]) {
 
         
-          const sub = DataStore.observeQuery(Workouts).subscribe(({ items }) => {
+            const sub = DataStore.observeQuery(Workouts).subscribe(({ items }) => {
 
-            const filteredItems = items.filter(
-              (item) =>
-                item.workout_type === user[0].default_workout_type
-            );
+              const filteredItems = items.filter(
+                (item) =>
+                  item.workout_type === user[0].default_workout_type
+              );
 
-            console.log('filtered items: ' + filteredItems)
-        
-            filteredItems.sort((a, b) => {
-              const dateA = parse(a.date, 'MM/dd/yyyy', new Date());
-              const dateB = parse(b.date, 'MM/dd/yyyy', new Date());
-              return compareDesc(dateA, dateB);
-            });
-        
-            setWorkout(filteredItems[0]);
+              console.log('filtered items: ' + filteredItems)
+          
+              filteredItems.sort((a, b) => {
+                const dateA = parse(a.date, 'MM/dd/yyyy', new Date());
+                const dateB = parse(b.date, 'MM/dd/yyyy', new Date());
+                return compareDesc(dateA, dateB);
+              });
+          
+              setWorkout(filteredItems[0]);
           });
         
           return () => {
@@ -108,12 +108,12 @@ const WorkoutsCard = ( { navigation }) => {
           </ScrollView>
       </View>
       <Pressable 
-        onPress={() => navigation.navigate('WorkoutDetails', {value: 'Functional Fitness'})}
+        onPress={() => navigation.navigate('WorkoutDetails', {value: 'FUNCTIONALFITNESS'})}
         style={{width: '100%', borderColor: '#c9c9c9' , borderBottomWidth: 1,  justifyContent: 'flex-end', color: '#363636', alignItems: 'flex-start', padding: 5, marginTop: 25}}>
         <Text style={{fontSize: 25, fontWeight: '500', color: activeColors.primary_text}}>Functional Fitness</Text>
       </Pressable>
       <Pressable 
-        onPress={() => navigation.navigate('WorkoutDetails', {value: 'Military Prep'})}
+        onPress={() => navigation.navigate('WorkoutDetails', {value: 'MILITARYPREP'})}
         style={{width: '100%', borderColor: '#c9c9c9' , borderBottomWidth: 1, justifyContent: 'flex-end', color: '#363636', alignItems: 'flex-start', padding: 5, marginTop: 25}}>
         <Text style={{fontSize: 25, fontWeight: '500', color: activeColors.primary_text}}>Military Prep</Text>
       </Pressable>

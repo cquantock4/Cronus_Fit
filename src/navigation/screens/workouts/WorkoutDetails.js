@@ -153,7 +153,6 @@ export default function WorkoutDetails( {navigation} ) {
       return format(date, formatString);
     }
 
-
     const searchFilterFunction = (text) => {
       // Check if searched text is not blank
       if (text) {
@@ -576,17 +575,19 @@ export default function WorkoutDetails( {navigation} ) {
 
         const formatted_date = isValidDate(date)
 
-       //console.log(formatted_date)
+       console.log('fdate: ' + formatted_date)
 
         //const formatted_date = format(new Date(date), 'MM/dd/yyyy').toString()
 
         // Find today's workout
         const currworkout = (await DataStore.query(Workouts)).filter(
-          pe => pe.date === formatted_date && pe.type === workoutcategory.toString()
+          pe => pe.date === formatted_date && pe.workout_type === workoutcategory.toString()
         )
 
+        console.log(workoutcategory)
 
-        //console.log('reloading here: ' + date + ' ' + JSON.stringify(currworkout))
+
+        console.log('reloading here: ' + date + ' ' + JSON.stringify(currworkout))
 
     
         if (currworkout.length === 0) {
@@ -999,10 +1000,13 @@ export default function WorkoutDetails( {navigation} ) {
         } else {
           isoDateString = date
         }
+
+        console.log(isoDateString)
         
         let result = new Date(isoDateString)
 
-        //console.log('res: ' +result)
+        console.log('res: ' +result)
+        //console.log('res formatted: ' + result.setDate(result.getDate() + 1 ))
 
         setNewDate(result.setDate(result.getDate() + 1 ));
       };
@@ -1022,6 +1026,9 @@ export default function WorkoutDetails( {navigation} ) {
         }
 
         let result = new Date(isoDateString)
+
+        console.log('res: ' +result)
+        //console.log('res formatted: ' + result.setDate(result.getDate() + 1 ))
 
         setNewDate(result.setDate(result.getDate() - 1 ));
       };

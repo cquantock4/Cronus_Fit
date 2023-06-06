@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl, FlatList, Button, TouchableOpacity} from 'react-native';
-import { TextInput, Pressable, Modal, Dimensions,ActivityIndicator, KeyboardAvoidingView,SafeAreaView} from 'react-native';
+import { TextInput, Pressable, Modal, Dimensions,ActivityIndicator, KeyboardAvoidingView,SafeAreaView, Linking} from 'react-native';
 
 import axios from 'axios';
 import Constants from 'expo-constants'
@@ -2691,7 +2691,7 @@ that would prevent my participation in the program.
       return (
         <View>
           {pdfFiles.map((pdf, index) => (
-            <View style={{padding: 10}}>
+            <View key={index} style={{padding: 10}}>
               <TouchableOpacity key={pdf.storage_path} onPress={() => onPDFPress(pdf.storage_path)} style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                 <View style={{justifyContent: 'space-around'}}>
                   <Text style={{color: activeColors.whiteblack}}>{pdf.title}</Text>
