@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, Image, Alert, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert, ScrollView, Button } from 'react-native';
 import { TextInput, Pressable, Switch, Input, FlatList, KeyboardAvoidingView} from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Bubble_Button, Bubble_Button_Small, Button_Link } from '../../../components/ui/buttons'
 import { BubbleMultiLine, BubbleTextInput } from '../../../components/ui/inputs'
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import Modal from 'react-native-modal';
 import {MaskedTextInput, MaskedText} from 'react-native-mask-text';
@@ -1069,20 +1070,127 @@ export default function WorkoutDetails( {navigation} ) {
       
     
     }
+
+    const TimeInput = (props) => {
+      const [hours, setHours] = useState('');
+      const [minutes, setMinutes] = useState('');
+      const [seconds, setSeconds] = useState('');
+    
+      useEffect(() => {
+        // Split the initial value into hours, minutes, and seconds
+        if (props.value.includes(':')) {
+          const [hour, minute, second] = props.value.split(':');
+          setHours(hour);
+          setMinutes(minute);
+          setSeconds(second);
+        }
+      }, []);
+    
+      const handleHoursChange = (text) => {
+        const formattedValue = text.padStart(2, '0');
+        setHours(formattedValue);
+        props.onChange(`${formattedValue}:${minutes}:${seconds}`);
+      };
+    
+      const handleMinutesChange = (text) => {
+        const formattedValue = text.padStart(2, '0');
+        setMinutes(formattedValue);
+        props.onChange(`${hours}:${formattedValue}:${seconds}`);
+      };
+    
+      const handleSecondsChange = (text) => {
+        const formattedValue = text.padStart(2, '0');
+        setSeconds(formattedValue);
+        props.onChange(`${hours}:${minutes}:${formattedValue}`);
+      };
+    
+      return (
+        <View style={{ flexDirection: 'row' }}>
+          <TextInput
+            style={{ flex: 1 }}
+            placeholder="HH"
+            keyboardType="numeric"
+            maxLength={2}
+            value={hours}
+            onChangeText={handleHoursChange}
+          />
+          <TextInput
+            style={{ flex: 1 }}
+            placeholder="MM"
+            keyboardType="numeric"
+            maxLength={2}
+            value={minutes}
+            onChangeText={handleMinutesChange}
+          />
+          <TextInput
+            style={{ flex: 1 }}
+            placeholder="SS"
+            keyboardType="numeric"
+            maxLength={2}
+            value={seconds}
+            onChangeText={handleSecondsChange}
+          />
+        </View>
+      );
+    };
     
 
     const WorkoutItemInput = (props) => {
 
-      const timermask = '00:00:00';
 
-      function handleChange(event) {
-        // Here, we invoke the callback with the new value
-        
-        props.onChange(event.nativeEvent.text);
-        
-        
-        //(event.nativeEvent.text)
+      let setsreps1 = ''
+      let setsreps2 = ''
+
+      if (props.resultcat === 'SETSREPS') {
+        if (props.value.includes('-')) {
+          const [part1, part2] = props.value.split('-');
+          setsreps1 = part1
+          setsreps2 = part2
+        }
       }
+
+      let temp_hour =  ''
+      let temp_min = ''
+      let temp_sec = ''
+
+      if (props.resultcat === 'TIME') {
+        if (props.value.includes(':')) {
+          const [hour, minute, second] = props.value.split(':');
+          temp_hour = hour
+          temp_min = minute
+          temp_sec = second
+        }
+      }
+
+      /*
+      const formatTime = (inputTime) => {
+        const digitsOnly = inputTime.replace(/\D/g, '');
+        const paddedTime = digitsOnly.padStart(6, '0');
+        const formattedTime = `${paddedTime.slice(0, 2)}:${paddedTime.slice(2, 4)}:${paddedTime.slice(4, 6)}`;
+        return formattedTime;
+      };
+      */
+
+      function handleChange(name, event) {
+        // Here, we invoke the callback with the new value
+        let text = event.nativeEvent.text
+        let formatted_text = text
+
+        if ( name === 'hour' || name == 'min' || 'sec' ) {
+          if (name === 'hour' ) {
+            formatted_text = text + ':' + temp_min + ':' + temp_sec
+          } else if (name === 'min') {
+            formatted_text = temp_hour + ':' + text + ':' + temp_sec
+          } else if (name === 'sec') {
+            formatted_text = temp_hour + ':' + temp_min + ':' + text
+        }
+
+       }
+
+        props.onChange(formatted_text, name);
+        
+      }
+
 
       let input
 
@@ -1097,59 +1205,91 @@ export default function WorkoutDetails( {navigation} ) {
                       maxLength={5}
                       value={props.value}
                       style={{fontSize: 20, width: 100, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 0.5, color: activeColors.primary_text,  borderBottomColor: activeColors.primary_text}}
-                      onChange={handleChange}
+                      onChange={(event) => handleChange('weight', event)}
                   />
                   <Text  style={{color: activeColors.primary_text}}>
                     lbs
                   </Text>
                 </View>
       } else if (props.resultcat === 'SETSREPS')  {
+
+        //Split props.value on the - symbol
+
+
         input = <View style={{width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 5}}>
-                  {/*}
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <TextInput
-                      name='setsreps'
+                      name='setsreps1'
                       placeholder='Sets'
+                      placeholderTextColor={activeColors.primary_text}
                       control={control} 
                       keyboardType='numeric'
                       maxLength={3}
-                      value={props.value}
-                      style={{width: '30%', textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: 'black'}}
-                      onChange={handleChange}
+                      value={setsreps1}
+                      style={{width: 50, marginBottom: 10, fontSize: 20, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: activeColors.primary_text, color: activeColors.primary_text}}
+                      onChange={(event) => handleChange('setsreps1', event)}
                     />
-                  */}
-                  <MaskedTextInput
-                      mask="99-99"
-                      name='setsreps'
-                      value={props.value}
+                    <Text style={{color: activeColors.primary_text}}> Sets</Text>
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <TextInput
+                      name='setsreps2'
+                      placeholder='Reps'
+                      placeholderTextColor={activeColors.primary_text}
+                      control={control} 
                       keyboardType='numeric'
-                      onChange={handleChange}
-                      onChangeText={(text, rawText) => {
-                        console.log(text);
-                        console.log(rawText);
-                      }}
-                      style={{width: 100, marginBottom: 10, fontSize: 20, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: activeColors.primary_text, color: activeColors.primary_text}}
+                      maxLength={3}
+                      value={setsreps2}
+                      style={{width: 50, marginBottom: 10, fontSize: 20, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: activeColors.primary_text, color: activeColors.primary_text}}
+                      onChange={(event) => handleChange('setsreps2', event)}
                     />
-                    <Text style={{color: activeColors.primary_text}}>
-                      rounds/sets - reps
-                    </Text>
+                    <Text style={{color: activeColors.primary_text}}> Reps</Text>
+                  </View>
                 </View>
       } else if (props.resultcat === 'TIME')  {
-        input = <View style={{flexDirection: 'row',}}>
-                    <MaskedTextInput
-                      autoFocus
-                      mask="9:99:99"
-                      placeholder= "0:00:00"
-                      placeholderTextColor={activeColors.primary_text}
-                      name='time'
+        input = <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          {/*}
+                    <TextInput
+                      style={{ borderWidth: 1, borderColor: 'gray', padding: 10, color: activeColors.primary_text }}
                       value={props.value}
-                      keyboardType='numeric'
-                      onChange={handleChange}
-                      onChangeText={(text, rawText) => {
-                        console.log(text);
-                        console.log(rawText);
-                      }}
-                      style={{fontSize: 20, width: '100%', textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: activeColors.primary_text, color: activeColors.primary_text}}
+                      name='time'
+                      onChange={(event) => handleChange('time', event)}
+                      placeholder="Time (hh:mm:ss)"
+                      placeholderTextColor={activeColors.primary_text}
+      />*/} 
+
+
+                    <TextInput
+                      style={[styles.timeInput, {color: activeColors.primary_text, borderColor: activeColors.inverted_bg}]}
+                      placeholder="hour"
+                      placeholderTextColor={activeColors.primary_text}
+                      keyboardType="numeric"
+                      maxLength={2}
+                      value={temp_hour}
+                      onChange={(event) => handleChange('hour', event)}
                     />
+                    <Text style={{color: activeColors.primary_text, fontWeight: '600'}}> : </Text>
+                    <TextInput
+                      style={[styles.timeInput, {color: activeColors.primary_text, borderColor: activeColors.inverted_bg}]}
+                      placeholder="min"
+                      placeholderTextColor={activeColors.primary_text}
+                      keyboardType="numeric"
+                      maxLength={2}
+                      value={temp_min}
+                      onChange={(event) => handleChange('min', event)}
+                    />
+                    <Text style={{color: activeColors.primary_text, fontWeight: '600'}}> : </Text>
+                    <TextInput
+                      style={[styles.timeInput, {color: activeColors.primary_text, borderColor: activeColors.inverted_bg}]}
+                      placeholder="sec"
+                      placeholderTextColor={activeColors.primary_text}
+                      keyboardType="numeric"
+                      maxLength={2}
+                      value={temp_sec}
+                      onChange={(event) => handleChange('sec', event)}
+                    />
+
+                    {/* Use getTimeValue() to get the formatted time value */}
                   </View>
       }
 
@@ -1194,6 +1334,50 @@ export default function WorkoutDetails( {navigation} ) {
             let curr_subworkoutid = subworkouts[category].info[i].id
             let curr_workoutid = workoutresults.id
             let curr_value = subworkouts[category].info[i].value
+            let res_category = subworkouts[category].info[i].resultcat
+
+            console.log(curr_value)
+
+            if (res_category === 'TIME'){
+
+
+              //const [hour, min, sec] = curr_value.includes(':')
+
+              let [hour, min, sec] = [null, null, null];
+
+              if (curr_value.includes(':')) {
+                const parts = curr_value.split(':');
+
+                // Handle different cases based on the number of parts
+                if (parts.length === 3) {
+                  [hour, min, sec] = parts;
+                } else if (parts.length === 2) {
+                  [min, sec] = parts;
+                } else if (parts.length === 1) {
+                  // Check if the single value is an hour, minute, or second
+                  const value = parts[0];
+                  if (value.length === 2) {
+                    // Assume it's an hour
+                    hour = value;
+                  } else if (value.length === 1) {
+                    // Assume it's a minute or second
+                    min = value;
+                  }
+                }
+              }
+
+              //console.log(min)
+
+              let temp_hour = (hour === '') ? '00' : hour.padStart(2, '0')
+              let temp_min = (min === '') ? '00' : min.padStart(2, '0')
+              let temp_sec = (sec === '') ? '00' : sec.padStart(2, '0')
+
+              curr_value = temp_hour + ':' + temp_min + ':' + temp_sec
+
+
+            }
+
+
 
             //console.log('archive: ' + JSON.stringify(subworkout_archive))
 
@@ -1228,7 +1412,9 @@ export default function WorkoutDetails( {navigation} ) {
     
                   let curr_result_obj = workout_result[0];
                   //console.log(curr_result_obj)
-    
+                  
+
+                  console.log('updating with this value: ' + curr_value)
     
                   //Update the row
                   const updatedWorkoutResult = WorkoutResults.copyOf(curr_result_obj, updated => {
@@ -1332,14 +1518,66 @@ export default function WorkoutDetails( {navigation} ) {
                   */
                   
 
-                  function handleChange(newValue) {
+                  function handleChange(newValue, name) {
 
-                    //console.log('changed to: ' + newValue)
-            
-                    let newArr = [...values]; // copying the old array's data
+                    console.log('changed to: ' + newValue)
+                    console.log('id ' + name)
 
-                    newArr[index].value = newValue; // replace e.target.value with whatever you want to change it to
-            
+                    let newArr = [...values]; 
+
+                    const inputValue = newArr[index].value;
+
+                    let finalresult = newValue
+
+                    if ( name === 'setsreps1' || name == 'setsreps2' ) {
+                      let joinedValue = ''
+
+                      if (inputValue.includes('-')) {
+                        // Splitting the input value into two parts
+                        const [part1, part2] = inputValue.split('-');
+                        console.log(part1); // Output: 12
+                        console.log(part2); // Output: 34
+
+                        if ( name === 'setsreps1' ) {
+                          joinedValue = `${newValue}-${part2}`;
+                        } else if ( name === 'setsreps2' ) {
+                          joinedValue = `${part1}-${newValue}`;
+                        }
+                      } else {
+
+                        if ( name === 'setsreps1' ) {
+                          joinedValue = `${newValue}-${'0'}`;
+                        } else if ( name === 'setsreps2' ) {
+                          joinedValue = `${'0'}-${newValue}`;
+                        }
+                      }
+
+                      finalresult = joinedValue
+
+                   }
+
+                   /*
+                   if ( name === 'hour' || name == 'min' || 'sec' ) {
+                      if (name === 'hour' ) {
+                        finalresult = text + ':' + temp_min + ':' + temp_sec
+                      } else if (name === 'min') {
+                        finalresult = temp_hour + ':' + text + ':' + temp_sec
+                      } else if (name === 'sec') {
+                        finalresult = temp_hour + ':' + temp_min + ':' + text
+                    }
+
+                   }
+                   */
+
+
+                    // Joining the two parts back together
+                    
+                    console.log(finalresult); // Output: 12-34
+
+                    newArr[index].value = finalresult; // replace e.target.value with whatever you want to change it to
+                    
+                    console.log(newArr)
+
                     setValues(newArr);
                   }
 
@@ -1698,8 +1936,6 @@ export default function WorkoutDetails( {navigation} ) {
           </Modal>
 
           
-          
-
           {showSearch ? (
               <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
                 <TextInput
@@ -2016,5 +2252,11 @@ const styles = StyleSheet.create({
     color: 'black',
     marginBottom: 10,
   },
+
+  timeInput: {
+    flex: 1, 
+    textAlign: 'center', 
+    borderWidth: 1
+  }
   
 });
