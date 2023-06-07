@@ -731,6 +731,8 @@ export const onCreateSubWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
+      numitems
+      order
       createdAt
       updatedAt
       _version
@@ -767,6 +769,8 @@ export const onUpdateSubWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
+      numitems
+      order
       createdAt
       updatedAt
       _version
@@ -803,6 +807,8 @@ export const onDeleteSubWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
+      numitems
+      order
       createdAt
       updatedAt
       _version
@@ -879,6 +885,8 @@ export const onCreateWorkouts = /* GraphQL */ `
           required
           timecap
           workoutsID
+          numitems
+          order
           createdAt
           updatedAt
           _version
@@ -943,6 +951,8 @@ export const onUpdateWorkouts = /* GraphQL */ `
           required
           timecap
           workoutsID
+          numitems
+          order
           createdAt
           updatedAt
           _version
@@ -1007,6 +1017,8 @@ export const onDeleteWorkouts = /* GraphQL */ `
           required
           timecap
           workoutsID
+          numitems
+          order
           createdAt
           updatedAt
           _version

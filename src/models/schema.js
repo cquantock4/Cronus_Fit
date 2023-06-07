@@ -1052,6 +1052,20 @@ export const schema = {
                         ]
                     }
                 },
+                "numitems": {
+                    "name": "numitems",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "order": {
+                    "name": "order",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1707,5 +1721,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.4.3",
-    "version": "a474f8dcf9b4c0bc7fc1715a69994215"
+    "version": "815f9b78ce41d723e2aa93eefdc2d027"
 };

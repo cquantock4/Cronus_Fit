@@ -131,6 +131,8 @@ type SubWorkouts @model @auth(rules: [{allow: public}]) {
   timecap: String
   workoutsID: ID! @index(name: "byWorkouts")
   WorkoutResults: [WorkoutResults] @hasMany(indexName: "bySubWorkouts", fields: ["id"])
+  numitems: Int
+  order: Int
 }
 
 type WorkoutResults @model @auth(rules: [{allow: public}]) {

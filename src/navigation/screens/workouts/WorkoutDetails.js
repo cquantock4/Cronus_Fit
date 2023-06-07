@@ -31,7 +31,7 @@ export default function WorkoutDetails( {navigation} ) {
   const route = useRoute();
   const {control, handleSubmit, formState: {errors}} = useForm();
   const [workoutcategory, setWorkoutCategory] = useState(route?.params?.value);
-
+  const [workoutslog, setWorkoutsLog] = useState(false);
 
   //Modal
   const [modalVisible, setModalVisible] = useState(false);
@@ -354,14 +354,16 @@ export default function WorkoutDetails( {navigation} ) {
     
         arr.subWorkouts.forEach(el => {
 
-            //console.log(el.id)
+            console.log(el)
 
             
-            let curr_result_val
+            let curr_result_val, curr_order
             if (el.workoutresults[0]) {
                 curr_result_val = el.workoutresults[0].value
+                curr_order = el.order
             } else {
                 curr_result_val = ''
+                curr_order = 0
             }
             
         
@@ -374,7 +376,7 @@ export default function WorkoutDetails( {navigation} ) {
             res.push(grouptitle);
           }
     
-          let info = {id: el.id, workoutid: currworkoutid, desc: el.desc, resultcat: el.resultcategory, value: curr_result_val}
+          let info = {id: el.id, workoutid: currworkoutid, desc: el.desc, resultcat: el.resultcategory, value: curr_result_val, order: curr_order}
     
           if(typeof res[grouptitle] === "undefined") {
 
@@ -392,7 +394,7 @@ export default function WorkoutDetails( {navigation} ) {
           
         }, {});
     
-        //console.log('Here she is: ' + JSON.stringify(res))
+        console.log('Here she is: ' + JSON.stringify(res))
 
         res.sort();
     
@@ -403,157 +405,6 @@ export default function WorkoutDetails( {navigation} ) {
     
       }
       
-      
-/*
-    const groupAndAdd = (arr, arr_workoutresults) => {
-      const res = [];
-
-      arr.forEach(el => {
-        
-        const curr_workoutresults = arr_workoutresults.filter(
-          pe => pe.subWorkouts.id === el.subWorkouts.id
-        )
-
-        //console.log(curr_workoutresults)
-        
-        let curr_result_val
-        if (curr_workoutresults != 0) {
-          curr_result_val = curr_workoutresults[0].workoutResults.value
-        } else {
-          curr_result_val = ''
-        }
-    
-
-        let grouptitle = el.subWorkouts.group + '. ' + el.subWorkouts.grouptitle
-
-        //Checking to see if group exists
-        //If not exists, add group to array
-        if (!res[grouptitle]) {
-          res.push(grouptitle);
-        }
-
-        let info = {id: el.subWorkouts.id, desc: el.subWorkouts.desc, resultcat: el.subWorkouts.resultcategory, value: curr_result_val}
-
-        if(typeof res[grouptitle] === "undefined") {
-
-
-          res[grouptitle] = {group: grouptitle, info: [info]}
-
-        } else {
-
-          res[grouptitle].info.push(info);
-          //res[grouptitle].id.push(el.subWorkouts.id);
-
-        }
-        
-        
-      }, {});
-
-      //console.log(res["A. Accessory"])
-
-      setSubWorkouts(res)
-
-
-    }
-    
-*/
-   
-
-    async function getTodaysWorkout(){
-        
-        //console.log(workoutcategory)
-
-        //console.log('here we are')
-
-        try{
-            //const currworkout = await DataStore.query(Workouts , (w) =>
-             //w.date.eq(format(new Date(date), 'MM/dd/yyyy').toString()).type("eq", workoutcategory.toString()))
-
-            const currworkout = (await DataStore.query(Workouts)).filter(
-                pe => pe.date === format(new Date(date), 'MM/dd/yyyy').toString() && pe.type === workoutcategory.toString()
-            )
-
-            //console.log(currworkout)
-
-            //console.log(currworkout)
-
-             //Set the current Workout
-            if (currworkout.length != 0) {
-
-                //console.log(userid + ' ' + currworkout[0].id)
-
-                //check to see if user workout exixts
-                const savedworkout = (await DataStore.query(UserWorkouts)).filter(
-                    pe => pe.user.id === userid && pe.workouts.id === currworkout[0].id
-                )
-
-                //Get Workout Info
-                const subworkouts = (await DataStore.query(WorkoutsSubWorkouts)).filter(
-                    pe => pe.workouts.id === currworkout[0].id
-                )
-                
-
-                const subworkoutslookup = (await DataStore.query(SubWorkouts))
-
-                setSubWorkoutArchive(subworkoutslookup)
-
-                //userid
-                //console.log(userworkouts)
-
-                //Fix Issue somewhere here when savibg workout results. 
-
-                //console.log(userid)
-
-                //Get Workout Results
-                const workoutresults = (await DataStore.query(WorkoutResultsSubWorkouts)).filter(
-                pe => pe.workoutResults.userid === userid
-                )
-
-                //console.log('loaded: ' + workoutresults)
-
-                setWorkoutResults(workoutresults)
-
-
-                if (subworkouts) {
-                    groupAndAdd(subworkouts, workoutresults)
-                }
-
-                //setSubWorkouts(groupAndAdd(subworkouts))
-
-                //console.log(subworkouts)
-                
-            
-                //console.log('this: ' + savedworkout.length)
-
-                if (savedworkout.length === 1) {
-                    setIsEnabledIndSave(true)
-                } else {
-                    setIsEnabledIndSave(false)
-                }
-
-                //console.log(currworkout[0])
-
-                setWorkout(currworkout[0]);
-    
-                //Set the current workout ID
-                setWorkoutID(currworkout[0].id)
-            } else {
-                setWorkout(undefined)
-                setWorkoutID(undefined)
-                setIsEnabledIndSave(false)
-                setSubWorkouts(undefined)
-            }
-
-            //console.log(userid)
-            //console.log(workoutid)
-        } catch (e) {
-            console.log(e)
-        }
-        
-           
-        
-  
-      }
 
     async function getWorkoutAndSubWorkouts() {
 
@@ -629,6 +480,8 @@ export default function WorkoutDetails( {navigation} ) {
           s.workoutsID.eq(currworkout[0].id)
         );
 
+        console.log('here are the subworkouts: ' + JSON.stringify(subWorkouts))
+
         setSubWorkoutArchive(subWorkouts)
 
         // Get all the subworkoutIds
@@ -676,6 +529,8 @@ export default function WorkoutDetails( {navigation} ) {
     
     
         });
+
+        //console.log('Here is what we want: ' + JSON.stringify(subWorkoutsWithResults))
     
         const currentWorkout = currworkout[0]
     
@@ -698,7 +553,7 @@ export default function WorkoutDetails( {navigation} ) {
           subWorkouts: subWorkoutsWithResults
         };
     
-        //console.log('Here is the value: ' + JSON.stringify(dtWithResults))
+        console.log('Here is the value: ' + JSON.stringify(dtWithResults))
         setWorkoutResults(dtWithResults)
     
         if (dtWithResults.subWorkouts) {
@@ -1198,7 +1053,7 @@ export default function WorkoutDetails( {navigation} ) {
         input = <View style={{justifyContent: 'space-around', alignItems: 'center', marginBottom: 5, flexDirection: 'row'}}>
                   <TextInput
                       name='weight'
-                      placeholder='ex. 225'
+                      placeholder='-'
                       placeholderTextColor={activeColors.primary_text}
                       control={control} 
                       keyboardType='numeric'
@@ -1307,9 +1162,11 @@ export default function WorkoutDetails( {navigation} ) {
 
       const [expand, setExpand] = useState((savecategory === subworkouts[category].group) ? true : false);
 
-      const [values, setValues] = useState(subworkouts[category].info);
+      const [values, setValues] = useState(subworkouts[category].info.sort((a, b) => a.order - b.order));
       
-      //console.log('workoutresults: ' + JSON.stringify(values))
+      console.log('workoutresults: ' + JSON.stringify(values))
+
+      //console.log(subworkouts[category].info)
 
 
       const onSavePress = async () => {
@@ -1507,15 +1364,7 @@ export default function WorkoutDetails( {navigation} ) {
 
             {expand ? (
 
-              
-              
-                subworkouts[category].info.map((item, index) => {
-
-                  /*
-                  const filteredResults = workoutresults.filter(
-                    pe => pe.subWorkouts.id === item.id
-                  )
-                  */
+                  values.map((item, index) => {
                   
 
                   function handleChange(newValue, name) {
@@ -1581,75 +1430,18 @@ export default function WorkoutDetails( {navigation} ) {
                     setValues(newArr);
                   }
 
-
-                  /*
-                  if (item.resultcat === 'WEIGHT') {
-                    input = <View style={{alignItems: 'flex-end', marginBottom: 5}}>
-                        <TextInput
-                            name='weight'
-                            placeholder='ex. 225'
-                            //control={control} 
-                            keyboardType='numeric'
-                            maxLength={5}
-                            value={value_1}
-                            style={{fontSize: 20, width: 100, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 0.5, borderBottomColor: '#363636'}}
-                            //onChangeText={onChangeNumber}
-                            //onChange={updateFieldChanged(index)}
-                          />
-                        </View>
-                  } else if (item.resultcat === 'SETSREPS')  {
-                    input = <View style={{width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 5}}>
-                              <TextInput
-                                name='sets'
-                                placeholder='Sets'
-                                control={control} 
-                                keyboardType='numeric'
-                                maxLength={3}
-                                value={value_1}
-                                style={{width: '30%', textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: 'black'}}
-                                //onChangeText={onChangeNumber}
-                                //onChange={updateFieldChanged(index)}
-                              />
-                            </View>
-                  } else if (item.resultcat === 'TIME')  {
-                    input = <View style={{flexDirection: 'row',}}>
-                      <BubbleTextInput
-                          name='hours'
-                          placeholder='00'
-                          control={control}
-                          maxLength={2}
-                          keyboardType='numeric'
-                          vstyle={[
-                            styles.modalInputBoxTime,
-                            {width: 50, marginRight: 5, }
-                          ]}
-                        />
-                      <Text style={{marginTop: 5, fontWeight: 'bold'}}>:</Text>
-                      <BubbleTextInput
-                          name='minutes'
-                          placeholder='00'
-                          control={control}
-                          maxLength={2}
-                          keyboardType='numeric'
-                          vstyle={[
-                            styles.modalInputBoxTime,
-                            {width: 50, marginRight: 5,  marginLeft: 5}
-                          ]}
-                        />
-                      <Text style={{marginTop: 5, fontWeight: 'bold'}}>:</Text>
-                    </View>
-                  }
-                  */
-
                   return(
                     <View key={item.id} style={{padding: 12, flexDirection: "row", borderBottomColor: '#363636', borderBottomWidth: 0.5, justifyContent: 'space-between'}}>
-                      <View style={{alignItems: 'flex-start', justifyContent: 'center', width: '60%'}}>
+                      <View style={{alignItems: 'flex-start', justifyContent: 'center', width: workoutslog ? '60%' : '100%'}}>
                         <Text  style={{fontWeight: '400', fontSize: 15, lineHeight: 25, color: activeColors.primary_text}}>{textDisplay(item.desc)}</Text>
                       </View>
-
+                      {workoutslog ? (
                       <View style={{padding: 0, width: '40%'}}>
                           <WorkoutItemInput resultcat={item.resultcat} value={values[index].value} onChange={handleChange} />
                       </View>
+                      ) : (
+                        <></>
+                      )}
                     </View>
                   )
 
@@ -1662,7 +1454,7 @@ export default function WorkoutDetails( {navigation} ) {
 
           </KeyboardAvoidingView>
 
-          { expand ? (
+          { expand && workoutslog ? (
             <View style={{alignItems: 'center'}}>
                 <Bubble_Button 
                   text='SAVE'

@@ -397,6 +397,8 @@ type EagerSubWorkouts = {
   readonly timecap?: string | null;
   readonly workoutsID: string;
   readonly WorkoutResults?: (WorkoutResults | null)[] | null;
+  readonly numitems?: number | null;
+  readonly order?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -415,6 +417,8 @@ type LazySubWorkouts = {
   readonly timecap?: string | null;
   readonly workoutsID: string;
   readonly WorkoutResults: AsyncCollection<WorkoutResults>;
+  readonly numitems?: number | null;
+  readonly order?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

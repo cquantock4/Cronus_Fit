@@ -1042,6 +1042,8 @@ export const getSubWorkouts = /* GraphQL */ `
         nextToken
         startedAt
       }
+      numitems
+      order
       createdAt
       updatedAt
       _version
@@ -1070,6 +1072,8 @@ export const listSubWorkouts = /* GraphQL */ `
           nextToken
           startedAt
         }
+        numitems
+        order
         createdAt
         updatedAt
         _version
@@ -1107,6 +1111,8 @@ export const syncSubWorkouts = /* GraphQL */ `
           nextToken
           startedAt
         }
+        numitems
+        order
         createdAt
         updatedAt
         _version
@@ -1146,6 +1152,8 @@ export const subWorkoutsByWorkoutsID = /* GraphQL */ `
           nextToken
           startedAt
         }
+        numitems
+        order
         createdAt
         updatedAt
         _version
@@ -1303,6 +1311,8 @@ export const getWorkouts = /* GraphQL */ `
           required
           timecap
           workoutsID
+          numitems
+          order
           createdAt
           updatedAt
           _version
