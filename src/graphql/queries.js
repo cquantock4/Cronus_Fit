@@ -1,6 +1,135 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getWorkoutNotes = /* GraphQL */ `
+  query GetWorkoutNotes($id: ID!) {
+    getWorkoutNotes(id: $id) {
+      id
+      note
+      workoutsID
+      userID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const listWorkoutNotes = /* GraphQL */ `
+  query ListWorkoutNotes(
+    $filter: ModelWorkoutNotesFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listWorkoutNotes(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        note
+        workoutsID
+        userID
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const syncWorkoutNotes = /* GraphQL */ `
+  query SyncWorkoutNotes(
+    $filter: ModelWorkoutNotesFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncWorkoutNotes(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        note
+        workoutsID
+        userID
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const workoutNotesByWorkoutsID = /* GraphQL */ `
+  query WorkoutNotesByWorkoutsID(
+    $workoutsID: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelWorkoutNotesFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    workoutNotesByWorkoutsID(
+      workoutsID: $workoutsID
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        note
+        workoutsID
+        userID
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const workoutNotesByUserID = /* GraphQL */ `
+  query WorkoutNotesByUserID(
+    $userID: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelWorkoutNotesFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    workoutNotesByUserID(
+      userID: $userID
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        note
+        workoutsID
+        userID
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
 export const getCheckListItems = /* GraphQL */ `
   query GetCheckListItems($id: ID!) {
     getCheckListItems(id: $id) {
@@ -602,6 +731,11 @@ export const getUserInfo = /* GraphQL */ `
           nextToken
           startedAt
         }
+        workout_logs
+        WorkoutNotes {
+          nextToken
+          startedAt
+        }
         createdAt
         _version
         _deleted
@@ -658,6 +792,7 @@ export const listUserInfos = /* GraphQL */ `
           coach_yn
           updatedAt
           default_workout_type
+          workout_logs
           createdAt
           _version
           _deleted
@@ -723,6 +858,7 @@ export const syncUserInfos = /* GraphQL */ `
           coach_yn
           updatedAt
           default_workout_type
+          workout_logs
           createdAt
           _version
           _deleted
@@ -1352,6 +1488,21 @@ export const getWorkouts = /* GraphQL */ `
         startedAt
       }
       workout_type
+      WorkoutNotes {
+        items {
+          id
+          note
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -1385,6 +1536,10 @@ export const listWorkouts = /* GraphQL */ `
           startedAt
         }
         workout_type
+        WorkoutNotes {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -1427,6 +1582,10 @@ export const syncWorkouts = /* GraphQL */ `
           startedAt
         }
         workout_type
+        WorkoutNotes {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -1562,6 +1721,22 @@ export const getUser = /* GraphQL */ `
         nextToken
         startedAt
       }
+      workout_logs
+      WorkoutNotes {
+        items {
+          id
+          note
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       _version
       _deleted
@@ -1614,6 +1789,11 @@ export const listUsers = /* GraphQL */ `
         updatedAt
         default_workout_type
         CheckListItems {
+          nextToken
+          startedAt
+        }
+        workout_logs
+        WorkoutNotes {
           nextToken
           startedAt
         }
@@ -1678,6 +1858,11 @@ export const syncUsers = /* GraphQL */ `
         updatedAt
         default_workout_type
         CheckListItems {
+          nextToken
+          startedAt
+        }
+        workout_logs
+        WorkoutNotes {
           nextToken
           startedAt
         }
@@ -1753,6 +1938,11 @@ export const getUserCheckListItems = /* GraphQL */ `
           nextToken
           startedAt
         }
+        workout_logs
+        WorkoutNotes {
+          nextToken
+          startedAt
+        }
         createdAt
         _version
         _deleted
@@ -1809,6 +1999,7 @@ export const listUserCheckListItems = /* GraphQL */ `
           coach_yn
           updatedAt
           default_workout_type
+          workout_logs
           createdAt
           _version
           _deleted
@@ -1870,6 +2061,7 @@ export const syncUserCheckListItems = /* GraphQL */ `
           coach_yn
           updatedAt
           default_workout_type
+          workout_logs
           createdAt
           _version
           _deleted
@@ -1933,6 +2125,7 @@ export const userCheckListItemsByCheckListItemsId = /* GraphQL */ `
           coach_yn
           updatedAt
           default_workout_type
+          workout_logs
           createdAt
           _version
           _deleted
@@ -1996,6 +2189,7 @@ export const userCheckListItemsByUserId = /* GraphQL */ `
           coach_yn
           updatedAt
           default_workout_type
+          workout_logs
           createdAt
           _version
           _deleted

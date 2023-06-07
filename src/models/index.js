@@ -25,9 +25,10 @@ const ResultCategory = {
   "WEIGHT": "WEIGHT"
 };
 
-const { CheckListItems, SavedWorkouts, Checkin, FoodEntry, Messages, UserInfo, Articles, Programs, Comments, SubWorkouts, WorkoutResults, Workouts, User, UserCheckListItems } = initSchema(schema);
+const { WorkoutNotes, CheckListItems, SavedWorkouts, Checkin, FoodEntry, Messages, UserInfo, Articles, Programs, Comments, SubWorkouts, WorkoutResults, Workouts, User, UserCheckListItems } = initSchema(schema);
 
 export {
+  WorkoutNotes,
   CheckListItems,
   SavedWorkouts,
   Checkin,

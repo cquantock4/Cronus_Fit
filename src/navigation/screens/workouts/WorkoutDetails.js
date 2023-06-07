@@ -4,11 +4,8 @@ import { TextInput, Pressable, Switch, Input, FlatList, KeyboardAvoidingView} fr
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Bubble_Button, Bubble_Button_Small, Button_Link } from '../../../components/ui/buttons'
-import { BubbleMultiLine, BubbleTextInput } from '../../../components/ui/inputs'
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import Modal from 'react-native-modal';
-import {MaskedTextInput, MaskedText} from 'react-native-mask-text';
 
 import { parse,  format } from 'date-fns';
 
@@ -22,7 +19,7 @@ import {colors} from '../../../../assets/styles/themes'
 //import Header from '../../../ui/components/headers/header'
 
 import { Amplify, Auth, DataStore, Hub } from 'aws-amplify';
-import { Workouts, User, UserWorkouts, SavedWorkouts, WorkoutResults, SubWorkouts} from '../../../models';
+import { Workouts, User, WorkoutNotes, SavedWorkouts, WorkoutResults, SubWorkouts} from '../../../models';
 
 
 
@@ -56,6 +53,7 @@ export default function WorkoutDetails( {navigation} ) {
   const [subworkouts, setSubWorkouts] = useState(undefined);
   const [subworkout_archive, setSubWorkoutArchive] = useState(undefined);
   const [savedworkouts, setSavedWorkouts] = useState(undefined)
+  const [workoutnotes, setWorkoutNotes] = useState(undefined)
 
   const [date, setNewDate] = useState(new Date());
 
@@ -437,11 +435,40 @@ export default function WorkoutDetails( {navigation} ) {
         )
 
         console.log(workoutcategory)
+        console.log('here we are: ' + currworkout.length + ' ' + userid )
 
+       
+        if (currworkout.length > 0 && userid) {
+          const workoutId = currworkout[0].id;
 
-        console.log('reloading here: ' + date + ' ' + JSON.stringify(currworkout))
+          console.log(workoutId)
+  
+          
+          const notes = (await DataStore.query(WorkoutNotes)).filter(
+            pe => pe.workoutsID === workoutId && pe.userID === userid.toString()
+          )
+  
+          /*
+          const notes = await DataStore.query(WorkoutNotes, c =>
+            c
+              .where(pe => pe.workoutsID.eq(workoutId))
+              .where(pe => pe.userID.eq(userid))
+          );
+          */
+        
+          console.log('notes:', notes);
+        
+          if (notes.length > 0) {
+            setWorkoutNotes(notes[0].note);
+          } else {
+            setWorkoutNotes(undefined);
+          }
 
-    
+        } else {
+          setWorkoutNotes(undefined)
+        }
+  
+
         if (currworkout.length === 0) {
             //console.log('No workout found on this date');
             setWorkout(undefined)
@@ -581,6 +608,8 @@ export default function WorkoutDetails( {navigation} ) {
           const user = await DataStore.query(User, sw =>
             sw.sub.eq(authUser.attributes.sub)
           )
+
+
         
   
           //Query Matrix Table to find list of ids  
@@ -589,6 +618,7 @@ export default function WorkoutDetails( {navigation} ) {
             setUserID(user[0].id)
             //setUnits(user[0].units.toLowerCase())
             //console.log(user[0])
+            setWorkoutsLog(user[0].workout_logs)
   
           }
         } catch (e) {
@@ -750,8 +780,39 @@ export default function WorkoutDetails( {navigation} ) {
       setModalVisible(!modalVisible)
     };
 
-    const onSaveNotesPress = async () => {
-      //console.log('Notes have been Pressed')  
+    const onSaveNotesPress = async (text) => {
+
+      //Save Workout Notes
+      console.log('Notes have been Saved: ' + text) 
+      console.log('Workoutid: ' + workoutid) 
+      console.log('userid: ' + userid) 
+
+      try {
+        // Check if the record exists
+        
+        const existingNotes = (await DataStore.query(WorkoutNotes)).filter(
+          pe => pe.workoutsID === workoutid && pe.userID === userid
+        )
+
+        console.log(existingNotes)
+    
+        if (existingNotes.length > 0) {
+          // Update the existing record
+          const existingNote = existingNotes[0];
+          existingNote.note = text;
+          await DataStore.save(existingNote);
+          console.log('Updated workout notes:', existingNote);
+        } else {
+          // Create a new record
+          const newNote = new WorkoutNotes({ note: text, workoutsID: workoutid, userID: userid });
+          await DataStore.save(newNote);
+          console.log('Created workout notes:', newNote);
+        }
+      } catch (error) {
+        console.error('Error saving workout notes:', error);
+      }
+
+      setRefresh(!refresh)
       setModalVisibleNotes(!modalVisibleNotes)
     };
 
@@ -1164,7 +1225,7 @@ export default function WorkoutDetails( {navigation} ) {
 
       const [values, setValues] = useState(subworkouts[category].info.sort((a, b) => a.order - b.order));
       
-      console.log('workoutresults: ' + JSON.stringify(values))
+      //console.log('workoutresults: ' + JSON.stringify(values))
 
       //console.log(subworkouts[category].info)
 
@@ -1517,14 +1578,12 @@ export default function WorkoutDetails( {navigation} ) {
                         </>
                       
                     ) : (
-                      <>
-                      <Text style={{fontWeight: '400', lineHeight: 25, textAlign: 'left', color: activeColors.primary_text}}>No workout posted today</Text>
-                      </>
+                      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 200}}>
+                        <Text style={{fontWeight: '400', lineHeight: 25, color: activeColors.primary_text}}>No workout posted today</Text>
+                      </View>
                     )}
 
                     {
-
-
                       /*
                         Show Sub Workout Items
                       */
@@ -1547,6 +1606,23 @@ export default function WorkoutDetails( {navigation} ) {
                         )
                     }
 
+                {workout ? (
+                  <>
+                  <View style={{justifyContent: 'center', alignItems: 'center', padding: 5}}>
+                    <Text style={{color: activeColors.primary_text, fontSize: 18, fontWeight: 400}}>Notes</Text>
+                  </View>
+                    <Pressable onPress={onAddNotesPress} style={{margin: 5, borderWidth: 1, borderColor:activeColors.just_gray, padding: 5, borderRadius: 5, minHeight: 75 }}>
+                      {workoutnotes ? (
+                        <Text style={{color: activeColors.just_gray}}>{workoutnotes}</Text>
+                      ) : (
+                        <Text style={{color: activeColors.just_gray}}>Enter your workout notes</Text>
+                      )}
+                    </Pressable>
+                  </>
+                ) : (
+                  <>
+                  </>
+                )}
                    
 
               </View>
@@ -1559,9 +1635,14 @@ export default function WorkoutDetails( {navigation} ) {
     /*
       Entering Workout Notes
     */
-    const NotesModal = () => {
+    const NotesModal = (props) => {
 
+      const [workoutnotes, setWorkoutNotes] = useState(props.value)
 
+      const handleSaveNotesPress = () => {
+        
+        props.onPress(workoutnotes)
+      };
 
       let weightsTitle = 'Weight Used (lbs)'
 
@@ -1575,122 +1656,59 @@ export default function WorkoutDetails( {navigation} ) {
               setModalVisibleNotes(!modalVisibleNotes);
             }}
           >
-            <View style={styles.centeredView}>
-                <View style={styles.modalHeader}>
+            <View style={[styles.centeredView, ]}>
+                <View style={[styles.modalHeader, {backgroundColor: activeColors.secondary_bg}]}>
                   <Pressable
                     style={{justifyContent: 'center', paddingLeft: 10, paddingRight: 5}}
                     onPress={() => setModalVisibleNotes(!modalVisibleNotes)}
                   >
-                    <Ionicons name='add-outline' color='#363636' style={{fontSize: 32, transform: [{rotate: '45deg'}]}}/>
+                    <Ionicons name='add-outline' color={activeColors.primary_text} style={{fontSize: 32, transform: [{rotate: '45deg'}]}}/>
                   </Pressable>
-                  <View style={{justifyContent: 'center'}}>
-                    <Text style={{color: '#363636', fontSize: 18, fontWeight: '700'}}>Workout Notes</Text>
+                  <View style={{justifyContent: 'center', marginRight: 40}}>
+                    <Text style={{color: activeColors.primary_text, fontSize: 18, fontWeight: '700'}}>Workout Notes</Text>
                   </View>
+                  
                   <View style={{justifyContent: 'center', paddingRight: 10, paddingLeft: 5}}>
-                    <Text style={{color: '#363636'}}>Reset</Text>
-                  </View>
-                </View>
-
-                
-                <View style={styles.modalBody}>
-
-                  <Text style={{fontWeight: 'bold', marginBottom: 5}}>Total Time</Text>
-                  <Text style={{fontWeight: '400', marginBottom: 5, fontSize: 10}}>(hours:minutes:seconds)</Text>
-                  <View style={{flexDirection: 'row',}}>
-                    <BubbleTextInput
-                        name='hours'
-                        placeholder='00'
-                        control={control}
-                        maxLength={2}
-                        keyboardType='numeric'
-                        vstyle={[
-                          styles.modalInputBoxTime,
-                          {width: 50, marginRight: 5, }
-                        ]}
-                      />
-                    <Text style={{marginTop: 5, fontWeight: 'bold'}}>:</Text>
-                    <BubbleTextInput
-                        name='minutes'
-                        placeholder='00'
-                        control={control}
-                        maxLength={2}
-                        keyboardType='numeric'
-                        vstyle={[
-                          styles.modalInputBoxTime,
-                          {width: 50, marginRight: 5,  marginLeft: 5}
-                        ]}
-                      />
-                    <Text style={{marginTop: 5, fontWeight: 'bold'}}>:</Text>
-                    <BubbleTextInput
-                        name='seconds'
-                        placeholder='00'
-                        control={control}
-                        maxLength={2}
-                        keyboardType='numeric'
-                        vstyle={[
-                          styles.modalInputBoxTime,
-                          {width: 50, marginLeft: 5}
-                        ]}
-                      />
+                    <Text style={{color: activeColors.primary_text}}></Text>
                   </View>
                   
-                  <Text style={{fontWeight: 'bold', marginBottom: 5}}># of Sets and Reps Completed</Text>
-                  <View style={{width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 5}}>
-                    <BubbleTextInput
-                      name='sets'
-                      placeholder='Sets'
-                      control={control}
-                      maxLength={3}
-                      keyboardType='numeric'
-                      vstyle={[
-                        styles.modalInputBoxRegular,
-                        {width: 50}
-                      ]}
-                    />
-                    <BubbleTextInput
-                      name='reps'
-                      placeholder='Reps'
-                      control={control}
-                      maxLength={3}
-                      keyboardType='numeric'
-                      vstyle={[
-                        styles.modalInputBoxRegular,
-                        {width: 50}
-                      ]}
-                    />
-                  </View>
-                
-                  <Text style={{fontWeight: 'bold', marginBottom: 5}}>{weightsTitle}</Text>
-                  <BubbleTextInput
-                      name='weight'
-                      placeholder='ex. 225'
-                      control={control}
-                      maxLength={5}
-                      keyboardType='numeric'
-                      vstyle={[
-                        styles.modalInputBoxRegular,
-                        {width: 100}
-                      ]}
-                    />
-                  <BubbleMultiLine
-                    name='details'
-                    placeholder='Other Details and Notes'
-                    control={control} 
-                    //multiline={true}
+                </View>
+            {/*
+                <View style={{minHeight: 100, backgroundColor: activeColors.secondary_bg, padding: 10}}>
+                  <TextInput
+                    style={[{textAlignVertical: 'top', borderRadius: 5, borderWidth: 1, borderColor: activeColors.inverted_bg_alt, color: activeColors.primary_text, padding: 5}]}
+                    onChangeText={(text) => setWorkoutNotes(text)}
+                    value={workoutnotes}
+                    multiline  
+                    placeholder="Enter Notes Here"
+                    placeholderTextColor={activeColors.primary_text}
                   />
-                  
                 </View>
-                <View style={styles.modalFooter}>
-                <Bubble_Button 
-                  text='SAVE'
-                  onPress={onSaveNotesPress}
-                  bgColor='#F8BE13'
-                  fgColor='#363636'
-                  cstyle={{width: '95%'}}
-                  tstyle={{fontWeight: '900'}}
-                />
-                
+          */}
 
+                <View style={[styles.modalBody, { backgroundColor: activeColors.secondary_bg }]}>
+                  <TextInput
+                    style={[styles.textInput, { color: activeColors.primary_text,borderColor: activeColors.inverted_bg_alt }]}
+                    onChangeText={(text) => setWorkoutNotes(text)}
+                    value={workoutnotes}
+                    multiline
+                    placeholder="Enter Notes Here"
+                    placeholderTextColor={activeColors.primary_text}
+                    textAlignVertical="top"
+                    minHeight={100} // Set a minimum height for the text input
+                    maxHeight={200} // Set a maximum height for the text input (optional)
+                  />
+                </View>
+
+                <View style={[styles.modalFooter, {backgroundColor: activeColors.secondary_bg}]}>
+                  <Bubble_Button 
+                    text='SAVE'
+                    onPress={handleSaveNotesPress}
+                    bgColor='#F8BE13'
+                    fgColor='#363636'
+                    cstyle={{width: '95%'}}
+                    tstyle={{fontWeight: '900'}}
+                  />
                 </View>
             </View>
           </Modal>
@@ -1704,7 +1722,7 @@ export default function WorkoutDetails( {navigation} ) {
       <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
 
           {/* Modals */}
-          <NotesModal />
+          <NotesModal value={workoutnotes} onPress={(text) => onSaveNotesPress(text)}/>
           <Modal
             animationType='slide'
             transparent={true}
@@ -1892,12 +1910,11 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    //alignItems: "center",
     flexDirection: 'column',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    //backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalHeader: {
-    width: '95%',
     height: 40,
     backgroundColor: 'white',
     flexDirection: 'row',
@@ -1906,21 +1923,23 @@ const styles = StyleSheet.create({
     borderTopStartRadius: 5
   },
   modalBody: {
-    width: '95%',
-    height: 350,
     paddingTop: 20,
     backgroundColor: '#E3E3E3',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   modalFooter: {
-    width: '95%',
     height: 60,
-    backgroundColor: '#E3E3E3',
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomEndRadius: 5,
     borderBottomStartRadius: 5
+  },
+  textInput: {
+    borderRadius: 5,
+    borderWidth: 1,
+    padding: 5,
+    width: '95%', // Adjust the width as needed
   },
   modalInputBoxRegular: {
     padding: 0, 
@@ -1951,9 +1970,8 @@ const styles = StyleSheet.create({
 
   },
   infoViewContainer: {
-    width: '100%',
-   
-    //alignItems: 'center'
+    flex: 1
+    
   },
 
   //Search Results

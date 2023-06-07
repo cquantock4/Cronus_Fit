@@ -1,6 +1,57 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateWorkoutNotes = /* GraphQL */ `
+  subscription OnCreateWorkoutNotes(
+    $filter: ModelSubscriptionWorkoutNotesFilterInput
+  ) {
+    onCreateWorkoutNotes(filter: $filter) {
+      id
+      note
+      workoutsID
+      userID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onUpdateWorkoutNotes = /* GraphQL */ `
+  subscription OnUpdateWorkoutNotes(
+    $filter: ModelSubscriptionWorkoutNotesFilterInput
+  ) {
+    onUpdateWorkoutNotes(filter: $filter) {
+      id
+      note
+      workoutsID
+      userID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onDeleteWorkoutNotes = /* GraphQL */ `
+  subscription OnDeleteWorkoutNotes(
+    $filter: ModelSubscriptionWorkoutNotesFilterInput
+  ) {
+    onDeleteWorkoutNotes(filter: $filter) {
+      id
+      note
+      workoutsID
+      userID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
 export const onCreateCheckListItems = /* GraphQL */ `
   subscription OnCreateCheckListItems(
     $filter: ModelSubscriptionCheckListItemsFilterInput
@@ -391,6 +442,11 @@ export const onCreateUserInfo = /* GraphQL */ `
           nextToken
           startedAt
         }
+        workout_logs
+        WorkoutNotes {
+          nextToken
+          startedAt
+        }
         createdAt
         _version
         _deleted
@@ -466,6 +522,11 @@ export const onUpdateUserInfo = /* GraphQL */ `
           nextToken
           startedAt
         }
+        workout_logs
+        WorkoutNotes {
+          nextToken
+          startedAt
+        }
         createdAt
         _version
         _deleted
@@ -538,6 +599,11 @@ export const onDeleteUserInfo = /* GraphQL */ `
         updatedAt
         default_workout_type
         CheckListItems {
+          nextToken
+          startedAt
+        }
+        workout_logs
+        WorkoutNotes {
           nextToken
           startedAt
         }
@@ -926,6 +992,21 @@ export const onCreateWorkouts = /* GraphQL */ `
         startedAt
       }
       workout_type
+      WorkoutNotes {
+        items {
+          id
+          note
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -992,6 +1073,21 @@ export const onUpdateWorkouts = /* GraphQL */ `
         startedAt
       }
       workout_type
+      WorkoutNotes {
+        items {
+          id
+          note
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -1058,6 +1154,21 @@ export const onDeleteWorkouts = /* GraphQL */ `
         startedAt
       }
       workout_type
+      WorkoutNotes {
+        items {
+          id
+          note
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -1181,6 +1292,22 @@ export const onCreateUser = /* GraphQL */ `
           id
           checkListItemsId
           userId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      workout_logs
+      WorkoutNotes {
+        items {
+          id
+          note
+          workoutsID
+          userID
           createdAt
           updatedAt
           _version
@@ -1321,6 +1448,22 @@ export const onUpdateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
+      workout_logs
+      WorkoutNotes {
+        items {
+          id
+          note
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       _version
       _deleted
@@ -1452,6 +1595,22 @@ export const onDeleteUser = /* GraphQL */ `
         nextToken
         startedAt
       }
+      workout_logs
+      WorkoutNotes {
+        items {
+          id
+          note
+          workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       _version
       _deleted
@@ -1520,6 +1679,11 @@ export const onCreateUserCheckListItems = /* GraphQL */ `
         updatedAt
         default_workout_type
         CheckListItems {
+          nextToken
+          startedAt
+        }
+        workout_logs
+        WorkoutNotes {
           nextToken
           startedAt
         }
@@ -1600,6 +1764,11 @@ export const onUpdateUserCheckListItems = /* GraphQL */ `
           nextToken
           startedAt
         }
+        workout_logs
+        WorkoutNotes {
+          nextToken
+          startedAt
+        }
         createdAt
         _version
         _deleted
@@ -1674,6 +1843,11 @@ export const onDeleteUserCheckListItems = /* GraphQL */ `
         updatedAt
         default_workout_type
         CheckListItems {
+          nextToken
+          startedAt
+        }
+        workout_logs
+        WorkoutNotes {
           nextToken
           startedAt
         }

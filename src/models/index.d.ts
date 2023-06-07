@@ -27,6 +27,38 @@ export enum ResultCategory {
 
 
 
+type EagerWorkoutNotes = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<WorkoutNotes, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly note?: string | null;
+  readonly workoutsID: string;
+  readonly userID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyWorkoutNotes = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<WorkoutNotes, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly note?: string | null;
+  readonly workoutsID: string;
+  readonly userID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type WorkoutNotes = LazyLoading extends LazyLoadingDisabled ? EagerWorkoutNotes : LazyWorkoutNotes
+
+export declare const WorkoutNotes: (new (init: ModelInit<WorkoutNotes>) => WorkoutNotes) & {
+  copyOf(source: WorkoutNotes, mutator: (draft: MutableModel<WorkoutNotes>) => MutableModel<WorkoutNotes> | void): WorkoutNotes;
+}
+
 type EagerCheckListItems = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<CheckListItems, 'id'>;
@@ -474,6 +506,7 @@ type EagerWorkouts = {
   readonly Comments?: (Comments | null)[] | null;
   readonly SavedWorkouts?: (SavedWorkouts | null)[] | null;
   readonly workout_type?: WorkoutType | keyof typeof WorkoutType | null;
+  readonly WorkoutNotes?: (WorkoutNotes | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -491,6 +524,7 @@ type LazyWorkouts = {
   readonly Comments: AsyncCollection<Comments>;
   readonly SavedWorkouts: AsyncCollection<SavedWorkouts>;
   readonly workout_type?: WorkoutType | keyof typeof WorkoutType | null;
+  readonly WorkoutNotes: AsyncCollection<WorkoutNotes>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -528,6 +562,8 @@ type EagerUser = {
   readonly updatedAt?: string | null;
   readonly default_workout_type?: WorkoutType | keyof typeof WorkoutType | null;
   readonly CheckListItems?: (UserCheckListItems | null)[] | null;
+  readonly workout_logs?: boolean | null;
+  readonly WorkoutNotes?: (WorkoutNotes | null)[] | null;
   readonly createdAt?: string | null;
 }
 
@@ -558,6 +594,8 @@ type LazyUser = {
   readonly updatedAt?: string | null;
   readonly default_workout_type?: WorkoutType | keyof typeof WorkoutType | null;
   readonly CheckListItems: AsyncCollection<UserCheckListItems>;
+  readonly workout_logs?: boolean | null;
+  readonly WorkoutNotes: AsyncCollection<WorkoutNotes>;
   readonly createdAt?: string | null;
 }
 
