@@ -6,6 +6,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Bubble_Button, Bubble_Button_Small, Button_Link } from '../../../components/ui/buttons'
 
 import Modal from 'react-native-modal';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
+//import Swipeable  from 'react-native-gesture-handler/Swipeable'
 
 import { parse,  format } from 'date-fns';
 
@@ -24,7 +26,7 @@ import { Workouts, User, WorkoutNotes, SavedWorkouts, WorkoutResults, SubWorkout
 
 
 
-export default function WorkoutDetails( {navigation} ) {
+export default function WorkoutDetails( {navigation} )  {
   const route = useRoute();
   const {control, handleSubmit, formState: {errors}} = useForm();
   const [workoutcategory, setWorkoutCategory] = useState(route?.params?.value);
@@ -885,53 +887,55 @@ export default function WorkoutDetails( {navigation} ) {
     /*
         Workout Display
     */
+
+    
+
     const DatePickerArrows = () => {
 
       //Date Picker Info
 
       function isValidDate(dateString) {
         const pattern = /^\d{2}\/\d{2}\/\d{4}$/; // pattern for MM/dd/yyyy
-
+  
         if (!pattern.test(dateString)) {
           return false;
         }
-
+  
         return true;
         //const date = new Date(dateString);
         //return !isNaN(date);
-
+  
       }
-
-    
+  
       const addADay = () => {
-       // console.log('here: ' + date)
-
-        let isoDateString = ''
-
-        if (isValidDate(date)) {
-          const dateComponents = date.split('/');
-          const year = dateComponents[2];
-          const month = dateComponents[0];
-          const day = dateComponents[1];
-          isoDateString = `${year}-${month}-${day}`;
-        } else {
-          isoDateString = date
-        }
-
-        console.log(isoDateString)
-        
-        let result = new Date(isoDateString)
-
-        console.log('res: ' +result)
-        //console.log('res formatted: ' + result.setDate(result.getDate() + 1 ))
-
-        setNewDate(result.setDate(result.getDate() + 1 ));
-      };
-    
+        // console.log('here: ' + date)
+  
+          let isoDateString = ''
+  
+          if (isValidDate(date)) {
+            const dateComponents = date.split('/');
+            const year = dateComponents[2];
+            const month = dateComponents[0];
+            const day = dateComponents[1];
+            isoDateString = `${year}-${month}-${day}`;
+          } else {
+            isoDateString = date
+          }
+  
+          console.log(isoDateString)
+          
+          let result = new Date(isoDateString)
+  
+          console.log('res: ' +result)
+          //console.log('res formatted: ' + result.setDate(result.getDate() + 1 ))
+  
+          setNewDate(result.setDate(result.getDate() + 1 ));
+        };
+      
       const subADay = () => {
-
+  
         let isoDateString = ''
-
+  
         if (isValidDate(date)) {
           const dateComponents = date.split('/');
           const year = dateComponents[2];
@@ -941,17 +945,15 @@ export default function WorkoutDetails( {navigation} ) {
         } else {
           isoDateString = date
         }
-
+  
         let result = new Date(isoDateString)
-
+  
         console.log('res: ' +result)
         //console.log('res formatted: ' + result.setDate(result.getDate() + 1 ))
-
+  
         setNewDate(result.setDate(result.getDate() - 1 ));
       };
-
-      //console.log('this one: ' + date)
-
+      
       let date_final = ''
 
       if (isValidDate(date)) {
@@ -959,6 +961,8 @@ export default function WorkoutDetails( {navigation} ) {
       } else {
         date_final = format(new Date(date), 'MM/dd/yyyy')
       }
+
+      
 
       //console.log(date_final)
 
@@ -1111,7 +1115,7 @@ export default function WorkoutDetails( {navigation} ) {
       let input
 
       if (props.resultcat === 'WEIGHT') {
-        input = <View style={{justifyContent: 'space-around', alignItems: 'center', marginBottom: 5, flexDirection: 'row'}}>
+        input = <View style={{justifyContent: 'flex-end', alignItems: 'center', marginBottom: 5, flexDirection: 'row'}}>
                   <TextInput
                       name='weight'
                       placeholder='-'
@@ -1120,7 +1124,7 @@ export default function WorkoutDetails( {navigation} ) {
                       keyboardType='numeric'
                       maxLength={5}
                       value={props.value}
-                      style={{fontSize: 20, width: 100, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 0.5, color: activeColors.primary_text,  borderBottomColor: activeColors.primary_text}}
+                      style={{fontSize: 20, width: 75, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 0.5, color: activeColors.primary_text,  borderBottomColor: activeColors.primary_text}}
                       onChange={(event) => handleChange('weight', event)}
                   />
                   <Text  style={{color: activeColors.primary_text}}>
@@ -1413,7 +1417,7 @@ export default function WorkoutDetails( {navigation} ) {
 
           <Pressable onPress={expandRow}>
             <View style={styles.subWorkoutblock}>
-              <Text style={{fontWeight: '300', fontSize: 20, color: activeColors.primary_text}}>{subworkouts[category].group}</Text>
+              <Text style={{fontWeight: '600', fontSize: 20, color: activeColors.primary_text}}>{subworkouts[category].group}</Text>
             </View>
           </Pressable>
 
@@ -1492,7 +1496,7 @@ export default function WorkoutDetails( {navigation} ) {
                   }
 
                   return(
-                    <View key={item.id} style={{padding: 12, flexDirection: "row", borderBottomColor: '#363636', borderBottomWidth: 0.5, justifyContent: 'space-between'}}>
+                    <View key={item.id} style={{padding: 12, flexDirection: "row", justifyContent: 'space-between'}}>
                       <View style={{alignItems: 'flex-start', justifyContent: 'center', width: workoutslog ? '60%' : '100%'}}>
                         <Text  style={{fontWeight: '400', fontSize: 15, lineHeight: 25, color: activeColors.primary_text}}>{textDisplay(item.desc)}</Text>
                       </View>
@@ -1516,13 +1520,13 @@ export default function WorkoutDetails( {navigation} ) {
           </KeyboardAvoidingView>
 
           { expand && workoutslog ? (
-            <View style={{alignItems: 'center'}}>
+            <View style={{alignItems: 'flex-end'}}>
                 <Bubble_Button 
                   text='SAVE'
                   onPress={onSavePress}
                   bgColor='#F8BE13'
                   fgColor='#363636'
-                  cstyle={{width: '100%', borderBottomColor: '#363636', borderBottomWidth: 0.5}}
+                  cstyle={{width: '30%', padding: 10, marginRight: 5}}
                   tstyle={{fontWeight: '400'}}
                 />
             </View>
@@ -1546,7 +1550,7 @@ export default function WorkoutDetails( {navigation} ) {
 
 
         return (
-  
+          
             <View style={styles.workoutCategory}>
               {/*<Text>{route?.params?.value}</Text>*/}
               <View style={styles.infoViewContainer}>
@@ -1608,8 +1612,8 @@ export default function WorkoutDetails( {navigation} ) {
 
                 {workout ? (
                   <>
-                  <View style={{justifyContent: 'center', alignItems: 'center', padding: 5}}>
-                    <Text style={{color: activeColors.primary_text, fontSize: 18, fontWeight: 400}}>Notes</Text>
+                  <View style={{justifyContent: 'center', alignItems: 'center', padding: 5, marginTop: 10}}>
+                    <Text style={{color: activeColors.primary_text, fontSize: 18, fontWeight: 600}}>Notes</Text>
                   </View>
                     <Pressable onPress={onAddNotesPress} style={{margin: 5, borderWidth: 1, borderColor:activeColors.just_gray, padding: 5, borderRadius: 5, minHeight: 75 }}>
                       {workoutnotes ? (
@@ -1626,10 +1630,11 @@ export default function WorkoutDetails( {navigation} ) {
                    
 
               </View>
+              
             </View>
-            
+          
           )
-      }
+      };
     
 
     /*
@@ -1788,7 +1793,9 @@ export default function WorkoutDetails( {navigation} ) {
                   <View style={styles.datePicker}>
                     <DatePickerArrows />
                   </View>
-                  <WorkoutInfoView />
+                  
+                    <WorkoutInfoView />
+                  
                 </ScrollView>
               )}
               

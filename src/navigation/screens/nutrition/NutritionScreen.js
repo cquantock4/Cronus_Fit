@@ -461,19 +461,19 @@ export default function NutritionScreen( {navigation} ) {
         <View style={styles.macrosContainer}>
           <View style={styles.macroItem}>
             <Text style={[styles.macroLabel, {color: activeColors.primary_text}]}>Protein</Text>
-            <Text style={[styles.macroValue, {color: activeColors.primary_text}]}>{userinfo.goal_protein + ' g' || '-'}</Text>
+            <Text style={[styles.macroValue, {color: activeColors.primary_text}]}>{userinfo.goal_protein ? userinfo.goal_protein + ' g' : '-'}</Text>
           </View>
           <View style={styles.macroItem}>
             <Text style={[styles.macroLabel, {color: activeColors.primary_text}]}>Carbs</Text>
-            <Text style={[styles.macroValue, {color: activeColors.primary_text}]}>{userinfo.goal_carb + ' g' || '-'}</Text>
+            <Text style={[styles.macroValue, {color: activeColors.primary_text}]}>{userinfo.goal_carb ? userinfo.goal_carb + ' g' : '-'}</Text>
           </View>
           <View style={styles.macroItem}>
             <Text style={[styles.macroLabel, {color: activeColors.primary_text}]}>Fat</Text>
-            <Text style={[styles.macroValue, {color: activeColors.primary_text}]}>{userinfo.goal_fat + ' g' || '-'}</Text>
+            <Text style={[styles.macroValue, {color: activeColors.primary_text}]}>{userinfo.goal_fat ? userinfo.goal_fat + ' g' : '-'}</Text>
           </View>
           <View style={styles.macroItem}>
             <Text style={[styles.macroLabel, {color: activeColors.primary_text}]}>Fiber</Text>
-            <Text style={[styles.macroValue, {color: activeColors.primary_text}]}>{userinfo.goal_fiber + ' g' || '-'}</Text>
+            <Text style={[styles.macroValue, {color: activeColors.primary_text}]}>{userinfo.goal_fiber ? userinfo.goal_fiber + ' g' : '-'}</Text>
           </View>
         </View>
       </View>
