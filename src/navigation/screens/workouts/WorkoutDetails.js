@@ -1140,13 +1140,13 @@ export default function WorkoutDetails( {navigation} )  {
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <TextInput
                       name='setsreps1'
-                      placeholder='Sets'
+                      placeholder='-'
                       placeholderTextColor={activeColors.primary_text}
                       control={control} 
                       keyboardType='numeric'
                       maxLength={3}
                       value={setsreps1}
-                      style={{width: 50, marginBottom: 10, fontSize: 20, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: activeColors.primary_text, color: activeColors.primary_text}}
+                      style={{width: 50, marginBottom: 10, fontSize: 16, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: activeColors.primary_text, color: activeColors.primary_text}}
                       onChange={(event) => handleChange('setsreps1', event)}
                     />
                     <Text style={{color: activeColors.primary_text}}> Sets</Text>
@@ -1154,7 +1154,7 @@ export default function WorkoutDetails( {navigation} )  {
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <TextInput
                       name='setsreps2'
-                      placeholder='Reps'
+                      placeholder='-'
                       placeholderTextColor={activeColors.primary_text}
                       control={control} 
                       keyboardType='numeric'
