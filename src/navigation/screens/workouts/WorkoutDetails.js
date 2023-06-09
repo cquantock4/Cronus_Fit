@@ -1619,7 +1619,7 @@ export default function WorkoutDetails( {navigation} )  {
                       {workoutnotes ? (
                         <Text style={{color: activeColors.just_gray}}>{workoutnotes}</Text>
                       ) : (
-                        <Text style={{color: activeColors.just_gray}}>Enter your workout notes</Text>
+                        <Text style={{color: activeColors.just_gray}}>Enter Notes Here</Text>
                       )}
                     </Pressable>
                   </>
@@ -1698,7 +1698,7 @@ export default function WorkoutDetails( {navigation} )  {
                     value={workoutnotes}
                     multiline
                     placeholder="Enter Notes Here"
-                    placeholderTextColor={activeColors.primary_text}
+                    placeholderTextColor={activeColors.just_gray}
                     textAlignVertical="top"
                     minHeight={100} // Set a minimum height for the text input
                     maxHeight={200} // Set a maximum height for the text input (optional)

@@ -75,8 +75,6 @@ export default function LeaderboardDetails( {navigation} ) {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
-
-
   }, []);
 
   //Header
@@ -276,10 +274,27 @@ export default function LeaderboardDetails( {navigation} ) {
           if (resultcategory === 'TIME') {
 
             calc_workoutResults = timecap.replace(':', '').replace(':', '') - parseInt(calc_workoutResults.replace(':', '').replace(':', ''));
-          } else if (resultcategory === 'SETSREPS') {
-
-            console.log('sets and reps: ' + calc_workoutResults)
             
+            // If the user exceeded the time cap it will set their score to 0
+            if (calc_workoutResults < 0) {  
+              calc_workoutResults =0
+            }
+          
+          
+          }
+
+          if (resultcategory === 'SETSREPS') {
+
+            if (calc_workoutResults.includes('-')) {
+              const [group, order] = calc_workoutResults.split('-');
+              const formattedGroup = parseInt(group, 10).toString().padStart(2, '0');
+              const formattedOrder = parseInt(order, 10).toString().padStart(2, '0');
+              calc_workoutResults = `${formattedGroup}${formattedOrder}`;
+            } else {
+              calc_workoutResults = 0
+            }
+
+
           }
           
           if (calc_workoutResults != null && required) {
@@ -674,6 +689,28 @@ export default function LeaderboardDetails( {navigation} ) {
 
   async function getWorkoutAndSubWorkouts(date) {
 
+    // Custom comparator function
+    const compare = (a, b) => {
+      // Compare by "group" field
+      if (a.group < b.group) {
+        return -1;
+      }
+      if (a.group > b.group) {
+        return 1;
+      }
+
+      // If "group" fields are equal, compare by "order" field
+      if (a.order < b.order) {
+        return -1;
+      }
+      if (a.order > b.order) {
+        return 1;
+      }
+
+      // If both fields are equal, maintain the original order
+      return 0;
+    };
+
 
     // Find today's workout
     //const workouts = await DataStore.query(Workouts);
@@ -690,9 +727,16 @@ export default function LeaderboardDetails( {navigation} ) {
     }
 
     // Find the subworkouts associated with the workout
-    const subWorkouts = await DataStore.query(SubWorkouts, (s) =>
+    const subWorkouts_unfiltered = await DataStore.query(SubWorkouts, (s) =>
       s.workoutsID.eq(workouts[0].id)
     );
+
+    const subWorkouts = subWorkouts_unfiltered.sort(compare)
+
+    //console.log('here we are: ' + JSON.stringify(subWorkouts))
+
+    // Sort the array using the comparator function
+    //const sortedData = subWorkouts.sort(compare);
 
     // Get all the subworkoutIds
     const subWorkoutIds = subWorkouts.map((sw) => sw.id);
@@ -897,19 +941,33 @@ export default function LeaderboardDetails( {navigation} ) {
 
 
     const [expand, setExpand] = useState(false);
+    console.log('loading row: ' + props.curr_item)
 
-    //console.log(workoutresults[props.curr_item])
+    //console.log('this: ' + JSON.stringify(workoutresults[props.curr_item]))
+    //console.log('Here: ' + JSON.stringify(workoutresults[props.curr_item].results))
+
+    //const dataset_ordered = 
 
     //Loop over inner results list and create drop down
-
     let datadisplayed = workoutresults[props.curr_item].results.map((item, index) => {
+
+      
 
       try{
 
-      
         const subworkouts_filtered = workouts.subWorkouts.filter(
           pe => pe.id === item.subWorkoutID
         )
+
+        let formatted_sets, formatted_reps
+
+        if (subworkouts_filtered[0].resultcategory === 'SETSREPS') {
+          if (item.value.includes('-')) {
+            const [sets, reps] = item.value.split('-');
+            formatted_sets = sets
+            formatted_reps = reps
+         } 
+        }
       
         if (subworkouts_filtered.length != 0){
           let curr_units = ''
@@ -923,15 +981,21 @@ export default function LeaderboardDetails( {navigation} ) {
           } else if (subworkouts_filtered[0].resultcategory === 'SETSREPS') {
 
             curr_units = <View style={{alignItems: 'flex-end'}}>
-                            <Text style={{color: activeColors.primary_text}}>{item.value}&nbsp;</Text>
-                            <Text style={{color: activeColors.primary_text}}>rounds/sets - reps</Text>
+                          <View style={{flexDirection: 'row'}}>
+                              <Text style={{color: activeColors.primary_text}}>{formatted_sets}&nbsp;</Text>
+                              <Text style={{color: activeColors.primary_text}}>sets</Text>
+                          </View>
+                          <View style={{flexDirection: 'row'}}>
+                              <Text style={{color: activeColors.primary_text}}>{formatted_reps}&nbsp;</Text>
+                              <Text style={{color: activeColors.primary_text}}>reps</Text>
+                          </View>
                         </View>
 
           } else if (subworkouts_filtered[0].resultcategory === 'WEIGHT') {
 
             curr_units = <View style={{flexDirection: 'row'}}>
                             <Text style={{color: activeColors.primary_text}}>{item.value}&nbsp;</Text>
-                            <Text style={{color: activeColors.primary_text}}>{units}</Text>
+                            <Text style={{color: activeColors.primary_text}}>lbs</Text>
                         </View>
 
           }
@@ -976,7 +1040,7 @@ export default function LeaderboardDetails( {navigation} ) {
           </View>
           <View style={styles.rowMiddleSection}>
             <Text style={{fontSize: 14, color: 'black', fontWeight: '500', color: activeColors.primary_text}}>{props.name}</Text>
-            <Text style={{fontSize: 11, color: activeColors.accent_text}}>USA - 26 y/o</Text>
+            {/*<Text style={{fontSize: 11, color: activeColors.accent_text}}>View Results</Text>*/}
           </View>
           <View style={styles.rowCounts}>
             <View style={[styles.rowCountsContainer, {backgroundColor: activeColors.inverted_bg}]}>
@@ -1119,7 +1183,7 @@ export default function LeaderboardDetails( {navigation} ) {
   
     
 
-    //console.log('Workout Results this one: ' + JSON.stringify(workoutresults["42a4f8ed-5853-4804-b3c2-025f3880b77b"]))
+    console.log('Workout Results this one: ' + JSON.stringify(workoutresults))
       
     let datadisplayed = workoutresults.map((category, index) => {
 

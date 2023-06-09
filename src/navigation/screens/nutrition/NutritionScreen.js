@@ -128,11 +128,17 @@ export default function NutritionScreen( {navigation} ) {
         sw.sub.eq(authUser.attributes.sub)
       )
 
-      //console.log('this is the user: ' + JSON.stringify(user))
+      console.log('this is the user: ' + JSON.stringify(user))
       
 
-      if (user) {
-        const userInfo = await DataStore.query(UserInfo, user.userInfoID);
+      if (user[0]) {
+
+        console.log(user[0].id)
+        const userInfo = await DataStore.query(UserInfo, sw =>
+          sw.userInfoUserId.eq(user[0].id)
+        )
+
+        console.log('This is the user info: ' + JSON.stringify(userInfo))
         
         if (userInfo) {
           // Use the 'userInfo' object as needed

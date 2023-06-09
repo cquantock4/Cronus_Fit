@@ -163,6 +163,27 @@ export default function Leaderboard( {navigation} ) {
           if (resultcategory === 'TIME') {
 
             calc_workoutResults = timecap.replace(':', '').replace(':', '') - parseInt(calc_workoutResults.replace(':', '').replace(':', ''));
+            
+            // If the user exceeded the time cap it will set their score to 0
+            if (calc_workoutResults < 0) {  
+              calc_workoutResults =0
+            }
+          
+          
+          }
+
+          if (resultcategory === 'SETSREPS') {
+
+            if (calc_workoutResults.includes('-')) {
+              const [group, order] = calc_workoutResults.split('-');
+              const formattedGroup = parseInt(group, 10).toString().padStart(2, '0');
+              const formattedOrder = parseInt(order, 10).toString().padStart(2, '0');
+              calc_workoutResults = `${formattedGroup}${formattedOrder}`;
+            } else {
+              calc_workoutResults = 0
+            }
+
+
           }
           
           if (calc_workoutResults != null && required) {
