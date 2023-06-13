@@ -1299,11 +1299,6 @@ export default function WorkoutDetails( {navigation} )  {
 
             }
 
-
-
-            //console.log('archive: ' + JSON.stringify(subworkout_archive))
-
-
             //Query subworkouts for workoutid on insert
             
             const curr_sub_workout = subworkout_archive.filter(
@@ -1541,9 +1536,6 @@ export default function WorkoutDetails( {navigation} )  {
       );
         
     }
-
-   
-
 
     const WorkoutInfoView = () => {
 
