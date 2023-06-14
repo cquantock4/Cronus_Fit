@@ -359,6 +359,7 @@ type EagerPrograms = {
   readonly desc?: string | null;
   readonly free?: boolean | null;
   readonly price?: string | null;
+  readonly downloadurl?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -373,6 +374,7 @@ type LazyPrograms = {
   readonly desc?: string | null;
   readonly free?: boolean | null;
   readonly price?: string | null;
+  readonly downloadurl?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

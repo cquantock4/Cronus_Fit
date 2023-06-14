@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, Image, Switch, TextInput, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, Switch, TextInput, Pressable, Linking } from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import { Amplify, Auth, DataStore, Hub } from 'aws-amplify';
+import { Storage, Auth, DataStore, Hub } from 'aws-amplify';
 import { Programs } from '../../../models';
 
 import {useRoute} from '@react-navigation/native';
@@ -72,18 +72,23 @@ export default function ProgrammingScreen( {navigation} ) {
 
   }, []);
 
-  /*
+  
   async function listPDFFiles(folderPath, storagePaths) {
+
     try {
       const fileList = await Storage.list(folderPath, { level: 'public', pageSize: 10 });
+
+      console.log(fileList)
       const pdfFiles = fileList.results.filter((file) => storagePaths.includes(file.key));
-      setPDFFiles(pdfFiles);
+
+      //setPDFFiles(pdfFiles);
       console.log('PDF files:', pdfFiles);
     } catch (error) {
       console.error('Error listing PDF files:', error);
     }
+
   }
-  */
+  
 
   async function getPrograms(){
       
@@ -91,10 +96,13 @@ export default function ProgrammingScreen( {navigation} ) {
 
     const this_program = await DataStore.query(Programs)
 
+    console.log(this_program)
+
     setPrograms(this_program)
 
     //Gather Storage Paths
     //const storagePaths = this_program.map((item) => item.downloadurl);
+    //console.log(storagePaths)
     //listPDFFiles('programs', storagePaths);
 
     setFilteredDataSource(this_program);
@@ -155,13 +163,14 @@ export default function ProgrammingScreen( {navigation} ) {
   };
 
   
-  const onProgramCardPress = (id, cardtitle, desc) => {
+  const onProgramCardPress = (id, cardtitle, desc, url) => {
     setShowProgramView(true)
 
     //Setting current card details
     setCardTitle(cardtitle)
     setCardID(id)
     setCardDesc(desc)
+    setDownloadUrl(url ? url : '')
 
     //console.log(cardtitle)
   };
@@ -173,12 +182,13 @@ export default function ProgrammingScreen( {navigation} ) {
     const curr_cardtitle = props.title;
     const curr_carddesc = props.desc;
     const curr_free = props.free;
+    const curr_url = props.url;
 
     //console.log(curr_free)
   
     return(
       
-      <Pressable style={styles.programCard} onPress={() => onProgramCardPress(curr_cardid, curr_cardtitle, curr_carddesc)}>
+      <Pressable style={styles.programCard} onPress={() => onProgramCardPress(curr_cardid, curr_cardtitle, curr_carddesc, curr_url)}>
           <Text style={{color: 'white', marginTop: 10}}>{curr_cardtitle}</Text> 
           <Image style={styles.cardLogo} source={require('../../../../assets/images/Cronus_Fit_Clean_Logo.png')} />
 
@@ -201,28 +211,30 @@ export default function ProgrammingScreen( {navigation} ) {
 
     const workoutDesc = 'This is a 25 week, 7 days a week, 45 minutes a day program with the “professional” in mind. For those who don’t have 2-3 hours a day to train, this program is for you. Each training day is meant to be completed within a 45 minute time block (not including warm up/cool down). It is a self-regulating program where you can load lifts based on how you feel and your goals. \n\n The primary focus of this program is to give you a succinct, well-rounded program that addresses all aspects of fitness to include cyclical endurance work, hypertrophy, strength development, high intensity conditioning, gymnastics, etc. This is a great base building program and is scalable to any individual’s needs. '
 
-    const handlePDFPress = async (pdfKey) => {
-
-      try {
-        const url = await Storage.get(pdfKey);
-        Linking.openURL(url)
-          .catch((error) => {
-            console.log('Error opening PDF: ', error);
-            // Handle error if the PDF cannot be opened
-          });
-      } catch (error) {
-        console.log('Error getting file URL: ', error);
-        // Handle error if the file URL cannot be retrieved
-      }
-    };
 
     const gobackPress = () => {
       setShowProgramView(false)
     }
 
-    const onDownloadPress = () => {
-        console.log('Download Button pressed')
+    const onDownloadPress = async () => {
+        console.log('Download Button pressed: ' + downloadurl)
 
+        if (downloadurl !== '') {
+
+          try {
+            const url = await Storage.get(downloadurl);
+            Linking.openURL(url)
+              .catch((error) => {
+                console.log('Error opening PDF: ', error);
+                // Handle error if the PDF cannot be opened
+              });
+          } catch (error) {
+            console.log('Error getting file URL: ', error);
+            // Handle error if the file URL cannot be retrieved
+          }
+        }
+        
+    
     }
 
     return(
@@ -408,7 +420,7 @@ export default function ProgrammingScreen( {navigation} ) {
                     { filteredDataSource ? (
                         filteredDataSource.map((item, index) => {
                           return (
-                            <ProgramDisplayCard title={item.title} id={item.id} key={item.id} desc={item.desc} free={item.free}/>
+                            <ProgramDisplayCard title={item.title} id={item.id} key={item.id} desc={item.desc} free={item.free} url={item.downloadurl}/>
                           );
                         })
                       ) : (

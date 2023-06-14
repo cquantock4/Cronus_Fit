@@ -51,7 +51,7 @@ export default function NutritionDetails( {navigation} ) {
   const [user, setUser] = useState(route?.params?.user_id);
   const [userinfo, setUserInfo] = useState(null)
   const [users, setUsers] = useState(undefined);
-  const[headertitle, setHeaderTitle] = useState('Nutrition');
+  const [headertitle, setHeaderTitle] = useState('Nutrition');
 
   const [dimensions, setDimensions] = useState({ window, screen });
 
@@ -198,7 +198,7 @@ export default function NutritionDetails( {navigation} ) {
       const fileList = await Storage.list(folderPath, { level: 'public', pageSize: 10 });
       const pdfFiles = fileList.results.filter((file) => storagePaths.includes(file.key));
       setPDFFiles(pdfFiles);
-      console.log('PDF files:', pdfFiles);
+      //console.log('PDF files:', pdfFiles);
     } catch (error) {
       console.error('Error listing PDF files:', error);
     }
@@ -2663,7 +2663,7 @@ that would prevent my participation in the program.
 
   const ArticlesWindow= () => {
     
-    
+    console.log('articles: ' + JSON.stringify(pdfFiles))
 
     const handlePDFPress = async (pdfKey) => {
 
