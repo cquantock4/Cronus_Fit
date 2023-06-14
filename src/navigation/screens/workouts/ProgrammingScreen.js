@@ -233,8 +233,7 @@ export default function ProgrammingScreen( {navigation} ) {
             // Handle error if the file URL cannot be retrieved
           }
         }
-        
-    
+
     }
 
     return(
