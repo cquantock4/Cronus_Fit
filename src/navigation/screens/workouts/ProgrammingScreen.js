@@ -19,6 +19,7 @@ export default function ProgrammingScreen( {navigation} ) {
   const [showProgramView, setShowProgramView] = useState(false);
   const [downloadTrigger, setDownloadTrigger] = useState(false);
   const [cardTitle, setCardTitle] = useState('');
+  const [downloadurl, setDownloadUrl] = useState('');
   const [cardID, setCardID] = useState('');
   const [cardDesc, setCardDesc] = useState('');
 
@@ -71,6 +72,19 @@ export default function ProgrammingScreen( {navigation} ) {
 
   }, []);
 
+  /*
+  async function listPDFFiles(folderPath, storagePaths) {
+    try {
+      const fileList = await Storage.list(folderPath, { level: 'public', pageSize: 10 });
+      const pdfFiles = fileList.results.filter((file) => storagePaths.includes(file.key));
+      setPDFFiles(pdfFiles);
+      console.log('PDF files:', pdfFiles);
+    } catch (error) {
+      console.error('Error listing PDF files:', error);
+    }
+  }
+  */
+
   async function getPrograms(){
       
     //console.log(workoutcategory)
@@ -79,8 +93,15 @@ export default function ProgrammingScreen( {navigation} ) {
 
     setPrograms(this_program)
 
+    //Gather Storage Paths
+    //const storagePaths = this_program.map((item) => item.downloadurl);
+    //listPDFFiles('programs', storagePaths);
+
     setFilteredDataSource(this_program);
     setMasterDataSource(this_program);
+
+
+    
 
   }
 
@@ -180,12 +201,28 @@ export default function ProgrammingScreen( {navigation} ) {
 
     const workoutDesc = 'This is a 25 week, 7 days a week, 45 minutes a day program with the “professional” in mind. For those who don’t have 2-3 hours a day to train, this program is for you. Each training day is meant to be completed within a 45 minute time block (not including warm up/cool down). It is a self-regulating program where you can load lifts based on how you feel and your goals. \n\n The primary focus of this program is to give you a succinct, well-rounded program that addresses all aspects of fitness to include cyclical endurance work, hypertrophy, strength development, high intensity conditioning, gymnastics, etc. This is a great base building program and is scalable to any individual’s needs. '
 
+    const handlePDFPress = async (pdfKey) => {
+
+      try {
+        const url = await Storage.get(pdfKey);
+        Linking.openURL(url)
+          .catch((error) => {
+            console.log('Error opening PDF: ', error);
+            // Handle error if the PDF cannot be opened
+          });
+      } catch (error) {
+        console.log('Error getting file URL: ', error);
+        // Handle error if the file URL cannot be retrieved
+      }
+    };
+
     const gobackPress = () => {
       setShowProgramView(false)
     }
 
     const onDownloadPress = () => {
         console.log('Download Button pressed')
+
     }
 
     return(

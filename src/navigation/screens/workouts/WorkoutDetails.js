@@ -1258,10 +1258,7 @@ export default function WorkoutDetails( {navigation} )  {
             let curr_value = subworkouts[category].info[i].value
             let res_category = subworkouts[category].info[i].resultcat
 
-            console.log(curr_value)
-
             if (res_category === 'TIME'){
-
 
               //const [hour, min, sec] = curr_value.includes(':')
 
@@ -1296,7 +1293,6 @@ export default function WorkoutDetails( {navigation} )  {
 
               curr_value = temp_hour + ':' + temp_min + ':' + temp_sec
 
-
             }
 
             //Query subworkouts for workoutid on insert
@@ -1309,6 +1305,7 @@ export default function WorkoutDetails( {navigation} )  {
             //console.log('originial: ' + JSON.stringify(workoutresults.subWorkouts))
 
             //Query by the subworkout ID: subworkouts[category].info[2].id
+            
             /*
             const filteredResults = workoutresults.subWorkouts.filter(
               pe => pe.workoutresults[0].userID === userid && pe.id === curr_subworkoutid
