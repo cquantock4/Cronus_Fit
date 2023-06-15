@@ -22,5 +22,29 @@
         "s3cronusfitstorage53141d21": {}
       }
     }
+  },
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-cronusfit-dev-170012-authRole",
+      "UnauthRoleArn": "arn:aws:iam::473770778907:role/amplify-cronusfit-dev-170012-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::473770778907:role/amplify-cronusfit-dev-170012-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-cronusfit-dev-170012-deployment",
+      "UnauthRoleName": "amplify-cronusfit-dev-170012-unauthRole",
+      "StackName": "amplify-cronusfit-dev-170012",
+      "StackId": "arn:aws:cloudformation:us-east-1:473770778907:stack/amplify-cronusfit-dev-170012/786b6200-0af6-11ee-be07-12d9e078e629",
+      "AmplifyAppId": "d13n17x2fk0jtr"
+    },
+    "categories": {
+      "auth": {
+        "CronusFit": {}
+      },
+      "api": {
+        "cronusfit": {}
+      },
+      "storage": {
+        "s3cronusfitstorage53141d21": {}
+      }
+    }
   }
 }

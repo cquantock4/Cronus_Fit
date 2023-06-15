@@ -684,6 +684,7 @@ export const onCreatePrograms = /* GraphQL */ `
       desc
       free
       price
+      downloadurl
       createdAt
       updatedAt
       _version
@@ -700,6 +701,7 @@ export const onUpdatePrograms = /* GraphQL */ `
       desc
       free
       price
+      downloadurl
       createdAt
       updatedAt
       _version
@@ -716,6 +718,7 @@ export const onDeletePrograms = /* GraphQL */ `
       desc
       free
       price
+      downloadurl
       createdAt
       updatedAt
       _version

@@ -961,6 +961,7 @@ export const getPrograms = /* GraphQL */ `
       desc
       free
       price
+      downloadurl
       createdAt
       updatedAt
       _version
@@ -982,6 +983,7 @@ export const listPrograms = /* GraphQL */ `
         desc
         free
         price
+        downloadurl
         createdAt
         updatedAt
         _version
@@ -1012,6 +1014,7 @@ export const syncPrograms = /* GraphQL */ `
         desc
         free
         price
+        downloadurl
         createdAt
         updatedAt
         _version
