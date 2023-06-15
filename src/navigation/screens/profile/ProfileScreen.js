@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import {Button, Pressable, ActivityIndicator } from 'react-native';
+import {Button, Pressable, ActivityIndicator, TouchableOpacity } from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
@@ -46,6 +46,8 @@ export default function ProfileScreen( {navigation} ) {
   const [imagekey, setImageKey] = useState();
   const [imageURI, setImageURI] = useState(undefined);
 
+  const [profileImage, setProfileImage] = useState(null);
+
 
   //Modal
   const [imagemodalvisible, setImageModalVisible] = useState(false);
@@ -74,14 +76,17 @@ export default function ProfileScreen( {navigation} ) {
 
   }, [isFocused]);
 
+/*
   useEffect(() => {
 
     if (image) {
+      console.log('running this')
       uploadResource()
     }
     
 
   }, [image]);
+  */
 
   async function getUser(){
 
@@ -107,10 +112,9 @@ export default function ProfileScreen( {navigation} ) {
         setFullname(_user[0].name)
         console.log('setting the imageurl to: ' + _user[0].image)
 
+        setProfileImage(_user[0].image);
         
-
         setImageURI(_user[0].image)
-
         setImageKey(_user[0].image_uri)
       }
 
@@ -163,7 +167,77 @@ export default function ProfileScreen( {navigation} ) {
      Image Upload Section
   */
 
+     const pickImage = async () => {
+      try {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          console.log('Permission to access media library denied');
+          return;
+        }
+  
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+  
+        if (!result.canceled) {
+          // Upload the selected image to S3
+          const uploadedImage = await uploadImage(result.assets[0].uri);
+  
+          // Update the user's profile image in the database
+          await updateUserProfileImage(uploadedImage);
+  
+          // Update the profile image state
+          setProfileImage(uploadedImage);
+        }
+      } catch (error) {
+        console.log('Error picking image:', error);
+      }
+    };
+  
+    const uploadImage = async (imageUri) => {
+      try {
+        const response = await fetch(imageUri);
+        const blob = await response.blob();
+        const fileName = `profileimages/${Date.now()}.jpg`;
+  
+        // Upload the image to S3 bucket using Amplify Storage
+        await Storage.put(fileName, blob, {
+          contentType: 'image/jpeg',
+        });
+  
+        // Get the public URL of the uploaded image
+        const imageUrl = await Storage.get(fileName);
+        return imageUrl;
+      } catch (error) {
+        console.log('Error uploading image:', error);
+        throw error;
+      }
+    };
+  
+    const updateUserProfileImage = async (imageUrl) => {
 
+        console.log('updating User profile image')
+
+      try {
+
+        if (user) {
+          DataStore.save(
+            User.copyOf(user, (updated) => {
+              updated.image = imageUrl
+            })
+          )
+        }
+        
+
+      } catch (error) {
+        console.log('Error updating profile image:', error);
+      }
+    };
+
+  /*
   const pickImage = async () => {
 
 
@@ -176,7 +250,7 @@ export default function ProfileScreen( {navigation} ) {
     });
 
 
-    //console.log(result.assets[0].uri);
+    console.log(result);
 
     if (!result.canceled) {
       //console.log('This is the delete key: **************: ' + imagekey);
@@ -192,36 +266,6 @@ export default function ProfileScreen( {navigation} ) {
 
   };
 
-  const ImagePickerExample = () => {
-    const [image, setImage] = useState(null);
-  
-    const pickImage = async () => {
-      try {
-        let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsMultipleSelection: false,
-        });
-  
-        //console.log(result.assets[0].uri)
-        //console.log(result.canceled)
-  
-        if (!result.canceled) {
-          //setImage(result.assets[0].uri);
-          setImageURI(result.assets[0].uri);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-  
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'blue' }}>
-        <Button title="Pick Image" onPress={pickImage} />
-        
-      </View>
-    );
-  };
-  
   const updateProfileImage = (temp_img_url) => {
 
     //console.log('here')
@@ -232,7 +276,7 @@ export default function ProfileScreen( {navigation} ) {
 
       try {
 
-        //console.log('updating the profile image: ' + temp_img_url)
+        console.log('updating the profile image: ' + temp_img_url)
 
         //const authUser =  Auth.currentAuthenticatedUser({bypassCache: true});
 
@@ -265,7 +309,6 @@ export default function ProfileScreen( {navigation} ) {
 
   }
 
-  
   const fetchResourceFromURI = async uri => {
     const response = await fetch(uri);
     //console.log(JSON.stringify(response));
@@ -278,30 +321,23 @@ export default function ProfileScreen( {navigation} ) {
     if (isLoading) return;
 
     setisLoading(true);
-
-    /*
-    try {
-      //Delete Previous Image
-      const original = await DataStore.query(User, user.id);
-      const currentImageUrl = original.image;
-
-      await Storage.remove(currentImageUrl);
-
-    } catch (e) {
-      console.log('Error: ' + e.message)
-    }
-    */
     
     //console.log('we made it here')
 
+
+
     //console.log(image)
     const img = await fetchResourceFromURI(image.assets[0].uri);
-    const fileName = user.name.replace(/\s+/g, '')+ '_profileImage.jpeg';
+
+    console.log(img)
+
+    const path = 'profileimages/';
+    //const fileName = user.name.replace(/\s+/g, '')+ '_profileImage.jpeg';
+    const fileName = `${path}${Date.now()}-${file.name}`;
+
     console.log(fileName)
 
-
-    let temp_img_url = ''
-
+    let temp_img_url = ''    
 
     return Storage.put(fileName, img, {
       level: 'public',
@@ -361,7 +397,7 @@ export default function ProfileScreen( {navigation} ) {
 
       
   };
-
+  */
 
   /*
     Navigation
@@ -416,8 +452,17 @@ export default function ProfileScreen( {navigation} ) {
     <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
         <View style={styles.topContainer}>
           <View style={styles.topLeftContainer}> 
-          
-            <Pressable onPress={pickImage} style={{justifyContent: 'center', alignItems: 'center'}}>
+
+            <TouchableOpacity onPress={pickImage} style={{justifyContent: 'center', alignItems: 'center'}}>
+              {profileImage ? (
+                <Image source={{ uri: profileImage }} style={styles.profile_image}/>
+              ) : (
+                <Image style={styles.profile_image} source={require('../../../../assets/images/AddProfileImage.png')} />
+              )}
+            </TouchableOpacity>
+
+            {/*
+              <Pressable onPress={pickImage} style={{justifyContent: 'center', alignItems: 'center'}}>
               {imageURI ? (
                 isLoading ? (
                     <ActivityIndicator />
@@ -429,8 +474,8 @@ export default function ProfileScreen( {navigation} ) {
                 <Image style={styles.profile_image} source={require('../../../../assets/images/AddProfileImage.png')} />
               )}
                 
-            </Pressable>
-              
+              </Pressable>
+            */}
 
           </View>
 
