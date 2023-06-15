@@ -42,12 +42,8 @@ export default function ProfileScreen( {navigation} ) {
   const [progressText, setProgressText] = useState('');
   const [isLoading, setisLoading] = useState(false);
 
-  const [image, setImage] = useState();
-  const [imagekey, setImageKey] = useState();
-  const [imageURI, setImageURI] = useState(undefined);
-
   const [profileImage, setProfileImage] = useState(null);
-
+  const [refresh, setRefresh] = useState(false);
 
   //Modal
   const [imagemodalvisible, setImageModalVisible] = useState(false);
@@ -67,26 +63,15 @@ export default function ProfileScreen( {navigation} ) {
   useEffect(() => {
 
     // Call only when screen open or when back on screen 
-    console.log(isFocused)
+    //console.log(isFocused)
     if(isFocused){ 
         getUser();
     }
 
     //getUser();
 
-  }, [isFocused]);
+  }, [isFocused, refresh]);
 
-/*
-  useEffect(() => {
-
-    if (image) {
-      console.log('running this')
-      uploadResource()
-    }
-    
-
-  }, [image]);
-  */
 
   async function getUser(){
 
@@ -100,8 +85,6 @@ export default function ProfileScreen( {navigation} ) {
       const _user = await DataStore.query(User, sw =>
         sw.sub.eq(authUser.attributes.sub)
       )
-
-      console.log(_user)
     
       //console.log('Here we are: ' + JSON.stringify(user))
       //Query Matrix Table to find list of ids  
@@ -110,12 +93,8 @@ export default function ProfileScreen( {navigation} ) {
         setUser(_user[0])
         setEmail(_user[0].email)
         setFullname(_user[0].name)
-        console.log('setting the imageurl to: ' + _user[0].image)
 
-        setProfileImage(_user[0].image);
-        
-        setImageURI(_user[0].image)
-        setImageKey(_user[0].image_uri)
+        setProfileImage(_user[0].image); 
       }
 
     
@@ -124,44 +103,6 @@ export default function ProfileScreen( {navigation} ) {
     }
 
   }
-  /*
-  useEffect(() => {
-    /*
-    const fetchUsers = () => {
-      //Get current authenticated user
-      try {
-        const authUser =  Auth.currentAuthenticatedUser({bypassCache: true});
-        setUsername(authUser.username)
-
-        const _user =  DataStore.query(User , (w) => w.sub("eq", authUser.attributes.sub))
-
-        setUserData(_user)
-        setUser(_user[0])
-
-        if (_user[0]) {
-          setEmail(_user[0].email)
-          setFullname(_user[0].name)
-          setImageURI(_user[0].image)
-
-        }
-       
-      } catch (e) {
-        setUsername(null);
-      }
-     
-    }
-   
-    fetchUsers();   
-     
-
-    //if (image) {
-      
-      //uploadResource()
-    //}
-    
-
-  }, [userdata, user]);
-  */
 
   /*
      Image Upload Section
@@ -219,9 +160,20 @@ export default function ProfileScreen( {navigation} ) {
   
     const updateUserProfileImage = async (imageUrl) => {
 
-        console.log('updating User profile image')
 
       try {
+
+        // Delete the current profile image from the S3 bucket
+        if (user.image) {
+          //const imageName = user.image.split('/').pop();
+
+          const imageUrlParts = user.image.split('/');
+          const imageNameWithParams = imageUrlParts.pop();
+          const imageName = imageNameWithParams.split('?')[0];
+
+          await Storage.remove(`profileimages/${imageName}`);
+        }
+
 
         if (user) {
           DataStore.save(
@@ -231,173 +183,12 @@ export default function ProfileScreen( {navigation} ) {
           )
         }
         
+        setRefresh(!refresh)
 
       } catch (error) {
         console.log('Error updating profile image:', error);
       }
     };
-
-  /*
-  const pickImage = async () => {
-
-
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [3, 4],
-      quality: 1,
-    });
-
-
-    console.log(result);
-
-    if (!result.canceled) {
-      //console.log('This is the delete key: **************: ' + imagekey);
-
-      await Storage.remove(imagekey);
-
-      setImage(result);
-      setImageKey(result.assets[0].uri);
-      console.log('uploading resource: ' + result.assets[0].uri)
-    }
-
-   
-
-  };
-
-  const updateProfileImage = (temp_img_url) => {
-
-    //console.log('here')
-
-
-
-    if (temp_img_url) {
-
-      try {
-
-        console.log('updating the profile image: ' + temp_img_url)
-
-        //const authUser =  Auth.currentAuthenticatedUser({bypassCache: true});
-
-        //console.log(authUser)
-
-        //const original = DataStore.query(User , (w) => w.sub("eq", authUser.attributes.sub))
-
-
-        //console.log(original[0])
-
-        //Exclude objects
-        //let result = Object.values(original[0].User).filter( x => typeof x != "object")
-        //let result = Object.values(original[0])
-        
-        DataStore.save(
-          User.copyOf(user, (updated) => {
-            updated.image = temp_img_url
-          })
-        )
-
-        //update
-
-        //('image saved')
-        
-
-      } catch (err) {
-        console.log('Error: ' + err)
-      }
-    }
-
-  }
-
-  const fetchResourceFromURI = async uri => {
-    const response = await fetch(uri);
-    //console.log(JSON.stringify(response));
-    const blob = await response.blob();
-    return blob;
-  };
-
-  const uploadResource = async () => {
-    //console.log(isLoading)
-    if (isLoading) return;
-
-    setisLoading(true);
-    
-    //console.log('we made it here')
-
-
-
-    //console.log(image)
-    const img = await fetchResourceFromURI(image.assets[0].uri);
-
-    console.log(img)
-
-    const path = 'profileimages/';
-    //const fileName = user.name.replace(/\s+/g, '')+ '_profileImage.jpeg';
-    const fileName = `${path}${Date.now()}-${file.name}`;
-
-    console.log(fileName)
-
-    let temp_img_url = ''    
-
-    return Storage.put(fileName, img, {
-      level: 'public',
-      contentType: image.assets[0].type,
-      progressCallback(uploadProgress) {
-
-        setProgressText(
-          ` ${Math.round(
-            (uploadProgress.loaded / uploadProgress.total) * 100,
-          )} %`,
-        );
-
-        console.log(
-          `Progress: ${uploadProgress.loaded}/${uploadProgress.total}`,
-        );
-
-      },
-    })
-      .then(res => {
-        setProgressText('');
-        //setImage(null);
-
-        //console.log('This is the key ---**:: ' + res.key)
-
-        Storage.get(res.key)
-          .then(result => {
-
-            console.log('here is the result: ' + JSON.stringify(result))
-            //console.log('made it here too')
-
-            setImageURI(result)
-
-            temp_img_url = result
-
-            //console.log('Updating Profile image')
-            updateProfileImage(temp_img_url);
-
-            //console.log(result)
-            //updateProfileImage()
-          })
-          .catch(err => {
-            setProgressText('Upload Error');
-            //console.log(err);
-          });
-
-          setisLoading(false);
-
-          
-
-      })
-      .catch(err => {
-        setisLoading(false);
-        setProgressText('Upload Error');
-        //console.log(err);
-      });
-
-
-      
-  };
-  */
 
   /*
     Navigation
