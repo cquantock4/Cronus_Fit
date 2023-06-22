@@ -114,6 +114,7 @@ type Programs @model @auth(rules: [{allow: public}]) {
   free: Boolean
   price: String
   downloadurl: String
+  data_type: String
 }
 
 type Comments @model @auth(rules: [{allow: public}]) {

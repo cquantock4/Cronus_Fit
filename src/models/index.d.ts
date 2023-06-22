@@ -360,6 +360,7 @@ type EagerPrograms = {
   readonly free?: boolean | null;
   readonly price?: string | null;
   readonly downloadurl?: string | null;
+  readonly data_type?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -375,6 +376,7 @@ type LazyPrograms = {
   readonly free?: boolean | null;
   readonly price?: string | null;
   readonly downloadurl?: string | null;
+  readonly data_type?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
