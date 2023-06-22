@@ -1500,6 +1500,13 @@ that would prevent my participation in the program.
 
           console.log(requestData)
     
+          const headers = oauth.toHeader(
+            oauth.authorize(requestData, {
+              key: Constants.expoConfig.extra.fatSecretAPIKey,
+              secret: Constants.expoConfig.extra.fatSecretAPISecret,
+            })
+          );
+    
       const searchFood = async () => {
         const url = `https://platform.fatsecret.com/rest/server.api?method=foods.search.v2&search_expression=${encodeURIComponent(
           searchQuery
