@@ -1449,100 +1449,21 @@ that would prevent my participation in the program.
   */
   const AddMealSnack = () => {
 
+
     const FoodSearch = () => {
-      const [searchTerm, setSearchTerm] = useState('');
-      const [searchResults, setSearchResults] = useState([]);
-    
-      const handleSearch = async () => {
-        try {
-          const oauth = OAuth({
-            consumer: {
-              key: Constants.expoConfig.extra.fatSecretAPIKey,
-              secret: Constants.expoConfig.extra.fatSecretAPISecret,
-            },
-            oauth_signature_method: 'HMAC-SHA1',
-            hash_function: (baseString, key) =>
-              CryptoJS.HmacSHA1(baseString, key).toString(CryptoJS.enc.Base64),
-          });
-
-          console.log('Oauth: ' + JSON.stringify(oauth))
-    
-          const requestData = {
-            url: 'https://platform.fatsecret.com/rest/server.api',
-            method: 'GET',
-            data: {
-              method: 'foods.search',
-              format: 'json',
-              search_expression: searchTerm,
-            },
-          };
-
-          console.log(requestData)
-    
-          const headers = oauth.toHeader(
-            oauth.authorize(requestData, {
-              key: Constants.expoConfig.extra.fatSecretAPIKey,
-              secret: Constants.expoConfig.extra.fatSecretAPISecret,
-            })
-          );
-    
-          const response = await axios.get(requestData.url, {
-            headers: headers,
-            params: requestData.data,
-          });
-
-          console.log(response)
-    
-          const foodResults = response.data?.foods?.food;
-    
-          if (foodResults) {
-            if (Array.isArray(foodResults)) {
-              setSearchResults(foodResults);
-            } else {
-              setSearchResults([foodResults]);
-            }
-          } else {
-            setSearchResults([]);
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      };
-    
-      return (
-        <View>
-          <TextInput
-            placeholder="Search for food"
-            value={searchTerm}
-            onChangeText={setSearchTerm}
-          />
-          <Button title="Search" onPress={handleSearch} />
-          {searchResults.map((food) => (
-            <View key={food.food_id}>
-              <Text>Name: {food.food_name}</Text>
-              <Text>Brand: {food.brand_name}</Text>
-              <Text>Calories: {food.calories}</Text>
-              {/* Add more fields as per your requirements */}
-            </View>
-          ))}
-        </View>
-      );
-    };
-
-    const FoodSearch2 = () => {
       const CLIENT_ID = Constants.expoConfig.extra.fatSecretAPIClientID;
       const CLIENT_SECRET = Constants.expoConfig.extra.fatSecretAPIClientSecret;
-
+    
       const [accessToken, setAccessToken] = useState('');
       const [searchQuery, setSearchQuery] = useState('');
-      const [data, setData] = useState([]);
       const [searchResults, setSearchResults] = useState([]);
-
+      const [selectedFood, setSelectedFood] = useState(null);
+      const [servings, setServings] = useState([]);
+    
       useEffect(() => {
-        console.log('authorizing')
         authorize();
       }, []);
-
+    
       const authorize = async () => {
         const authString = base64.encode(`${CLIENT_ID}:${CLIENT_SECRET}`);
         const response = await fetch('https://oauth.fatsecret.com/connect/token', {
@@ -1553,29 +1474,68 @@ that would prevent my participation in the program.
           },
           body: 'grant_type=client_credentials',
         });
-
+    
         const data = await response.json();
         const accessToken = data.access_token;
         setAccessToken(accessToken);
       };
-
+    
       const searchFood = async () => {
-        const url = `https://platform.fatsecret.com/rest/server.api?method=foods.search&search_expression=${encodeURIComponent(
+        const url = `https://platform.fatsecret.com/rest/server.api?method=foods.search.v2&search_expression=${encodeURIComponent(
           searchQuery
         )}&format=json`;
-
+    
         const response = await fetch(url, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-
+    
         const data = await response.json();
-        console.log(data)
-        setData(data)
-        setSearchResults(data.foods);
+        const foods = data.foods_search.results.food;
+        setSearchResults(foods);
       };
-
+    
+      const fetchServings = async (food) => {
+        const url = `https://platform.fatsecret.com/rest/server.api?method=food.get.v2&food_id=${food.food_id}&format=json`;
+    
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+    
+        const data = await response.json();
+        const servings = data.food.servings.serving;
+        setServings(servings);
+      };
+    
+      const handleFoodClick = (food) => {
+        setSelectedFood(food);
+        fetchServings(food);
+      };
+    
+      const FoodRow = ({ item }) => {
+        return (
+          <View style={{ padding: 5, borderBottomColor: 'black', borderBottomWidth: 1 }}>
+            <Text onPress={() => handleFoodClick(item)}>{item.food_name}</Text>
+          </View>
+        );
+      };
+    
+      const ServingRow = ({ item }) => {
+        return (
+          <View style={{ padding: 5, borderBottomColor: 'black', borderBottomWidth: 1 }}>
+            <Text>Serving: {item.serving_description}</Text>
+            <Text>Calories: {item.calories}</Text>
+            <Text>Protein: {item.protein}</Text>
+            <Text>Carbs: {item.carbs}</Text>
+            <Text>Fat: {item.fat}</Text>
+            <Text>Fiber: {item.fiber}</Text>
+          </View>
+        );
+      };
+    
       return (
         <View>
           <TextInput
@@ -1584,15 +1544,24 @@ that would prevent my participation in the program.
             onChangeText={setSearchQuery}
           />
           <Button title="Search" onPress={searchFood} />
-          <Text>{JSON.stringify(data)}</Text>
+          {selectedFood && (
+            <View>
+              <Text>Selected Food: {selectedFood.food_name}</Text>
+              <FlatList
+                data={servings}
+                keyExtractor={(item) => item.serving_id.toString()}
+                renderItem={({ item }) => <ServingRow item={item} />}
+              />
+            </View>
+          )}
           <FlatList
             data={searchResults}
             keyExtractor={(item) => item.food_id.toString()}
-            renderItem={({ item }) => <Text>{item.food_name}</Text>}
+            renderItem={({ item }) => <FoodRow item={item} />}
           />
         </View>
       );
-    }
+    };
 
 
     //const addFood = (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
@@ -1920,7 +1889,7 @@ that would prevent my participation in the program.
 
     return(
       <View style={{width: '100%', height: '100%', alignItems: 'center'}}>
-        <FoodSearch2 />
+        <FoodSearch />
         <DatePickerArrows />
         <ScrollView style={{width: '100%'}}>
         <View style={{width: '100%'}}>
