@@ -42,6 +42,8 @@
     "extra": {
       "fatSecretAPIKey": "fa132652e7f24d40ac5b0de166d10a05",
       "fatSecretAPISecret": "6d1733c4af524ff4bf9c32d43f7e1aa8",
+      "fatSecretAPIClientID": "fa132652e7f24d40ac5b0de166d10a05",
+      "fatSecretAPIClientSecret": "80e54ca4e9c540ddb23d169c30bbf78a",
       "eas": {
         "projectId": "ccb6c5ec-5edf-46b2-bfe8-14514a2628d7"
       }

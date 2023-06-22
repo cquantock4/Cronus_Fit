@@ -7,6 +7,7 @@ import Constants from 'expo-constants'
 import oauthSignature from 'oauth-signature';
 import CryptoJS from 'crypto-js';
 import OAuth from 'oauth-1.0a';
+import base64 from 'react-native-base64';
 
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -1459,10 +1460,12 @@ that would prevent my participation in the program.
               key: Constants.expoConfig.extra.fatSecretAPIKey,
               secret: Constants.expoConfig.extra.fatSecretAPISecret,
             },
-            signature_method: 'HMAC-SHA1',
+            oauth_signature_method: 'HMAC-SHA1',
             hash_function: (baseString, key) =>
               CryptoJS.HmacSHA1(baseString, key).toString(CryptoJS.enc.Base64),
           });
+
+          console.log('Oauth: ' + JSON.stringify(oauth))
     
           const requestData = {
             url: 'https://platform.fatsecret.com/rest/server.api',
@@ -1473,6 +1476,8 @@ that would prevent my participation in the program.
               search_expression: searchTerm,
             },
           };
+
+          console.log(requestData)
     
           const headers = oauth.toHeader(
             oauth.authorize(requestData, {
@@ -1523,6 +1528,71 @@ that would prevent my participation in the program.
         </View>
       );
     };
+
+    const FoodSearch2 = () => {
+      const CLIENT_ID = Constants.expoConfig.extra.fatSecretAPIClientID;
+      const CLIENT_SECRET = Constants.expoConfig.extra.fatSecretAPIClientSecret;
+
+      const [accessToken, setAccessToken] = useState('');
+      const [searchQuery, setSearchQuery] = useState('');
+      const [data, setData] = useState([]);
+      const [searchResults, setSearchResults] = useState([]);
+
+      useEffect(() => {
+        console.log('authorizing')
+        authorize();
+      }, []);
+
+      const authorize = async () => {
+        const authString = base64.encode(`${CLIENT_ID}:${CLIENT_SECRET}`);
+        const response = await fetch('https://oauth.fatsecret.com/connect/token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${authString}`,
+          },
+          body: 'grant_type=client_credentials',
+        });
+
+        const data = await response.json();
+        const accessToken = data.access_token;
+        setAccessToken(accessToken);
+      };
+
+      const searchFood = async () => {
+        const url = `https://platform.fatsecret.com/rest/server.api?method=foods.search&search_expression=${encodeURIComponent(
+          searchQuery
+        )}&format=json`;
+
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const data = await response.json();
+        console.log(data)
+        setData(data)
+        setSearchResults(data.foods);
+      };
+
+      return (
+        <View>
+          <TextInput
+            placeholder="Search for a food"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          <Button title="Search" onPress={searchFood} />
+          <Text>{JSON.stringify(data)}</Text>
+          <FlatList
+            data={searchResults}
+            keyExtractor={(item) => item.food_id.toString()}
+            renderItem={({ item }) => <Text>{item.food_name}</Text>}
+          />
+        </View>
+      );
+    }
 
 
     //const addFood = (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
@@ -1850,6 +1920,7 @@ that would prevent my participation in the program.
 
     return(
       <View style={{width: '100%', height: '100%', alignItems: 'center'}}>
+        <FoodSearch2 />
         <DatePickerArrows />
         <ScrollView style={{width: '100%'}}>
         <View style={{width: '100%'}}>
