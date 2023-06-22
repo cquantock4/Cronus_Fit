@@ -94,7 +94,7 @@ export default function HomeScreen( props, {navigation } ) {
       //Get current authenticated user
       try {
         const authUser = await Auth.currentAuthenticatedUser({bypassCache: true});
-        console.log(authUser)
+        console.log('Here is the logged in user: ' + JSON.stringify(authUser))
         setAuthSub(authUser.attributes.sub)
         temp_sub = authUser.attributes.sub
 
@@ -106,10 +106,9 @@ export default function HomeScreen( props, {navigation } ) {
 
         //const results = await DataStore.query(User, u => u.sub("eq", temp_sub));
 
-        
         const results = await DataStore.query(User, (u) => u.sub.eq(temp_sub));
 
-        //console.log(results)
+        console.log('here: ' + JSON.stringify(results))
 
         let nameresult = results.map((item, index) => {
           return (
