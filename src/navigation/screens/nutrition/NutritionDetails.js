@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl, FlatList, Button, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl, FlatList, Button, TouchableOpacity, } from 'react-native';
 import { TextInput, Pressable, Modal, Dimensions,ActivityIndicator, KeyboardAvoidingView,SafeAreaView, Linking} from 'react-native';
 
 import axios from 'axios';
@@ -8,6 +8,8 @@ import oauthSignature from 'oauth-signature';
 import CryptoJS from 'crypto-js';
 import OAuth from 'oauth-1.0a';
 import base64 from 'react-native-base64';
+
+import {Picker} from  '@react-native-picker/picker';
 
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -1459,6 +1461,7 @@ that would prevent my participation in the program.
       const [searchResults, setSearchResults] = useState([]);
       const [selectedFood, setSelectedFood] = useState(null);
       const [servings, setServings] = useState([]);
+      const [selectedServing, setSelectedServing] = useState(null);
     
       useEffect(() => {
         authorize();
@@ -1517,7 +1520,7 @@ that would prevent my participation in the program.
     
       const FoodRow = ({ item }) => {
         return (
-          <View style={{ padding: 5, borderBottomColor: 'black', borderBottomWidth: 1 }}>
+          <View style={{ padding: 15, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5 }}>
             <Text onPress={() => handleFoodClick(item)}>{item.food_name}</Text>
           </View>
         );
@@ -1525,7 +1528,7 @@ that would prevent my participation in the program.
     
       const ServingRow = ({ item }) => {
         return (
-          <View style={{ padding: 5, borderBottomColor: 'black', borderBottomWidth: 1 }}>
+          <View style={{ padding: 5, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5 }}>
             <Text>Serving: {item.serving_description}</Text>
             <Text>Calories: {item.calories}</Text>
             <Text>Protein: {item.protein}</Text>
@@ -1535,30 +1538,53 @@ that would prevent my participation in the program.
           </View>
         );
       };
+
+      const ServingDropdown = () => {
+        return (
+          <Picker
+            selectedValue={selectedServing}
+            onValueChange={(itemValue) => setSelectedServing(itemValue)}
+          >
+            {servings.map((serving) => (
+              <Picker.Item key={serving.serving_id} label={serving.serving_description} value={serving} />
+            ))}
+          </Picker>
+        );
+      };
     
       return (
-        <View>
-          <TextInput
-            placeholder="Search for a food"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-          <Button title="Search" onPress={searchFood} />
+        <View style={{ width: '100%' }}>
+          {!selectedFood && (
+            <>
+              <TextInput
+                placeholder="Search for a food"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                style={{ paddingTop: 10, paddingBottom: 10 }}
+              />
+              <Bubble_Button
+                text="Search"
+                onPress={searchFood}
+                bgColor="#F8BE13"
+                fgColor="#363636"
+                cstyle={{ width: '100%', paddingTop: 10, paddingBottom: 10 }}
+              />
+              <FlatList
+                data={searchResults}
+                keyExtractor={(item) => item.food_id.toString()}
+                renderItem={({ item }) => <FoodRow item={item} />}
+              />
+            </>
+          )}
+
           {selectedFood && (
             <View>
-              <Text>Selected Food: {selectedFood.food_name}</Text>
-              <FlatList
-                data={servings}
-                keyExtractor={(item) => item.serving_id.toString()}
-                renderItem={({ item }) => <ServingRow item={item} />}
-              />
+              <View style={{ padding: 5 }}>
+                <Text>Selected Food: {selectedFood.food_name}</Text>
+              </View>
+              <ServingDropdown />
             </View>
           )}
-          <FlatList
-            data={searchResults}
-            keyExtractor={(item) => item.food_id.toString()}
-            renderItem={({ item }) => <FoodRow item={item} />}
-          />
         </View>
       );
     };
@@ -1888,144 +1914,122 @@ that would prevent my participation in the program.
     */
 
     return(
-      <View style={{width: '100%', height: '100%', alignItems: 'center'}}>
-        <FoodSearch />
-        <DatePickerArrows />
-        <ScrollView style={{width: '100%'}}>
-        <View style={{width: '100%'}}>
-            <Pressable style={{padding: 10, flexDirection: 'row'}} onPress={() => setViewEntryScreen(!viewentryscreen)}>
-                
-                { viewentryscreen ? (
-                        <>
-                            <Text style={{color: activeColors.primary_text}}>Add Food  </Text>
-                            <Ionicons name='remove-outline' color= {activeColors.primary_text} style={{fontSize: 18}}/>
-                        </>
-                    ) : (
-                        <>
-                            <Text style={{color: activeColors.primary_text}}>Add Food  </Text>
-                            <Ionicons name='add-outline' color={activeColors.primary_text} style={{fontSize: 18}}/>
-                        </>
-                    )
-                }
-                
-                
-            </Pressable>
-            <AddFoodItemArea viewTrigger={viewentryscreen} category='breakfast'/>
-        </View>
+      <View style={{width: '100%', height: '100%'}}>
         { viewentryscreen ? (
-            <></>
+            <FoodSearch />
         ) : (
-            <View style={{width: '100%', alignItems: 'center', padding: 10}}>
-
-            {/* Breakfast */}
-            <ExpandableSectionButton itemList={breakfastlist} viewTrigger={viewbreakfast} category='breakfast' />
-            <ExpandableSectionArea itemList={breakfastlist} viewTrigger={viewbreakfast} category='breakfast'/>
-
-            {/* Lunch */}
-            <ExpandableSectionButton itemList={lunchlist} viewTrigger={viewlunch} category='lunch' />
-            <ExpandableSectionArea itemList={lunchlist} viewTrigger={viewlunch} category='lunch'/>
-
-            {/* Dinner */}
-            <ExpandableSectionButton itemList={dinnerlist} viewTrigger={viewdinner} category='dinner' />
-            <ExpandableSectionArea itemList={dinnerlist} viewTrigger={viewdinner} category='dinner'/>
-
-            {/* Snacks */}
-            <ExpandableSectionButton itemList={snackslist} viewTrigger={viewsnacks} category='snacks' />
-            <ExpandableSectionArea itemList={snackslist} viewTrigger={viewsnacks} category='snacks'/>
-            
-
-            <View style={{marginTop: 25, justifyContent: 'center', alignItems: 'center'}}>
-            <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '50%', marginBottom: 10}}>
-                <Text style={{color: 'white', fontWeight: '300'}}>Total Calories: </Text>
-                <Text style={{color: 'white', fontWeight: '300'}}>
-                {
-                breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
-                + 
-                lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
-                + 
-                dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
-                + 
-                snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
-                } 
-                </Text>
-            </View>
-            <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%', marginBottom: 10}}>
-                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
-                <Text style={{color: 'white', fontWeight: '300'}}>Total Protein: </Text>
-                <Text style={{color: 'white', fontWeight: '300'}}>
+          <ScrollView style={{width: '100%'}}>
+            <View style={{width: '100%', alignItems: 'center', paddingTop: 10}} >
+              <View style={{flexDirection: 'row'}}>
+                <DatePickerArrows />
+                  <Bubble_Button 
+                    text='Add Food'
+                    onPress={() => setViewEntryScreen(!viewentryscreen)}
+                    bgColor='#F8BE13'
+                    fgColor='#363636'
+                    cstyle={{width: '30%', padding: 10, marginRight: 5}}
+                    tstyle={{fontWeight: '400'}}
+                  />
+              </View>
+              <View style={{width: '100%', alignItems: 'center'}}>
+                <View style={{marginTop: 25, marginBottom: 15, justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '50%', marginBottom: 10}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Calories: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}>
                     {
-                    breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                    breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
                     + 
-                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
                     + 
-                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
                     + 
-                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
-                    } g 
-                </Text>
+                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
+                    } 
+                    </Text>
                 </View>
-                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
-                <Text style={{color: 'white', fontWeight: '300'}}>Total Carbs: </Text>
-                <Text style={{color: 'white', fontWeight: '300'}}>
-                    {
-                    breakfastlist.reduce((total , currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
-                    + 
-                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
-                    + 
-                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
-                    + 
-                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
-                    } g 
-                </Text>
+                <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%', marginBottom: 10}}>
+                    <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Protein: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}>
+                        {
+                        breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                        + 
+                        lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                        + 
+                        dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                        + 
+                        snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                        } g 
+                    </Text>
+                    </View>
+                    <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Carbs: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}>
+                        {
+                        breakfastlist.reduce((total , currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                        + 
+                        lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                        + 
+                        dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                        + 
+                        snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                        } g 
+                    </Text>
+                    </View>
                 </View>
-            </View>
-            <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%'}}>
-                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
-                <Text style={{color: 'white', fontWeight: '300'}}>Total Fat: </Text>
-                <Text style={{color: 'white', fontWeight: '300'}}>
-                    {
-                    breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
-                    + 
-                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
-                    + 
-                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
-                    + 
-                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
-                    } g 
-                </Text>
+                <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%'}}>
+                    <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Fat: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}>
+                        {
+                        breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                        + 
+                        lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                        + 
+                        dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                        + 
+                        snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                        } g 
+                    </Text>
+                    </View>
+                    <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Fiber: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}> 
+                        {
+                        breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                        + 
+                        lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                        + 
+                        dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                        + 
+                        snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                        } g 
+                    </Text>
+                    </View>
                 </View>
-                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
-                <Text style={{color: 'white', fontWeight: '300'}}>Total Fiber: </Text>
-                <Text style={{color: 'white', fontWeight: '300'}}> 
-                    {
-                    breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
-                    + 
-                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
-                    + 
-                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
-                    + 
-                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
-                    } g 
-                </Text>
                 </View>
+
+                  {/* Breakfast */}
+                  <ExpandableSectionButton itemList={breakfastlist} viewTrigger={viewbreakfast} category='breakfast' />
+                  <ExpandableSectionArea itemList={breakfastlist} viewTrigger={viewbreakfast} category='breakfast'/>
+
+                  {/* Lunch */}
+                  <ExpandableSectionButton itemList={lunchlist} viewTrigger={viewlunch} category='lunch' />
+                  <ExpandableSectionArea itemList={lunchlist} viewTrigger={viewlunch} category='lunch'/>
+
+                  {/* Dinner */}
+                  <ExpandableSectionButton itemList={dinnerlist} viewTrigger={viewdinner} category='dinner' />
+                  <ExpandableSectionArea itemList={dinnerlist} viewTrigger={viewdinner} category='dinner'/>
+
+                  {/* Snacks */}
+                  <ExpandableSectionButton itemList={snackslist} viewTrigger={viewsnacks} category='snacks' />
+                  <ExpandableSectionArea itemList={snackslist} viewTrigger={viewsnacks} category='snacks'/>
+              </View>
             </View>
-            </View>
-            {/*}
-            <View style={{marginTop: 50, width: '100%', marginBottom: 50}}>
-            <Bubble_Button 
-                text='Save Food Entries'
-                onPress={saveFoodEntries}
-                bgColor='#F8BE13'
-                fgColor='#363636'
-                cstyle={{width: '100%'}}
-            />
-            </View>
-                */}
-            </View>
+          </ScrollView>
         )}
           
 
-        </ScrollView>
       </View>
     )
   }
@@ -3024,8 +3028,9 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingBottom: 15,
-    paddingTop: 15,
+    paddingBottom: 10,
+    paddingTop: 10,
+    marginRight: 10,
     width: 200
   },
 
