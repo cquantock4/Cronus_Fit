@@ -498,6 +498,20 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "servingsize": {
+                    "name": "servingsize",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "quantity": {
+                    "name": "quantity",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1865,5 +1879,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.4.4",
-    "version": "3d104a6f2e57b77ae0522ebdbcaee6e3"
+    "version": "acae7b31718075e1f49854423371945c"
 };

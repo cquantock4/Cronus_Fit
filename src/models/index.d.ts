@@ -192,6 +192,8 @@ type EagerFoodEntry = {
   readonly fiber?: number | null;
   readonly calories?: number | null;
   readonly userID: string;
+  readonly servingsize?: string | null;
+  readonly quantity?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -211,6 +213,8 @@ type LazyFoodEntry = {
   readonly fiber?: number | null;
   readonly calories?: number | null;
   readonly userID: string;
+  readonly servingsize?: string | null;
+  readonly quantity?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

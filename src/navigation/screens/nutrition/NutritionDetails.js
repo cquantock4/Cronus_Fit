@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl, FlatList, Button, TouchableOpacity, } from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl, FlatList, Button, TouchableOpacity, Label } from 'react-native';
 import { TextInput, Pressable, Modal, Dimensions,ActivityIndicator, KeyboardAvoidingView,SafeAreaView, Linking} from 'react-native';
 
 import axios from 'axios';
@@ -373,7 +373,7 @@ export default function NutritionDetails( {navigation} ) {
 
       setFoodEntries(foodentries)
 
-      //console.log('here are the entries: ' + JSON.stringify(foodentries))
+      console.log('here are the entries: ' + JSON.stringify(foodentries))
 
       const result_breakfast = foodentries.filter((value, index) => value.category === 'BREAKFAST')
       const result_lunch = foodentries.filter((value, index) => value.category === 'LUNCH')
@@ -391,7 +391,9 @@ export default function NutritionDetails( {navigation} ) {
           carbs: item.carbs,
           fat: item.fat,
           fiber: item.fiber,
-          calories: item.calories
+          calories: item.calories,
+          servingsize: item.servingsize,
+          quantity: item.quantity
         }]));
 
       })  
@@ -408,7 +410,9 @@ export default function NutritionDetails( {navigation} ) {
           carbs: item.carbs,
           fat: item.fat,
           fiber: item.fiber,
-          calories: item.calories
+          calories: item.calories,
+          servingsize: item.servingsize,
+          quantity: item.quantity
         }]));
 
       })  
@@ -424,7 +428,9 @@ export default function NutritionDetails( {navigation} ) {
           carbs: item.carbs,
           fat: item.fat,
           fiber: item.fiber,
-          calories: item.calories
+          calories: item.calories,
+          servingsize: item.servingsize,
+          quantity: item.quantity
         }]));
 
       })  
@@ -440,7 +446,9 @@ export default function NutritionDetails( {navigation} ) {
           carbs: item.carbs,
           fat: item.fat,
           fiber: item.fiber,
-          calories: item.calories
+          calories: item.calories,
+          servingsize: item.servingsize,
+          quantity: item.quantity
         }]));
 
       })  
@@ -1462,6 +1470,9 @@ that would prevent my participation in the program.
       const [selectedFood, setSelectedFood] = useState(null);
       const [servings, setServings] = useState([]);
       const [selectedServing, setSelectedServing] = useState(null);
+      const [selectedMeal, setSelectedMeal] = useState('BREAKFAST');
+      const [enteredServings, setEnteredServings] = useState('');
+      const [displayResults, setDisplayResults] = useState(null);
     
       useEffect(() => {
         authorize();
@@ -1498,6 +1509,130 @@ that would prevent my participation in the program.
         const foods = data.foods_search.results.food;
         setSearchResults(foods);
       };
+
+
+      const insertFood = () => {
+      
+        let totalProtein = 0;
+        let totalCarbohydrates = 0;
+        let totalFat = 0;
+        let totalFiber = 0;
+        let totalCalories = 0;
+        let selectedserving_desc = '';
+        let quantity = 0.0;
+      
+        if (selectedServing && selectedMeal && enteredServings) {
+          const parsedServings = parseFloat(enteredServings);
+      
+          if (!isNaN(parsedServings) && parsedServings > 0) {
+            totalProtein = selectedServing.protein * parsedServings;
+            totalCarbohydrates = selectedServing.carbohydrate * parsedServings;
+            totalFat = selectedServing.fat * parsedServings;
+            totalFiber = selectedServing.fiber * parsedServings;
+            totalCalories = selectedServing.calories * parsedServings;
+            selectedserving_desc = selectedServing.measurement_description;
+            quantity = parsedServings
+
+            // Round the totals to the nearest tenth
+            totalProtein = Math.round(totalProtein * 10) / 10;
+            totalCarbohydrates = Math.round(totalCarbohydrates * 10) / 10;
+            totalFat = Math.round(totalFat * 10) / 10;
+            totalFiber = Math.round(totalFiber * 10) / 10;
+            totalCalories = Math.round(totalCalories * 10) / 10;
+          } else {
+            console.log('Invalid entered servings');
+            return;
+          }
+        } else {
+          console.log('Missing selected serving, selected meal, or entered servings');
+          return;
+        }
+
+        
+        if (selectedMeal === 'BREAKFAST') {
+
+          setBreakfastList(breakfastlist => ([...breakfastlist, {
+            desc: selectedFood.food_name,
+            protein: totalProtein.toString(),
+            carbs: totalCarbohydrates.toString(),
+            fat: totalFat.toString(),
+            fiber: totalFiber.toString(),
+            calories: totalCalories.toString(),
+            servingsize: selectedserving_desc,
+            quantity
+          } ]));
+
+        } else if (selectedMeal === 'LUNCH') {
+
+          setLunchList(lunchlist => ([...lunchlist, {
+            desc: selectedFood.food_name,
+            protein: totalProtein.toString(),
+            carbs: totalCarbohydrates.toString(),
+            fat: totalFat.toString(),
+            fiber: totalFiber.toString(),
+            calories: totalCalories.toString(),
+            servingsize: selectedserving_desc,
+            quantity
+          } ]));
+        }
+        else if (selectedMeal === 'DINNER') {
+
+          setDinnerList(dinnerlist => ([...dinnerlist, {
+            desc: selectedFood.food_name,
+            protein: totalProtein.toString(),
+            carbs: totalCarbohydrates.toString(),
+            fat: totalFat.toString(),
+            fiber: totalFiber.toString(),
+            calories: totalCalories.toString(),
+            servingsize: selectedserving_desc,
+            quantity
+          } ]));
+        }
+        else if (selectedMeal === 'SNACKS') {
+
+          setSnacksList(snackslist => ([...snackslist, {
+            desc: selectedFood.food_name,
+            protein: totalProtein.toString(),
+            carbs: totalCarbohydrates.toString(),
+            fat: totalFat.toString(),
+            fiber: totalFiber.toString(),
+            calories: totalCalories.toString(),
+            servingsize: selectedserving_desc,
+            quantity
+          } ]));
+        }
+
+        
+        //Insert into DB
+        try {
+
+           DataStore.save(
+            new FoodEntry({
+              date: format(new Date(date), 'MM/dd/yyyy').toString(),
+              category: selectedMeal,
+              desc: selectedFood.food_name,
+              protein: parseFloat(totalProtein),
+              carbs: parseFloat(totalCarbohydrates),
+              fat: parseFloat(totalFat),
+              fiber: parseFloat(totalFiber),
+              calories: parseFloat(totalCalories),
+              servingsize: selectedserving_desc,
+              quantity: parseFloat(quantity),
+              userID: user.id
+            })
+          );
+
+          
+          setViewEntryScreen(!viewentryscreen)
+        //console.log("Data Saved successfully!");
+        } catch (error) {
+          console.log("Error saving data", error);
+        }
+        
+        
+
+        setViewEntryScreen(!viewentryscreen)
+      };
     
       const fetchServings = async (food) => {
         const url = `https://platform.fatsecret.com/rest/server.api?method=food.get.v2&food_id=${food.food_id}&format=json`;
@@ -1512,7 +1647,7 @@ that would prevent my participation in the program.
         const servings = data.food.servings.serving;
         setServings(servings);
       };
-    
+
       const handleFoodClick = (food) => {
         setSelectedFood(food);
         fetchServings(food);
@@ -1525,21 +1660,15 @@ that would prevent my participation in the program.
           </View>
         );
       };
-    
-      const ServingRow = ({ item }) => {
-        return (
-          <View style={{ padding: 5, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5 }}>
-            <Text>Serving: {item.serving_description}</Text>
-            <Text>Calories: {item.calories}</Text>
-            <Text>Protein: {item.protein}</Text>
-            <Text>Carbs: {item.carbs}</Text>
-            <Text>Fat: {item.fat}</Text>
-            <Text>Fiber: {item.fiber}</Text>
-          </View>
-        );
-      };
+  
 
       const ServingDropdown = () => {
+        useEffect(() => {
+          if (!selectedServing && servings.length > 0) {
+            setSelectedServing(servings[0]); // Set the default selected serving to the first item in the list
+          }
+        }, [selectedServing, servings]);
+      
         return (
           <Picker
             selectedValue={selectedServing}
@@ -1583,12 +1712,44 @@ that would prevent my participation in the program.
                 <Text>Selected Food: {selectedFood.food_name}</Text>
               </View>
               <ServingDropdown />
+              <View style={{ padding: 5 }}>
+                <Picker 
+                  selectedValue={selectedMeal}
+                  onValueChange={(itemValue) => setSelectedMeal(itemValue)}>
+                    <Picker.Item label='Breakfast' value='BREAKFAST' />
+                    <Picker.Item label='Lunch' value='LUNCH' />
+                    <Picker.Item label='Dinner' value='DINNER' />
+                    <Picker.Item label='Snacks' value='SNACKS' />
+                </Picker>
+              </View>
+              <View style={{ padding: 5, flexDirection: 'row', justifyContent: 'space-around' }}>
+                <Text>Number of Servings</Text>
+                <TextInput
+                    name='numservings'
+                    placeholder='-'
+                    placeholderTextColor={activeColors.primary_text}
+                    keyboardType='numeric'
+                    maxLength={3}
+                    value={enteredServings}
+                    style={{width: 50, marginBottom: 10, fontSize: 16, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: activeColors.primary_text, color: activeColors.primary_text}}
+                    onChangeText={(text) => setEnteredServings(text)}
+                  />
+              </View>
+              <Bubble_Button
+                text="Add Food Item"
+                onPress={insertFood}
+                bgColor="#F8BE13"
+                fgColor="#363636"
+                cstyle={{ width: '100%', paddingTop: 10, paddingBottom: 10 }}
+              />
             </View>
           )}
+
+
+
         </View>
       );
     };
-
 
     //const addFood = (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
     const addFood = async (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
@@ -1614,7 +1775,7 @@ that would prevent my participation in the program.
         //Insert into DB
         try {
           await DataStore.save(
-            new Foodentry({
+            new FoodEntry({
               date: format(new Date(date), 'MM/dd/yyyy').toString(),
               category: 'BREAKFAST',
               desc: pfooddesc,
@@ -1645,7 +1806,7 @@ that would prevent my participation in the program.
         //Insert into DB
         try {
           await DataStore.save(
-            new Foodentry({
+            new FoodEntry({
               date: format(new Date(date), 'MM/dd/yyyy').toString(),
               category: 'LUNCH',
               desc: pfooddesc,
@@ -1676,7 +1837,7 @@ that would prevent my participation in the program.
         //Insert into DB
         try {
           await DataStore.save(
-            new Foodentry({
+            new FoodEntry({
               date: format(new Date(date), 'MM/dd/yyyy').toString(),
               category: 'DINNER',
               desc: pfooddesc,
@@ -1707,7 +1868,7 @@ that would prevent my participation in the program.
         //Insert into DB
         try {
           await DataStore.save(
-            new Foodentry({
+            new FoodEntry({
               date: format(new Date(date), 'MM/dd/yyyy').toString(),
               category: 'SNACKS',
               desc: pfooddesc,

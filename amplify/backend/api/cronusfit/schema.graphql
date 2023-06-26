@@ -65,6 +65,8 @@ type FoodEntry @model @auth(rules: [{allow: public}]) {
   fiber: Float
   calories: Float
   userID: ID! @index(name: "byUser")
+  servingsize: String
+  quantity: Float
 }
 
 type Messages @model @auth(rules: [{allow: public}]) {

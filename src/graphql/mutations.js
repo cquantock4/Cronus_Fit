@@ -16,6 +16,7 @@ export const createWorkoutNotes = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -34,6 +35,7 @@ export const updateWorkoutNotes = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -52,6 +54,7 @@ export const deleteWorkoutNotes = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -75,15 +78,18 @@ export const createCheckListItems = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -107,15 +113,18 @@ export const updateCheckListItems = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -139,15 +148,18 @@ export const deleteCheckListItems = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -165,6 +177,7 @@ export const createSavedWorkouts = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -182,6 +195,7 @@ export const updateSavedWorkouts = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -199,6 +213,7 @@ export const deleteSavedWorkouts = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -228,6 +243,7 @@ export const createCheckin = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -257,6 +273,7 @@ export const updateCheckin = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -286,6 +303,7 @@ export const deleteCheckin = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -305,11 +323,14 @@ export const createFoodEntry = /* GraphQL */ `
       fiber
       calories
       userID
+      servingsize
+      quantity
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -329,11 +350,14 @@ export const updateFoodEntry = /* GraphQL */ `
       fiber
       calories
       userID
+      servingsize
+      quantity
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -353,11 +377,14 @@ export const deleteFoodEntry = /* GraphQL */ `
       fiber
       calories
       userID
+      servingsize
+      quantity
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -376,6 +403,7 @@ export const createMessages = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -394,6 +422,7 @@ export const updateMessages = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -412,6 +441,7 @@ export const deleteMessages = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -451,22 +481,27 @@ export const createUserInfo = /* GraphQL */ `
         Checkins {
           nextToken
           startedAt
+          __typename
         }
         Foodentries {
           nextToken
           startedAt
+          __typename
         }
         WorkoutResults {
           nextToken
           startedAt
+          __typename
         }
         Comments {
           nextToken
           startedAt
+          __typename
         }
         SavedWorkouts {
           nextToken
           startedAt
+          __typename
         }
         coach_yn
         updatedAt
@@ -474,16 +509,19 @@ export const createUserInfo = /* GraphQL */ `
         CheckListItems {
           nextToken
           startedAt
+          __typename
         }
         workout_logs
         WorkoutNotes {
           nextToken
           startedAt
+          __typename
         }
         createdAt
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       goal_protein
       goal_carb
@@ -495,6 +533,7 @@ export const createUserInfo = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userInfoUserId
+      __typename
     }
   }
 `;
@@ -534,22 +573,27 @@ export const updateUserInfo = /* GraphQL */ `
         Checkins {
           nextToken
           startedAt
+          __typename
         }
         Foodentries {
           nextToken
           startedAt
+          __typename
         }
         WorkoutResults {
           nextToken
           startedAt
+          __typename
         }
         Comments {
           nextToken
           startedAt
+          __typename
         }
         SavedWorkouts {
           nextToken
           startedAt
+          __typename
         }
         coach_yn
         updatedAt
@@ -557,16 +601,19 @@ export const updateUserInfo = /* GraphQL */ `
         CheckListItems {
           nextToken
           startedAt
+          __typename
         }
         workout_logs
         WorkoutNotes {
           nextToken
           startedAt
+          __typename
         }
         createdAt
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       goal_protein
       goal_carb
@@ -578,6 +625,7 @@ export const updateUserInfo = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userInfoUserId
+      __typename
     }
   }
 `;
@@ -617,22 +665,27 @@ export const deleteUserInfo = /* GraphQL */ `
         Checkins {
           nextToken
           startedAt
+          __typename
         }
         Foodentries {
           nextToken
           startedAt
+          __typename
         }
         WorkoutResults {
           nextToken
           startedAt
+          __typename
         }
         Comments {
           nextToken
           startedAt
+          __typename
         }
         SavedWorkouts {
           nextToken
           startedAt
+          __typename
         }
         coach_yn
         updatedAt
@@ -640,16 +693,19 @@ export const deleteUserInfo = /* GraphQL */ `
         CheckListItems {
           nextToken
           startedAt
+          __typename
         }
         workout_logs
         WorkoutNotes {
           nextToken
           startedAt
+          __typename
         }
         createdAt
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       goal_protein
       goal_carb
@@ -661,6 +717,7 @@ export const deleteUserInfo = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userInfoUserId
+      __typename
     }
   }
 `;
@@ -681,6 +738,7 @@ export const createArticles = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -701,6 +759,7 @@ export const updateArticles = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -721,6 +780,7 @@ export const deleteArticles = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -736,11 +796,13 @@ export const createPrograms = /* GraphQL */ `
       free
       price
       downloadurl
+      data_type
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -756,11 +818,13 @@ export const updatePrograms = /* GraphQL */ `
       free
       price
       downloadurl
+      data_type
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -776,11 +840,13 @@ export const deletePrograms = /* GraphQL */ `
       free
       price
       downloadurl
+      data_type
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -799,6 +865,7 @@ export const createComments = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -817,6 +884,7 @@ export const updateComments = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -835,6 +903,7 @@ export const deleteComments = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -863,9 +932,11 @@ export const createSubWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       numitems
       order
@@ -874,6 +945,7 @@ export const createSubWorkouts = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -902,9 +974,11 @@ export const updateSubWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       numitems
       order
@@ -913,6 +987,7 @@ export const updateSubWorkouts = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -941,9 +1016,11 @@ export const deleteSubWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       numitems
       order
@@ -952,6 +1029,7 @@ export const deleteSubWorkouts = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -970,6 +1048,7 @@ export const createWorkoutResults = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -988,6 +1067,7 @@ export const updateWorkoutResults = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -1006,6 +1086,7 @@ export const deleteWorkoutResults = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -1036,9 +1117,11 @@ export const createWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       Comments {
         items {
@@ -1051,9 +1134,11 @@ export const createWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       SavedWorkouts {
         items {
@@ -1065,9 +1150,11 @@ export const createWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       workout_type
       WorkoutNotes {
@@ -1081,15 +1168,18 @@ export const createWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -1120,9 +1210,11 @@ export const updateWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       Comments {
         items {
@@ -1135,9 +1227,11 @@ export const updateWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       SavedWorkouts {
         items {
@@ -1149,9 +1243,11 @@ export const updateWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       workout_type
       WorkoutNotes {
@@ -1165,15 +1261,18 @@ export const updateWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -1204,9 +1303,11 @@ export const deleteWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       Comments {
         items {
@@ -1219,9 +1320,11 @@ export const deleteWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       SavedWorkouts {
         items {
@@ -1233,9 +1336,11 @@ export const deleteWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       workout_type
       WorkoutNotes {
@@ -1249,15 +1354,18 @@ export const deleteWorkouts = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -1302,9 +1410,11 @@ export const createUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       Foodentries {
         items {
@@ -1318,14 +1428,18 @@ export const createUser = /* GraphQL */ `
           fiber
           calories
           userID
+          servingsize
+          quantity
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       WorkoutResults {
         items {
@@ -1338,9 +1452,11 @@ export const createUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       Comments {
         items {
@@ -1353,9 +1469,11 @@ export const createUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       SavedWorkouts {
         items {
@@ -1367,9 +1485,11 @@ export const createUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       coach_yn
       updatedAt
@@ -1384,9 +1504,11 @@ export const createUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       workout_logs
       WorkoutNotes {
@@ -1400,14 +1522,17 @@ export const createUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       createdAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -1452,9 +1577,11 @@ export const updateUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       Foodentries {
         items {
@@ -1468,14 +1595,18 @@ export const updateUser = /* GraphQL */ `
           fiber
           calories
           userID
+          servingsize
+          quantity
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       WorkoutResults {
         items {
@@ -1488,9 +1619,11 @@ export const updateUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       Comments {
         items {
@@ -1503,9 +1636,11 @@ export const updateUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       SavedWorkouts {
         items {
@@ -1517,9 +1652,11 @@ export const updateUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       coach_yn
       updatedAt
@@ -1534,9 +1671,11 @@ export const updateUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       workout_logs
       WorkoutNotes {
@@ -1550,14 +1689,17 @@ export const updateUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       createdAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -1602,9 +1744,11 @@ export const deleteUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       Foodentries {
         items {
@@ -1618,14 +1762,18 @@ export const deleteUser = /* GraphQL */ `
           fiber
           calories
           userID
+          servingsize
+          quantity
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       WorkoutResults {
         items {
@@ -1638,9 +1786,11 @@ export const deleteUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       Comments {
         items {
@@ -1653,9 +1803,11 @@ export const deleteUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       SavedWorkouts {
         items {
@@ -1667,9 +1819,11 @@ export const deleteUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       coach_yn
       updatedAt
@@ -1684,9 +1838,11 @@ export const deleteUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       workout_logs
       WorkoutNotes {
@@ -1700,14 +1856,17 @@ export const deleteUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          __typename
         }
         nextToken
         startedAt
+        __typename
       }
       createdAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -1728,12 +1887,14 @@ export const createUserCheckListItems = /* GraphQL */ `
         users {
           nextToken
           startedAt
+          __typename
         }
         createdAt
         updatedAt
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       user {
         id
@@ -1752,22 +1913,27 @@ export const createUserCheckListItems = /* GraphQL */ `
         Checkins {
           nextToken
           startedAt
+          __typename
         }
         Foodentries {
           nextToken
           startedAt
+          __typename
         }
         WorkoutResults {
           nextToken
           startedAt
+          __typename
         }
         Comments {
           nextToken
           startedAt
+          __typename
         }
         SavedWorkouts {
           nextToken
           startedAt
+          __typename
         }
         coach_yn
         updatedAt
@@ -1775,22 +1941,26 @@ export const createUserCheckListItems = /* GraphQL */ `
         CheckListItems {
           nextToken
           startedAt
+          __typename
         }
         workout_logs
         WorkoutNotes {
           nextToken
           startedAt
+          __typename
         }
         createdAt
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -1811,12 +1981,14 @@ export const updateUserCheckListItems = /* GraphQL */ `
         users {
           nextToken
           startedAt
+          __typename
         }
         createdAt
         updatedAt
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       user {
         id
@@ -1835,22 +2007,27 @@ export const updateUserCheckListItems = /* GraphQL */ `
         Checkins {
           nextToken
           startedAt
+          __typename
         }
         Foodentries {
           nextToken
           startedAt
+          __typename
         }
         WorkoutResults {
           nextToken
           startedAt
+          __typename
         }
         Comments {
           nextToken
           startedAt
+          __typename
         }
         SavedWorkouts {
           nextToken
           startedAt
+          __typename
         }
         coach_yn
         updatedAt
@@ -1858,22 +2035,26 @@ export const updateUserCheckListItems = /* GraphQL */ `
         CheckListItems {
           nextToken
           startedAt
+          __typename
         }
         workout_logs
         WorkoutNotes {
           nextToken
           startedAt
+          __typename
         }
         createdAt
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -1894,12 +2075,14 @@ export const deleteUserCheckListItems = /* GraphQL */ `
         users {
           nextToken
           startedAt
+          __typename
         }
         createdAt
         updatedAt
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       user {
         id
@@ -1918,22 +2101,27 @@ export const deleteUserCheckListItems = /* GraphQL */ `
         Checkins {
           nextToken
           startedAt
+          __typename
         }
         Foodentries {
           nextToken
           startedAt
+          __typename
         }
         WorkoutResults {
           nextToken
           startedAt
+          __typename
         }
         Comments {
           nextToken
           startedAt
+          __typename
         }
         SavedWorkouts {
           nextToken
           startedAt
+          __typename
         }
         coach_yn
         updatedAt
@@ -1941,22 +2129,26 @@ export const deleteUserCheckListItems = /* GraphQL */ `
         CheckListItems {
           nextToken
           startedAt
+          __typename
         }
         workout_logs
         WorkoutNotes {
           nextToken
           startedAt
+          __typename
         }
         createdAt
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
