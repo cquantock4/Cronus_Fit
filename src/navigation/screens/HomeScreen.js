@@ -108,6 +108,8 @@ export default function HomeScreen( props, {navigation } ) {
 
         const results = await DataStore.query(User, (u) => u.sub.eq(temp_sub));
 
+        //console.log('results: ' + JSON.stringify(results))
+
         let nameresult = results.map((item, index) => {
           return (
               item.name
