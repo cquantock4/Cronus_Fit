@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl, FlatList, Button, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, RefreshControl, FlatList, Button, TouchableOpacity, Label } from 'react-native';
 import { TextInput, Pressable, Modal, Dimensions,ActivityIndicator, KeyboardAvoidingView,SafeAreaView, Linking} from 'react-native';
 
 import axios from 'axios';
@@ -7,6 +7,9 @@ import Constants from 'expo-constants'
 import oauthSignature from 'oauth-signature';
 import CryptoJS from 'crypto-js';
 import OAuth from 'oauth-1.0a';
+import base64 from 'react-native-base64';
+
+import {Picker} from  '@react-native-picker/picker';
 
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -370,7 +373,7 @@ export default function NutritionDetails( {navigation} ) {
 
       setFoodEntries(foodentries)
 
-      //console.log('here are the entries: ' + JSON.stringify(foodentries))
+      console.log('here are the entries: ' + JSON.stringify(foodentries))
 
       const result_breakfast = foodentries.filter((value, index) => value.category === 'BREAKFAST')
       const result_lunch = foodentries.filter((value, index) => value.category === 'LUNCH')
@@ -388,7 +391,9 @@ export default function NutritionDetails( {navigation} ) {
           carbs: item.carbs,
           fat: item.fat,
           fiber: item.fiber,
-          calories: item.calories
+          calories: item.calories,
+          servingsize: item.servingsize,
+          quantity: item.quantity
         }]));
 
       })  
@@ -405,7 +410,9 @@ export default function NutritionDetails( {navigation} ) {
           carbs: item.carbs,
           fat: item.fat,
           fiber: item.fiber,
-          calories: item.calories
+          calories: item.calories,
+          servingsize: item.servingsize,
+          quantity: item.quantity
         }]));
 
       })  
@@ -421,7 +428,9 @@ export default function NutritionDetails( {navigation} ) {
           carbs: item.carbs,
           fat: item.fat,
           fiber: item.fiber,
-          calories: item.calories
+          calories: item.calories,
+          servingsize: item.servingsize,
+          quantity: item.quantity
         }]));
 
       })  
@@ -437,7 +446,9 @@ export default function NutritionDetails( {navigation} ) {
           carbs: item.carbs,
           fat: item.fat,
           fiber: item.fiber,
-          calories: item.calories
+          calories: item.calories,
+          servingsize: item.servingsize,
+          quantity: item.quantity
         }]));
 
       })  
@@ -1448,82 +1459,297 @@ that would prevent my participation in the program.
   */
   const AddMealSnack = () => {
 
+
     const FoodSearch = () => {
-      const [searchTerm, setSearchTerm] = useState('');
+      const CLIENT_ID = Constants.expoConfig.extra.fatSecretAPIClientID;
+      const CLIENT_SECRET = Constants.expoConfig.extra.fatSecretAPIClientSecret;
+    
+      const [accessToken, setAccessToken] = useState('');
+      const [searchQuery, setSearchQuery] = useState('');
       const [searchResults, setSearchResults] = useState([]);
+      const [selectedFood, setSelectedFood] = useState(null);
+      const [servings, setServings] = useState([]);
+      const [selectedServing, setSelectedServing] = useState(null);
+      const [selectedMeal, setSelectedMeal] = useState('BREAKFAST');
+      const [enteredServings, setEnteredServings] = useState('');
+      const [displayResults, setDisplayResults] = useState(null);
     
-      const handleSearch = async () => {
+      useEffect(() => {
+        authorize();
+      }, []);
+    
+      const authorize = async () => {
+        const authString = base64.encode(`${CLIENT_ID}:${CLIENT_SECRET}`);
+        const response = await fetch('https://oauth.fatsecret.com/connect/token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${authString}`,
+          },
+          body: 'grant_type=client_credentials',
+        });
+    
+        const data = await response.json();
+        const accessToken = data.access_token;
+        setAccessToken(accessToken);
+      };
+    
+      const searchFood = async () => {
+        const url = `https://platform.fatsecret.com/rest/server.api?method=foods.search.v2&search_expression=${encodeURIComponent(
+          searchQuery
+        )}&format=json`;
+    
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+    
+        const data = await response.json();
+        const foods = data.foods_search.results.food;
+        setSearchResults(foods);
+      };
+
+
+      const insertFood = () => {
+      
+        let totalProtein = 0;
+        let totalCarbohydrates = 0;
+        let totalFat = 0;
+        let totalFiber = 0;
+        let totalCalories = 0;
+        let selectedserving_desc = '';
+        let quantity = 0.0;
+      
+        if (selectedServing && selectedMeal && enteredServings) {
+          const parsedServings = parseFloat(enteredServings);
+      
+          if (!isNaN(parsedServings) && parsedServings > 0) {
+            totalProtein = selectedServing.protein * parsedServings;
+            totalCarbohydrates = selectedServing.carbohydrate * parsedServings;
+            totalFat = selectedServing.fat * parsedServings;
+            totalFiber = selectedServing.fiber * parsedServings;
+            totalCalories = selectedServing.calories * parsedServings;
+            selectedserving_desc = selectedServing.measurement_description;
+            quantity = parsedServings
+
+            // Round the totals to the nearest tenth
+            totalProtein = Math.round(totalProtein * 10) / 10;
+            totalCarbohydrates = Math.round(totalCarbohydrates * 10) / 10;
+            totalFat = Math.round(totalFat * 10) / 10;
+            totalFiber = Math.round(totalFiber * 10) / 10;
+            totalCalories = Math.round(totalCalories * 10) / 10;
+          } else {
+            console.log('Invalid entered servings');
+            return;
+          }
+        } else {
+          console.log('Missing selected serving, selected meal, or entered servings');
+          return;
+        }
+
+        
+        if (selectedMeal === 'BREAKFAST') {
+
+          setBreakfastList(breakfastlist => ([...breakfastlist, {
+            desc: selectedFood.food_name,
+            protein: totalProtein.toString(),
+            carbs: totalCarbohydrates.toString(),
+            fat: totalFat.toString(),
+            fiber: totalFiber.toString(),
+            calories: totalCalories.toString(),
+            servingsize: selectedserving_desc,
+            quantity
+          } ]));
+
+        } else if (selectedMeal === 'LUNCH') {
+
+          setLunchList(lunchlist => ([...lunchlist, {
+            desc: selectedFood.food_name,
+            protein: totalProtein.toString(),
+            carbs: totalCarbohydrates.toString(),
+            fat: totalFat.toString(),
+            fiber: totalFiber.toString(),
+            calories: totalCalories.toString(),
+            servingsize: selectedserving_desc,
+            quantity
+          } ]));
+        }
+        else if (selectedMeal === 'DINNER') {
+
+          setDinnerList(dinnerlist => ([...dinnerlist, {
+            desc: selectedFood.food_name,
+            protein: totalProtein.toString(),
+            carbs: totalCarbohydrates.toString(),
+            fat: totalFat.toString(),
+            fiber: totalFiber.toString(),
+            calories: totalCalories.toString(),
+            servingsize: selectedserving_desc,
+            quantity
+          } ]));
+        }
+        else if (selectedMeal === 'SNACKS') {
+
+          setSnacksList(snackslist => ([...snackslist, {
+            desc: selectedFood.food_name,
+            protein: totalProtein.toString(),
+            carbs: totalCarbohydrates.toString(),
+            fat: totalFat.toString(),
+            fiber: totalFiber.toString(),
+            calories: totalCalories.toString(),
+            servingsize: selectedserving_desc,
+            quantity
+          } ]));
+        }
+
+        
+        //Insert into DB
         try {
-          const oauth = OAuth({
-            consumer: {
-              key: Constants.expoConfig.extra.fatSecretAPIKey,
-              secret: Constants.expoConfig.extra.fatSecretAPISecret,
-            },
-            signature_method: 'HMAC-SHA1',
-            hash_function: (baseString, key) =>
-              CryptoJS.HmacSHA1(baseString, key).toString(CryptoJS.enc.Base64),
-          });
-    
-          const requestData = {
-            url: 'https://platform.fatsecret.com/rest/server.api',
-            method: 'GET',
-            data: {
-              method: 'foods.search',
-              format: 'json',
-              search_expression: searchTerm,
-            },
-          };
-    
-          const headers = oauth.toHeader(
-            oauth.authorize(requestData, {
-              key: Constants.expoConfig.extra.fatSecretAPIKey,
-              secret: Constants.expoConfig.extra.fatSecretAPISecret,
+
+           DataStore.save(
+            new FoodEntry({
+              date: format(new Date(date), 'MM/dd/yyyy').toString(),
+              category: selectedMeal,
+              desc: selectedFood.food_name,
+              protein: parseFloat(totalProtein),
+              carbs: parseFloat(totalCarbohydrates),
+              fat: parseFloat(totalFat),
+              fiber: parseFloat(totalFiber),
+              calories: parseFloat(totalCalories),
+              servingsize: selectedserving_desc,
+              quantity: parseFloat(quantity),
+              userID: user.id
             })
           );
-    
-          const response = await axios.get(requestData.url, {
-            headers: headers,
-            params: requestData.data,
-          });
 
-          console.log(response)
-    
-          const foodResults = response.data?.foods?.food;
-    
-          if (foodResults) {
-            if (Array.isArray(foodResults)) {
-              setSearchResults(foodResults);
-            } else {
-              setSearchResults([foodResults]);
-            }
-          } else {
-            setSearchResults([]);
-          }
+          
+          setViewEntryScreen(!viewentryscreen)
+        //console.log("Data Saved successfully!");
         } catch (error) {
-          console.error(error);
+          console.log("Error saving data", error);
         }
+        
+        
+
+        setViewEntryScreen(!viewentryscreen)
+      };
+    
+      const fetchServings = async (food) => {
+        const url = `https://platform.fatsecret.com/rest/server.api?method=food.get.v2&food_id=${food.food_id}&format=json`;
+    
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+    
+        const data = await response.json();
+        const servings = data.food.servings.serving;
+        setServings(servings);
+      };
+
+      const handleFoodClick = (food) => {
+        setSelectedFood(food);
+        fetchServings(food);
+      };
+    
+      const FoodRow = ({ item }) => {
+        return (
+          <View style={{ padding: 15, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5 }}>
+            <Text onPress={() => handleFoodClick(item)}>{item.food_name}</Text>
+          </View>
+        );
+      };
+  
+
+      const ServingDropdown = () => {
+        useEffect(() => {
+          if (!selectedServing && servings.length > 0) {
+            setSelectedServing(servings[0]); // Set the default selected serving to the first item in the list
+          }
+        }, [selectedServing, servings]);
+      
+        return (
+          <Picker
+            selectedValue={selectedServing}
+            onValueChange={(itemValue) => setSelectedServing(itemValue)}
+          >
+            {servings.map((serving) => (
+              <Picker.Item key={serving.serving_id} label={serving.serving_description} value={serving} />
+            ))}
+          </Picker>
+        );
       };
     
       return (
-        <View>
-          <TextInput
-            placeholder="Search for food"
-            value={searchTerm}
-            onChangeText={setSearchTerm}
-          />
-          <Button title="Search" onPress={handleSearch} />
-          {searchResults.map((food) => (
-            <View key={food.food_id}>
-              <Text>Name: {food.food_name}</Text>
-              <Text>Brand: {food.brand_name}</Text>
-              <Text>Calories: {food.calories}</Text>
-              {/* Add more fields as per your requirements */}
+        <View style={{ width: '100%' }}>
+          {!selectedFood && (
+            <>
+              <TextInput
+                placeholder="Search for a food"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                style={{ paddingTop: 10, paddingBottom: 10 }}
+              />
+              <Bubble_Button
+                text="Search"
+                onPress={searchFood}
+                bgColor="#F8BE13"
+                fgColor="#363636"
+                cstyle={{ width: '100%', paddingTop: 10, paddingBottom: 10 }}
+              />
+              <FlatList
+                data={searchResults}
+                keyExtractor={(item) => item.food_id.toString()}
+                renderItem={({ item }) => <FoodRow item={item} />}
+              />
+            </>
+          )}
+
+          {selectedFood && (
+            <View>
+              <View style={{ padding: 5 }}>
+                <Text>Selected Food: {selectedFood.food_name}</Text>
+              </View>
+              <ServingDropdown />
+              <View style={{ padding: 5 }}>
+                <Picker 
+                  selectedValue={selectedMeal}
+                  onValueChange={(itemValue) => setSelectedMeal(itemValue)}>
+                    <Picker.Item label='Breakfast' value='BREAKFAST' />
+                    <Picker.Item label='Lunch' value='LUNCH' />
+                    <Picker.Item label='Dinner' value='DINNER' />
+                    <Picker.Item label='Snacks' value='SNACKS' />
+                </Picker>
+              </View>
+              <View style={{ padding: 5, flexDirection: 'row', justifyContent: 'space-around' }}>
+                <Text>Number of Servings</Text>
+                <TextInput
+                    name='numservings'
+                    placeholder='-'
+                    placeholderTextColor={activeColors.primary_text}
+                    keyboardType='numeric'
+                    maxLength={3}
+                    value={enteredServings}
+                    style={{width: 50, marginBottom: 10, fontSize: 16, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: activeColors.primary_text, color: activeColors.primary_text}}
+                    onChangeText={(text) => setEnteredServings(text)}
+                  />
+              </View>
+              <Bubble_Button
+                text="Add Food Item"
+                onPress={insertFood}
+                bgColor="#F8BE13"
+                fgColor="#363636"
+                cstyle={{ width: '100%', paddingTop: 10, paddingBottom: 10 }}
+              />
             </View>
-          ))}
+          )}
+
+
+
         </View>
       );
     };
-
 
     //const addFood = (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
     const addFood = async (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
@@ -1549,7 +1775,7 @@ that would prevent my participation in the program.
         //Insert into DB
         try {
           await DataStore.save(
-            new Foodentry({
+            new FoodEntry({
               date: format(new Date(date), 'MM/dd/yyyy').toString(),
               category: 'BREAKFAST',
               desc: pfooddesc,
@@ -1580,7 +1806,7 @@ that would prevent my participation in the program.
         //Insert into DB
         try {
           await DataStore.save(
-            new Foodentry({
+            new FoodEntry({
               date: format(new Date(date), 'MM/dd/yyyy').toString(),
               category: 'LUNCH',
               desc: pfooddesc,
@@ -1611,7 +1837,7 @@ that would prevent my participation in the program.
         //Insert into DB
         try {
           await DataStore.save(
-            new Foodentry({
+            new FoodEntry({
               date: format(new Date(date), 'MM/dd/yyyy').toString(),
               category: 'DINNER',
               desc: pfooddesc,
@@ -1642,7 +1868,7 @@ that would prevent my participation in the program.
         //Insert into DB
         try {
           await DataStore.save(
-            new Foodentry({
+            new FoodEntry({
               date: format(new Date(date), 'MM/dd/yyyy').toString(),
               category: 'SNACKS',
               desc: pfooddesc,
@@ -1849,143 +2075,122 @@ that would prevent my participation in the program.
     */
 
     return(
-      <View style={{width: '100%', height: '100%', alignItems: 'center'}}>
-        <DatePickerArrows />
-        <ScrollView style={{width: '100%'}}>
-        <View style={{width: '100%'}}>
-            <Pressable style={{padding: 10, flexDirection: 'row'}} onPress={() => setViewEntryScreen(!viewentryscreen)}>
-                
-                { viewentryscreen ? (
-                        <>
-                            <Text style={{color: activeColors.primary_text}}>Add Food  </Text>
-                            <Ionicons name='remove-outline' color= {activeColors.primary_text} style={{fontSize: 18}}/>
-                        </>
-                    ) : (
-                        <>
-                            <Text style={{color: activeColors.primary_text}}>Add Food  </Text>
-                            <Ionicons name='add-outline' color={activeColors.primary_text} style={{fontSize: 18}}/>
-                        </>
-                    )
-                }
-                
-                
-            </Pressable>
-            <AddFoodItemArea viewTrigger={viewentryscreen} category='breakfast'/>
-        </View>
+      <View style={{width: '100%', height: '100%'}}>
         { viewentryscreen ? (
-            <></>
+            <FoodSearch />
         ) : (
-            <View style={{width: '100%', alignItems: 'center', padding: 10}}>
-
-            {/* Breakfast */}
-            <ExpandableSectionButton itemList={breakfastlist} viewTrigger={viewbreakfast} category='breakfast' />
-            <ExpandableSectionArea itemList={breakfastlist} viewTrigger={viewbreakfast} category='breakfast'/>
-
-            {/* Lunch */}
-            <ExpandableSectionButton itemList={lunchlist} viewTrigger={viewlunch} category='lunch' />
-            <ExpandableSectionArea itemList={lunchlist} viewTrigger={viewlunch} category='lunch'/>
-
-            {/* Dinner */}
-            <ExpandableSectionButton itemList={dinnerlist} viewTrigger={viewdinner} category='dinner' />
-            <ExpandableSectionArea itemList={dinnerlist} viewTrigger={viewdinner} category='dinner'/>
-
-            {/* Snacks */}
-            <ExpandableSectionButton itemList={snackslist} viewTrigger={viewsnacks} category='snacks' />
-            <ExpandableSectionArea itemList={snackslist} viewTrigger={viewsnacks} category='snacks'/>
-            
-
-            <View style={{marginTop: 25, justifyContent: 'center', alignItems: 'center'}}>
-            <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '50%', marginBottom: 10}}>
-                <Text style={{color: 'white', fontWeight: '300'}}>Total Calories: </Text>
-                <Text style={{color: 'white', fontWeight: '300'}}>
-                {
-                breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
-                + 
-                lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
-                + 
-                dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
-                + 
-                snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
-                } 
-                </Text>
-            </View>
-            <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%', marginBottom: 10}}>
-                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
-                <Text style={{color: 'white', fontWeight: '300'}}>Total Protein: </Text>
-                <Text style={{color: 'white', fontWeight: '300'}}>
+          <ScrollView style={{width: '100%'}}>
+            <View style={{width: '100%', alignItems: 'center', paddingTop: 10}} >
+              <View style={{flexDirection: 'row'}}>
+                <DatePickerArrows />
+                  <Bubble_Button 
+                    text='Add Food'
+                    onPress={() => setViewEntryScreen(!viewentryscreen)}
+                    bgColor='#F8BE13'
+                    fgColor='#363636'
+                    cstyle={{width: '30%', padding: 10, marginRight: 5}}
+                    tstyle={{fontWeight: '400'}}
+                  />
+              </View>
+              <View style={{width: '100%', alignItems: 'center'}}>
+                <View style={{marginTop: 25, marginBottom: 15, justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '50%', marginBottom: 10}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Calories: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}>
                     {
-                    breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                    breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
                     + 
-                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
                     + 
-                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
                     + 
-                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
-                    } g 
-                </Text>
+                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
+                    } 
+                    </Text>
                 </View>
-                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
-                <Text style={{color: 'white', fontWeight: '300'}}>Total Carbs: </Text>
-                <Text style={{color: 'white', fontWeight: '300'}}>
-                    {
-                    breakfastlist.reduce((total , currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
-                    + 
-                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
-                    + 
-                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
-                    + 
-                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
-                    } g 
-                </Text>
+                <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%', marginBottom: 10}}>
+                    <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Protein: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}>
+                        {
+                        breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                        + 
+                        lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                        + 
+                        dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                        + 
+                        snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                        } g 
+                    </Text>
+                    </View>
+                    <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Carbs: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}>
+                        {
+                        breakfastlist.reduce((total , currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                        + 
+                        lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                        + 
+                        dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                        + 
+                        snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                        } g 
+                    </Text>
+                    </View>
                 </View>
-            </View>
-            <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%'}}>
-                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
-                <Text style={{color: 'white', fontWeight: '300'}}>Total Fat: </Text>
-                <Text style={{color: 'white', fontWeight: '300'}}>
-                    {
-                    breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
-                    + 
-                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
-                    + 
-                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
-                    + 
-                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
-                    } g 
-                </Text>
+                <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%'}}>
+                    <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Fat: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}>
+                        {
+                        breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                        + 
+                        lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                        + 
+                        dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                        + 
+                        snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                        } g 
+                    </Text>
+                    </View>
+                    <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Fiber: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}> 
+                        {
+                        breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                        + 
+                        lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                        + 
+                        dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                        + 
+                        snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                        } g 
+                    </Text>
+                    </View>
                 </View>
-                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
-                <Text style={{color: 'white', fontWeight: '300'}}>Total Fiber: </Text>
-                <Text style={{color: 'white', fontWeight: '300'}}> 
-                    {
-                    breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
-                    + 
-                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
-                    + 
-                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
-                    + 
-                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
-                    } g 
-                </Text>
                 </View>
+
+                  {/* Breakfast */}
+                  <ExpandableSectionButton itemList={breakfastlist} viewTrigger={viewbreakfast} category='breakfast' />
+                  <ExpandableSectionArea itemList={breakfastlist} viewTrigger={viewbreakfast} category='breakfast'/>
+
+                  {/* Lunch */}
+                  <ExpandableSectionButton itemList={lunchlist} viewTrigger={viewlunch} category='lunch' />
+                  <ExpandableSectionArea itemList={lunchlist} viewTrigger={viewlunch} category='lunch'/>
+
+                  {/* Dinner */}
+                  <ExpandableSectionButton itemList={dinnerlist} viewTrigger={viewdinner} category='dinner' />
+                  <ExpandableSectionArea itemList={dinnerlist} viewTrigger={viewdinner} category='dinner'/>
+
+                  {/* Snacks */}
+                  <ExpandableSectionButton itemList={snackslist} viewTrigger={viewsnacks} category='snacks' />
+                  <ExpandableSectionArea itemList={snackslist} viewTrigger={viewsnacks} category='snacks'/>
+              </View>
             </View>
-            </View>
-            {/*}
-            <View style={{marginTop: 50, width: '100%', marginBottom: 50}}>
-            <Bubble_Button 
-                text='Save Food Entries'
-                onPress={saveFoodEntries}
-                bgColor='#F8BE13'
-                fgColor='#363636'
-                cstyle={{width: '100%'}}
-            />
-            </View>
-                */}
-            </View>
+          </ScrollView>
         )}
           
 
-        </ScrollView>
       </View>
     )
   }
@@ -2984,8 +3189,9 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingBottom: 15,
-    paddingTop: 15,
+    paddingBottom: 10,
+    paddingTop: 10,
+    marginRight: 10,
     width: 200
   },
 

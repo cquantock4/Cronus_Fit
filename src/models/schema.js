@@ -498,6 +498,20 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "servingsize": {
+                    "name": "servingsize",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "quantity": {
+                    "name": "quantity",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -935,6 +949,13 @@ export const schema = {
                 },
                 "downloadurl": {
                     "name": "downloadurl",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "data_type": {
+                    "name": "data_type",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -1857,6 +1878,6 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "codegenVersion": "3.4.3",
-    "version": "35eeadf26e99217eb07eebf4061ffcc7"
+    "codegenVersion": "3.4.4",
+    "version": "acae7b31718075e1f49854423371945c"
 };
