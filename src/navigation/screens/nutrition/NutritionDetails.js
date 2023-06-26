@@ -9,7 +9,7 @@ import CryptoJS from 'crypto-js';
 import OAuth from 'oauth-1.0a';
 import base64 from 'react-native-base64';
 
-//import {Picker} from  '@react-native-picker/picker';
+import {Picker} from  '@react-native-picker/picker';
 
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -1457,6 +1457,743 @@ that would prevent my participation in the program.
   Main Nutrtion Page Screens. 
   Adding Meals, Weekly Checkin, Upload Status pictures and Nutrition Coach Messages. 
   */
+  const AddMealSnack = () => {
+
+
+    const FoodSearch = () => {
+      const CLIENT_ID = Constants.expoConfig.extra.fatSecretAPIClientID;
+      const CLIENT_SECRET = Constants.expoConfig.extra.fatSecretAPIClientSecret;
+    
+      const [accessToken, setAccessToken] = useState('');
+      const [searchQuery, setSearchQuery] = useState('');
+      const [searchResults, setSearchResults] = useState([]);
+      const [selectedFood, setSelectedFood] = useState(null);
+      const [servings, setServings] = useState([]);
+      const [selectedServing, setSelectedServing] = useState(null);
+      const [selectedMeal, setSelectedMeal] = useState('BREAKFAST');
+      const [enteredServings, setEnteredServings] = useState('');
+      const [displayResults, setDisplayResults] = useState(null);
+    
+      useEffect(() => {
+        authorize();
+      }, []);
+    
+      const authorize = async () => {
+        const authString = base64.encode(`${CLIENT_ID}:${CLIENT_SECRET}`);
+        const response = await fetch('https://oauth.fatsecret.com/connect/token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${authString}`,
+          },
+          body: 'grant_type=client_credentials',
+        });
+    
+        const data = await response.json();
+        const accessToken = data.access_token;
+        setAccessToken(accessToken);
+      };
+    
+      const searchFood = async () => {
+        const url = `https://platform.fatsecret.com/rest/server.api?method=foods.search.v2&search_expression=${encodeURIComponent(
+          searchQuery
+        )}&format=json`;
+    
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+    
+        const data = await response.json();
+        const foods = data.foods_search.results.food;
+        setSearchResults(foods);
+      };
+
+
+      const insertFood = () => {
+      
+        let totalProtein = 0;
+        let totalCarbohydrates = 0;
+        let totalFat = 0;
+        let totalFiber = 0;
+        let totalCalories = 0;
+        let selectedserving_desc = '';
+        let quantity = 0.0;
+      
+        if (selectedServing && selectedMeal && enteredServings) {
+          const parsedServings = parseFloat(enteredServings);
+      
+          if (!isNaN(parsedServings) && parsedServings > 0) {
+            totalProtein = selectedServing.protein * parsedServings;
+            totalCarbohydrates = selectedServing.carbohydrate * parsedServings;
+            totalFat = selectedServing.fat * parsedServings;
+            totalFiber = selectedServing.fiber * parsedServings;
+            totalCalories = selectedServing.calories * parsedServings;
+            selectedserving_desc = selectedServing.measurement_description;
+            quantity = parsedServings
+
+            // Round the totals to the nearest tenth
+            totalProtein = Math.round(totalProtein * 10) / 10;
+            totalCarbohydrates = Math.round(totalCarbohydrates * 10) / 10;
+            totalFat = Math.round(totalFat * 10) / 10;
+            totalFiber = Math.round(totalFiber * 10) / 10;
+            totalCalories = Math.round(totalCalories * 10) / 10;
+          } else {
+            console.log('Invalid entered servings');
+            return;
+          }
+        } else {
+          console.log('Missing selected serving, selected meal, or entered servings');
+          return;
+        }
+
+        
+        if (selectedMeal === 'BREAKFAST') {
+
+          setBreakfastList(breakfastlist => ([...breakfastlist, {
+            desc: selectedFood.food_name,
+            protein: totalProtein.toString(),
+            carbs: totalCarbohydrates.toString(),
+            fat: totalFat.toString(),
+            fiber: totalFiber.toString(),
+            calories: totalCalories.toString(),
+            servingsize: selectedserving_desc,
+            quantity
+          } ]));
+
+        } else if (selectedMeal === 'LUNCH') {
+
+          setLunchList(lunchlist => ([...lunchlist, {
+            desc: selectedFood.food_name,
+            protein: totalProtein.toString(),
+            carbs: totalCarbohydrates.toString(),
+            fat: totalFat.toString(),
+            fiber: totalFiber.toString(),
+            calories: totalCalories.toString(),
+            servingsize: selectedserving_desc,
+            quantity
+          } ]));
+        }
+        else if (selectedMeal === 'DINNER') {
+
+          setDinnerList(dinnerlist => ([...dinnerlist, {
+            desc: selectedFood.food_name,
+            protein: totalProtein.toString(),
+            carbs: totalCarbohydrates.toString(),
+            fat: totalFat.toString(),
+            fiber: totalFiber.toString(),
+            calories: totalCalories.toString(),
+            servingsize: selectedserving_desc,
+            quantity
+          } ]));
+        }
+        else if (selectedMeal === 'SNACKS') {
+
+          setSnacksList(snackslist => ([...snackslist, {
+            desc: selectedFood.food_name,
+            protein: totalProtein.toString(),
+            carbs: totalCarbohydrates.toString(),
+            fat: totalFat.toString(),
+            fiber: totalFiber.toString(),
+            calories: totalCalories.toString(),
+            servingsize: selectedserving_desc,
+            quantity
+          } ]));
+        }
+
+        
+        //Insert into DB
+        try {
+
+           DataStore.save(
+            new FoodEntry({
+              date: format(new Date(date), 'MM/dd/yyyy').toString(),
+              category: selectedMeal,
+              desc: selectedFood.food_name,
+              protein: parseFloat(totalProtein),
+              carbs: parseFloat(totalCarbohydrates),
+              fat: parseFloat(totalFat),
+              fiber: parseFloat(totalFiber),
+              calories: parseFloat(totalCalories),
+              servingsize: selectedserving_desc,
+              quantity: parseFloat(quantity),
+              userID: user.id
+            })
+          );
+
+          
+          setViewEntryScreen(!viewentryscreen)
+        //console.log("Data Saved successfully!");
+        } catch (error) {
+          console.log("Error saving data", error);
+        }
+        
+        
+
+        setViewEntryScreen(!viewentryscreen)
+      };
+    
+      const fetchServings = async (food) => {
+        const url = `https://platform.fatsecret.com/rest/server.api?method=food.get.v2&food_id=${food.food_id}&format=json`;
+    
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+    
+        const data = await response.json();
+        const servings = data.food.servings.serving;
+        setServings(servings);
+      };
+
+      const handleFoodClick = (food) => {
+        setSelectedFood(food);
+        fetchServings(food);
+      };
+    
+      const FoodRow = ({ item }) => {
+        return (
+          <View style={{ padding: 15, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5 }}>
+            <Text onPress={() => handleFoodClick(item)}>{item.food_name}</Text>
+          </View>
+        );
+      };
+  
+
+      const ServingDropdown = () => {
+        useEffect(() => {
+          if (!selectedServing && servings.length > 0) {
+            setSelectedServing(servings[0]); // Set the default selected serving to the first item in the list
+          }
+        }, [selectedServing, servings]);
+      
+        return (
+          <Picker
+            selectedValue={selectedServing}
+            onValueChange={(itemValue) => setSelectedServing(itemValue)}
+          >
+            {servings.map((serving) => (
+              <Picker.Item key={serving.serving_id} label={serving.serving_description} value={serving} />
+            ))}
+          </Picker>
+        );
+      };
+    
+      return (
+        <View style={{ width: '100%' }}>
+          {!selectedFood && (
+            <>
+              <TextInput
+                placeholder="Search for a food"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                style={{ paddingTop: 10, paddingBottom: 10 }}
+              />
+              <Bubble_Button
+                text="Search"
+                onPress={searchFood}
+                bgColor="#F8BE13"
+                fgColor="#363636"
+                cstyle={{ width: '100%', paddingTop: 10, paddingBottom: 10 }}
+              />
+              <FlatList
+                data={searchResults}
+                keyExtractor={(item) => item.food_id.toString()}
+                renderItem={({ item }) => <FoodRow item={item} />}
+              />
+            </>
+          )}
+
+          {selectedFood && (
+            <View>
+              <View style={{ padding: 5 }}>
+                <Text>Selected Food: {selectedFood.food_name}</Text>
+              </View>
+              <ServingDropdown />
+              <View style={{ padding: 5 }}>
+                <Picker 
+                  selectedValue={selectedMeal}
+                  onValueChange={(itemValue) => setSelectedMeal(itemValue)}>
+                    <Picker.Item label='Breakfast' value='BREAKFAST' />
+                    <Picker.Item label='Lunch' value='LUNCH' />
+                    <Picker.Item label='Dinner' value='DINNER' />
+                    <Picker.Item label='Snacks' value='SNACKS' />
+                </Picker>
+              </View>
+              <View style={{ padding: 5, flexDirection: 'row', justifyContent: 'space-around' }}>
+                <Text>Number of Servings</Text>
+                <TextInput
+                    name='numservings'
+                    placeholder='-'
+                    placeholderTextColor={activeColors.primary_text}
+                    keyboardType='numeric'
+                    maxLength={3}
+                    value={enteredServings}
+                    style={{width: 50, marginBottom: 10, fontSize: 16, textAlign: 'center', marginBottom: 20, marginTop: 20, borderBottomWidth: 1, borderBottomColor: activeColors.primary_text, color: activeColors.primary_text}}
+                    onChangeText={(text) => setEnteredServings(text)}
+                  />
+              </View>
+              <Bubble_Button
+                text="Add Food Item"
+                onPress={insertFood}
+                bgColor="#F8BE13"
+                fgColor="#363636"
+                cstyle={{ width: '100%', paddingTop: 10, paddingBottom: 10 }}
+              />
+            </View>
+          )}
+
+
+
+        </View>
+      );
+    };
+
+    //const addFood = (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
+    const addFood = async (pfooddesc, pprotein, pcarbs, pfat, pfiber, pcalories, category) => {
+
+      //console.log(category)
+
+      //console.log(pprotein)
+      //if (pfooddesc == null || pprotein == null || pcarbs == null || pfat == null || pfiber == null || pcalories == null) return;
+      
+      if (pfooddesc == null || pcalories == null) return;
+
+
+      if (category === 'breakfast') {
+        setBreakfastList(breakfastlist => ([...breakfastlist, {
+          desc: pfooddesc,
+          protein: pprotein,
+          carbs: pcarbs,
+          fat: pfat,
+          fiber: pfiber,
+          calories: pcalories
+        } ]));
+
+        //Insert into DB
+        try {
+          await DataStore.save(
+            new FoodEntry({
+              date: format(new Date(date), 'MM/dd/yyyy').toString(),
+              category: 'BREAKFAST',
+              desc: pfooddesc,
+              protein: parseFloat(pprotein),
+              carbs: parseFloat(pcarbs),
+              fat: parseFloat(pfat),
+              fiber: parseFloat(pfiber),
+              calories: parseFloat(pcalories),
+              userID: user.id
+            })
+          );
+  
+            //console.log("Data Saved successfully!");
+          } catch (error) {
+            console.log("Error saving data", error);
+          }
+
+      } else if (category === 'lunch') {
+        setLunchList(lunchlist => ([...lunchlist, {
+          desc: pfooddesc,
+          protein: pprotein,
+          carbs: pcarbs,
+          fat: pfat,
+          fiber: pfiber,
+          calories: pcalories
+        } ]));
+
+        //Insert into DB
+        try {
+          await DataStore.save(
+            new FoodEntry({
+              date: format(new Date(date), 'MM/dd/yyyy').toString(),
+              category: 'LUNCH',
+              desc: pfooddesc,
+              protein: parseFloat(pprotein),
+              carbs: parseFloat(pcarbs),
+              fat: parseFloat(pfat),
+              fiber: parseFloat(pfiber),
+              calories: parseFloat(pcalories),
+              userID: user.id
+            })
+          );
+  
+            //console.log("Data Saved successfully!");
+          } catch (error) {
+            console.log("Error saving data", error);
+          }
+
+      } else if (category === 'dinner') {
+        setDinnerList(dinnerlist => ([...dinnerlist, {
+          desc: pfooddesc,
+          protein: pprotein,
+          carbs: pcarbs,
+          fat: pfat,
+          fiber: pfiber,
+          calories: pcalories
+        } ]));
+
+        //Insert into DB
+        try {
+          await DataStore.save(
+            new FoodEntry({
+              date: format(new Date(date), 'MM/dd/yyyy').toString(),
+              category: 'DINNER',
+              desc: pfooddesc,
+              protein: parseFloat(pprotein),
+              carbs: parseFloat(pcarbs),
+              fat: parseFloat(pfat),
+              fiber: parseFloat(pfiber),
+              calories: parseFloat(pcalories),
+              userID: user.id
+            })
+          );
+  
+            //console.log("Data Saved successfully!");
+          } catch (error) {
+            console.log("Error saving data", error);
+          }
+
+      } else if (category === 'snacks') {
+        setSnacksList(snackslist => ([...snackslist, {
+          desc: pfooddesc,
+          protein: pprotein,
+          carbs: pcarbs,
+          fat: pfat,
+          fiber: pfiber,
+          calories: pcalories
+        } ]));
+
+        //Insert into DB
+        try {
+          await DataStore.save(
+            new FoodEntry({
+              date: format(new Date(date), 'MM/dd/yyyy').toString(),
+              category: 'SNACKS',
+              desc: pfooddesc,
+              protein: parseFloat(pprotein),
+              carbs: parseFloat(pcarbs),
+              fat: parseFloat(pfat),
+              fiber: parseFloat(pfiber),
+              calories: parseFloat(pcalories),
+              userID: user.id
+            })
+          );
+  
+            //console.log("Data Saved successfully!");
+          } catch (error) {
+            console.log("Error saving data", error);
+          }
+
+      }
+      
+    }
+
+    const deleteTask = (deleteIndex, category, item) => {
+
+      //console.log(category)
+      if (category === 'breakfast') {
+        setBreakfastList(breakfastlist.filter((value, index) => index != deleteIndex));
+      } else if (category === 'lunch') {
+        setLunchList(lunchlist.filter((value, index) => index != deleteIndex));
+      } else if (category === 'dinner') {
+        setDinnerList(dinnerlist.filter((value, index) => index != deleteIndex));
+      } else if (category === 'snacks') {
+        setSnacksList(snackslist.filter((value, index) => index != deleteIndex));
+      } 
+
+     
+
+      const item_to_delete = foodentries.filter((value) => value.id === item.id)
+
+      //console.log('we need to delete this food item: ' + JSON.stringify(item_to_delete))
+
+      if (item_to_delete[0]) {
+
+        //console.log("found it, let''s delete it")
+
+        DataStore.delete(item_to_delete[0]);
+
+      }
+      
+    }
+
+    const saveFoodEntries = async () => {
+      setAddFood(!addfood)
+
+       navigation.navigate('NutritionScreen')
+      //console.log(addfood)
+    }
+
+  
+    const expandCategory = async (label) => {
+
+      //console.log(label.category)
+
+      if (label.category === 'breakfast') {
+        setViewBreakfast(!viewbreakfast)
+      } else if (label.category === 'lunch') {
+        setViewLunch(!viewlunch)
+      } else if (label.category === 'dinner') {
+        setViewDinner(!viewdinner)
+      }  else if (label.category === 'snacks') {
+        setViewSnacks(!viewsnacks)
+      }
+
+      /*
+
+      {
+              breakfastlist ? (
+                breakfastlist.map((item, index) => {
+                  return (
+                    <View key={index} style={{flex: 1}}>
+                      <Text>{item.calories}</Text>
+                    </View>
+                  );
+                })
+              ) : (
+                <></>
+              )
+            }
+      */
+      
+      
+    }
+    
+
+    function capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    
+    const ExpandableSectionButton = ({itemList, viewTrigger, category}) => {
+
+      return (
+          <Pressable style={styles.expandentrybutton} onPress={() => expandCategory({category})}>
+            <View>
+              <Text style={{fontSize: 20, color: activeColors.secondary_text}}>{capitalizeFirstLetter(category)}</Text>
+            </View>
+            <View style={{flexDirection: 'row', marginRight: 20}}>
+              <Text style={{marginTop: 5, marginRight: 25, color: activeColors.secondary_text}}>
+              {
+                itemList.reduce((total,currentItem) =>  total = parseInt(total) + parseInt(currentItem.calories) , 0 )
+              } calories
+              </Text>
+          
+              { viewTrigger ? (
+                <Ionicons name='chevron-back-outline' color={activeColors.secondary_text} style={{fontSize: 25}}/>
+              ) : (
+                <Ionicons name='chevron-down-outline' color={ activeColors.secondary_text} style={{fontSize: 25}}/>
+              )}
+            </View>
+            
+        </Pressable>
+      );
+    };
+
+    const ExpandableSectionArea = ({itemList, viewTrigger, category}) => {
+      return (
+          viewTrigger ? (
+              <View style={{padding: 10, width: '100%', flexDirection: 'column', justifyContent: 'space-evenly'}}>
+                <ScrollView>
+                  {
+                    (itemList.length > 0) ? (
+                        //Filter out 0 calorie items and then display the food items
+                        itemList.filter(function(item) {
+                        if (item.calories === 0) {
+                          return false; // skip
+                        }
+                        return true;
+                      }).map((item, index) => {
+                        return (
+                          <View key={index} style={{flex: 1}}>
+                              <FoodItem index={index + 1} item={item} deleteTask={() => deleteTask(index, category, item)}/>
+                          </View>
+                        );
+                      })
+                    ) : (
+                        <View>
+                            <Text style={{color: activeColors.primary_text}}>No data</Text>
+                        </View>
+                    )} 
+                </ScrollView>
+                {/*
+                <View style={{marginTop: 5}}>
+                  <FoodInputField addFood={addFood} category={category}/>
+                </View>*/}
+              </View>
+          ) : (
+            <>
+            </>
+          )
+          
+        );
+    };
+
+    const AddFoodItemArea = ({viewTrigger}) => {
+        return (
+            viewTrigger ? (
+                <View style={{padding: 10, width: '100%', flexDirection: 'column', justifyContent: 'space-evenly'}}>
+                  <View style={{marginTop: 5}}>
+                    <FoodInputField addFood={addFood}/>
+                  </View>
+                </View>
+            ) : (
+              <>
+              </>
+            )
+            
+          );
+      };
+
+
+    //const testingfoodData = require('../../../assets/testData/testingfooddata.json');
+
+    //var result = testingfoodData.filter(obj => (obj.date == moment(date).format('MM/DD/YYYY').toString()));
+
+  {/* 
+    let datadisplayed = result.map((item, index) => {
+      let datadisplayed_inner = item.food.map((item_1, index) => {
+        let datadisplayed_inner_2 = item.food_item.map((item_2, index) => {
+            return (
+              <View>
+                <Text>{item_2.protein}</Text>
+              </View> 
+            );
+        })
+      })
+    })
+  */}
+      
+
+    /*
+    let datadisplayed = result.food.map((item, index) => {
+      return(
+        item.food_item
+      )
+    })
+    */
+
+    return(
+      <View style={{width: '100%', height: '100%'}}>
+        { viewentryscreen ? (
+            <FoodSearch />
+        ) : (
+          <ScrollView style={{width: '100%'}}>
+            <View style={{width: '100%', alignItems: 'center', paddingTop: 10}} >
+              <View style={{flexDirection: 'row'}}>
+                <DatePickerArrows />
+                  <Bubble_Button 
+                    text='Add Food'
+                    onPress={() => setViewEntryScreen(!viewentryscreen)}
+                    bgColor='#F8BE13'
+                    fgColor='#363636'
+                    cstyle={{width: '30%', padding: 10, marginRight: 5}}
+                    tstyle={{fontWeight: '400'}}
+                  />
+              </View>
+              <View style={{width: '100%', alignItems: 'center'}}>
+                <View style={{marginTop: 25, marginBottom: 15, justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '50%', marginBottom: 10}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Calories: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}>
+                    {
+                    breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
+                    + 
+                    lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
+                    + 
+                    dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
+                    + 
+                    snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.calories) || 0) , 0 )
+                    } 
+                    </Text>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%', marginBottom: 10}}>
+                    <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Protein: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}>
+                        {
+                        breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                        + 
+                        lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                        + 
+                        dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                        + 
+                        snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.protein) || 0) , 0 )
+                        } g 
+                    </Text>
+                    </View>
+                    <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Carbs: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}>
+                        {
+                        breakfastlist.reduce((total , currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                        + 
+                        lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                        + 
+                        dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                        + 
+                        snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.carbs) || 0) , 0 )
+                        } g 
+                    </Text>
+                    </View>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%'}}>
+                    <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Fat: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}>
+                        {
+                        breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                        + 
+                        lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                        + 
+                        dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                        + 
+                        snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fat) || 0) , 0 )
+                        } g 
+                    </Text>
+                    </View>
+                    <View style={{flexDirection: 'row', padding: 15, backgroundColor: '#363636', borderRadius: 5, width: '45%', justifyContent: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '300'}}>Total Fiber: </Text>
+                    <Text style={{color: 'white', fontWeight: '300'}}> 
+                        {
+                        breakfastlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                        + 
+                        lunchlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                        + 
+                        dinnerlist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                        + 
+                        snackslist.reduce((total,currentItem) =>  total = parseInt(total) + (parseInt(currentItem.fiber) || 0) , 0 )
+                        } g 
+                    </Text>
+                    </View>
+                </View>
+                </View>
+
+                  {/* Breakfast */}
+                  <ExpandableSectionButton itemList={breakfastlist} viewTrigger={viewbreakfast} category='breakfast' />
+                  <ExpandableSectionArea itemList={breakfastlist} viewTrigger={viewbreakfast} category='breakfast'/>
+
+                  {/* Lunch */}
+                  <ExpandableSectionButton itemList={lunchlist} viewTrigger={viewlunch} category='lunch' />
+                  <ExpandableSectionArea itemList={lunchlist} viewTrigger={viewlunch} category='lunch'/>
+
+                  {/* Dinner */}
+                  <ExpandableSectionButton itemList={dinnerlist} viewTrigger={viewdinner} category='dinner' />
+                  <ExpandableSectionArea itemList={dinnerlist} viewTrigger={viewdinner} category='dinner'/>
+
+                  {/* Snacks */}
+                  <ExpandableSectionButton itemList={snackslist} viewTrigger={viewsnacks} category='snacks' />
+                  <ExpandableSectionArea itemList={snackslist} viewTrigger={viewsnacks} category='snacks'/>
+              </View>
+            </View>
+          </ScrollView>
+        )}
+          
+
+      </View>
+    )
+  }
 
   const WeeklyCheckin = () => {
 
@@ -2094,16 +2831,12 @@ that would prevent my participation in the program.
     return(
     <>
     {/*
-    <AddMealSnack />
       <Header navigation={navigation} title={currentTitle} navlocation='NutritionScreen' showbackbutton={true} showbuttons={false}/>
     */}
       <View style={{padding: 5, flex: 1}}>
 
         {addfood ? (
-          <View>
-            <Text>testing</Text>
-            </View>
-            
+          <AddMealSnack />
           ) : (
             <>
             </>
