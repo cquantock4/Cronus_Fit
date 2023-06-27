@@ -2836,7 +2836,7 @@ that would prevent my participation in the program.
       <View style={{padding: 5, flex: 1}}>
 
         {addfood ? (
-            <AddMealSnack />
+          <AddMealSnack />
           ) : (
             <>
             </>
