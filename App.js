@@ -4,6 +4,8 @@ import 'core-js/full/symbol/async-iterator';
 import '@azure/core-asynciterator-polyfill'; 
 
 import React, { useContext } from 'react';
+import Constants from 'expo-constants'
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
@@ -33,11 +35,16 @@ Amplify.configure({
 
 export default function App() {
 
+  const stripePublishableKey = Constants.expoConfig.extra.stripePublishableKey;
+
 
   return (
+    <StripeProvider
+      publishableKey={stripePublishableKey}>
       <ThemeProvider>
           <Navigation />
       </ThemeProvider>
+    </StripeProvider>
   );
 }
 

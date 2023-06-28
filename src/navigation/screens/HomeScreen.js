@@ -5,8 +5,11 @@ import {  Modal, Pressable, StyleSheet, Image, Linking,
 import Constants from 'expo-constants'
 
 //Amplify DataStore
-import { Amplify, Auth, DataStore, Hub } from 'aws-amplify';
+import { Amplify, Auth, DataStore, Hub, API } from 'aws-amplify';
 import { User } from '../../../src/models';
+
+//import { CardField } from '@stripe/stripe-react-native';
+import PaymentScreen from '../../components/stripe'
 
 //Styles
 //import style from '../../assets/styles/style.scss';
@@ -47,6 +50,7 @@ export default function HomeScreen( props, {navigation } ) {
   const [newuser, setNewUser] = useState(false);
   const [name, setName] = useState(undefined);
   const [sub, setAuthSub] = useState(undefined);
+  const [showPayment, setShowPayment] = useState(false);
 
   const discordLogoWhite = require('./../../../assets/images/discord-logo-white.png');
   const discordLogoBlack = require('./../../../assets/images/discord-logo-black.png');
@@ -80,7 +84,6 @@ export default function HomeScreen( props, {navigation } ) {
 
   
   useEffect(() => {
-
     //Amplify.DataStore.clear()
     
     if (newuser) {
@@ -124,8 +127,6 @@ export default function HomeScreen( props, {navigation } ) {
 
   }, [sub]);
 
-  
-  
 
 /*
 
@@ -235,29 +236,31 @@ export default function HomeScreen( props, {navigation } ) {
       <FirstTimeUserWelcome />
       <ImageBackground source={require('../../../assets/images/CenteredBackgroundImage_Large.png')} style={styles.image}>
       
-        
-          <View style={styles.header}>
-            <Text style={{marginBottom: 10, color: activeColors.primary_text}}>Welcome, {name}!</Text>
-          </View>
-
-          <ScrollView style={{marginBottom: 50}}>
-            <View style={{flexDirection: 'row', width: '100%', justifyContent: 'center', padding: 15}}>
-              <View style={{marginBottom: 0,}}>
-                {/*<Switch value={darkMode} onValueChange={setTheme} />*/}
-                <Text style={{marginBottom: 20, color: activeColors.primary_text}}>BY RANGERS.</Text>
-                <Text style={{marginBottom: 20, marginLeft: 50, color: activeColors.primary_text}}>FOR RANGERS.</Text>
-                <Text style={{marginBottom: 0, marginLeft: 100, color: activeColors.primary_text}}>AND THOSE WHO DARE.</Text>
-              </View>
+        {showPayment ? (
+          <PaymentScreen />
+        ) : (
+          <>
+            <View style={styles.header}>
+              <Text style={{marginBottom: 10, color: activeColors.primary_text}}>Welcome, {name}!</Text>
             </View>
 
-           
-            {/*
-            <Home_Block_Button title_text='Workout of the day' bgColor = 'rgba(36, 39, 41, 0.6)' fgColor='#fff' cstyle={{padding: 40, paddingTop: 50, paddingBottom: 50, marginBottom: 5}}/>
-            <Home_Block_Button title_text='My Programs' bgColor = 'rgba(248, 190, 19, 0.6)' fgColor='#000' cstyle={{padding: 40, paddingTop: 50, paddingBottom: 50, marginBottom: 5}}/>
-            <Home_Block_Button title_text='Nutrition Articles' bgColor = {activeColors.grey_transparent} fgColor='#fff' cstyle={{padding: 50, paddingTop: 50, paddingBottom: 50, marginBottom: 5}} onPress={() => navigation.navigate('NutritionArticleSearch', {value: 'all'})}/>
-  */}
-          
+            <ScrollView style={{marginBottom: 50}}>
+              <View style={{flexDirection: 'row', width: '100%', justifyContent: 'center', padding: 15}}>
+                <View style={{marginBottom: 0,}}>
+                  {/*<Switch value={darkMode} onValueChange={setTheme} />*/}
+                  <Text style={{marginBottom: 20, color: activeColors.primary_text}}>BY RANGERS.</Text>
+                  <Text style={{marginBottom: 20, marginLeft: 50, color: activeColors.primary_text}}>FOR RANGERS.</Text>
+                  <Text style={{marginBottom: 0, marginLeft: 100, color: activeColors.primary_text}}>AND THOSE WHO DARE.</Text>
+                </View>
+              </View>
+
+              
+            
             </ScrollView>
+
+            <Pressable onPress={() => setShowPayment(!showPayment)}  style={{backgroundColor: 'blue', padding: 5}}>
+                <Text>Pay Now</Text>
+            </Pressable>
 
             <Pressable style={styles.iconContainer} onPress={openDiscord}>
               <Text style={{color: activeColors.primary_text, fontWeight: '600', fontSize: 16}}>Find us on</Text>
@@ -268,6 +271,9 @@ export default function HomeScreen( props, {navigation } ) {
               )}
               
             </Pressable>
+          </>
+        )}
+          
 
 
       </ImageBackground>
@@ -348,6 +354,7 @@ const styles = StyleSheet.create({
     margin: 5
   },
   container_content: {
+    width: '100%',
     backgroundColor: 'white',
     margin: 5,
     flex:1,
