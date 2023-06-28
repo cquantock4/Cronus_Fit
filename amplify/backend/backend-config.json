@@ -20,20 +20,6 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "AppSync"
-    },
-    "cronusfitrest": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "cronusfitstripeserver"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "API Gateway"
     }
   },
   "auth": {
@@ -68,61 +54,7 @@
       "service": "Cognito"
     }
   },
-  "function": {
-    "cronusfitstripeserver": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
-    "stripeserver": {
-      "build": true,
-      "dependsOn": [],
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    }
-  },
-  "parameters": {
-    "AMPLIFY_function_cronusfitstripeserver_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "cronusfitstripeserver"
-        }
-      ]
-    },
-    "AMPLIFY_function_cronusfitstripeserver_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "cronusfitstripeserver"
-        }
-      ]
-    },
-    "AMPLIFY_function_stripeserver_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "stripeserver"
-        }
-      ]
-    },
-    "AMPLIFY_function_stripeserver_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "stripeserver"
-        }
-      ]
-    },
-    "AMPLIFY_function_stripeserver_secretsPathAmplifyAppId": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "stripeserver"
-        }
-      ]
-    }
-  },
+  "function": {},
   "storage": {
     "s3cronusfitstorage53141d21": {
       "dependsOn": [],

@@ -236,10 +236,6 @@ export default function HomeScreen( props, {navigation } ) {
       <FirstTimeUserWelcome />
       <ImageBackground source={require('../../../assets/images/CenteredBackgroundImage_Large.png')} style={styles.image}>
       
-        {showPayment ? (
-          <PaymentScreen />
-        ) : (
-          <>
             <View style={styles.header}>
               <Text style={{marginBottom: 10, color: activeColors.primary_text}}>Welcome, {name}!</Text>
             </View>
@@ -258,10 +254,6 @@ export default function HomeScreen( props, {navigation } ) {
             
             </ScrollView>
 
-            <Pressable onPress={() => setShowPayment(!showPayment)}  style={{backgroundColor: 'blue', padding: 5}}>
-                <Text>Pay Now</Text>
-            </Pressable>
-
             <Pressable style={styles.iconContainer} onPress={openDiscord}>
               <Text style={{color: activeColors.primary_text, fontWeight: '600', fontSize: 16}}>Find us on</Text>
               {darkMode ? ( 
@@ -271,11 +263,8 @@ export default function HomeScreen( props, {navigation } ) {
               )}
               
             </Pressable>
-          </>
-        )}
+
           
-
-
       </ImageBackground>
 
       </View>

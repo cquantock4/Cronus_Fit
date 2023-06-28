@@ -40,22 +40,13 @@
         "CronusFit": {}
       },
       "api": {
-        "cronusfit": {},
-        "cronusfitrest": {}
+        "cronusfit": {}
       },
       "storage": {
         "s3cronusfitstorage53141d21": {}
       },
       "function": {
-        "cronusfitstripeserver": {
-          "deploymentBucketName": "amplify-cronusfit-dev-170012-deployment",
-          "s3Key": "amplify-builds/cronusfitstripeserver-2f6e7737596251456466-build.zip"
-        },
-        "stripeserver": {
-          "secretsPathAmplifyAppId": "d13n17x2fk0jtr",
-          "deploymentBucketName": "amplify-cronusfit-dev-170012-deployment",
-          "s3Key": "amplify-builds/stripeserver-61714a6d397348664433-build.zip"
-        }
+        "stripeserver": {}
       }
     }
   }
