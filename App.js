@@ -13,6 +13,8 @@ import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 //Themes
 import { ThemeProvider } from "./src/components/ThemeContext";
 
+import { PaperProvider } from 'react-native-paper';
+
 //Main Navigation Controller
 import Navigation from "./src/navigation"
 
