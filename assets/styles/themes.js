@@ -26,6 +26,10 @@ export const colors = {
     
     //status bar
     status_bar_bg: '#f3f4f6',
+
+    //Header
+    searchbox_bg: '#e0e0e0',
+    searchbox_text: '#000'
   },
 
   dark: {
@@ -52,6 +56,11 @@ export const colors = {
 
     //status bar
     status_bar_bg: '#7a7979',
+
+    //Header
+    searchbox_bg: '#424242',
+    searchbox_text: '#e0e0e0'
+
   },
 
   primary_bg: "#f3f4f6",

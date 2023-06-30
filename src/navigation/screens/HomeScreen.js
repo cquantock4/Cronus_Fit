@@ -13,6 +13,8 @@ import PaymentScreen from '../../components/stripe'
 //Styles
 //import style from '../../assets/styles/style.scss';
 
+import Header from '../../components/ui/inputs/header';
+
 import {
   VStack,
   HStack,
@@ -258,9 +260,15 @@ export default function HomeScreen( props, {navigation } ) {
     );
   }
   
+  const handleSearch = (text) => {
+    // Handle search logic based on the entered text
+    console.log(text)
+  };
+
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+      <Header title="Workout Details" searchable onSearch={handleSearch} searchtitle="workouts" />
         <Flex fill>
           <Box p={10} mb={10}>
             <Text variant='h4'>Cody Quantock</Text>
@@ -271,7 +279,7 @@ export default function HomeScreen( props, {navigation } ) {
                 elevation={6}
                 category="medium"
               >
-                <View style={{height: 50}}><Text>Testing text</Text></View>
+                <View style={{height: 50}}><Text style={{fontWeight: '700'}}>Testing text</Text></View>
               </Surface>
               <Surface
                 elevation={6}
