@@ -11,8 +11,6 @@ import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 import { parse,  format } from 'date-fns';
 
-import { Searchbar } from 'react-native-paper';
-
 import {useRoute} from '@react-navigation/native';
 import {useForm} from 'react-hook-form';
 

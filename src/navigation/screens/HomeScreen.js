@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {  Modal, Pressable, StyleSheet, Image, Linking,
-  Text, View, ScrollView, ImageBackground, ActivityIndicator, Dimensions
+import {  Modal, StyleSheet, Image, Linking, View, ScrollView, ImageBackground, ActivityIndicator, Dimensions
 } from 'react-native';
 import Constants from 'expo-constants'
 
@@ -14,10 +13,30 @@ import PaymentScreen from '../../components/stripe'
 //Styles
 //import style from '../../assets/styles/style.scss';
 
+import {
+  VStack,
+  HStack,
+  Surface,
+  Flex,
+  Box,
+  Text,
+  Button,
+  Spacer,
+  Stack,
+  Pressable,
+  Provider,
+  Dialog,
+  DialogHeader,
+  DialogContent,
+  DialogActions,
+} from "@react-native-material/core";
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 //Themes
 import ThemeContext from "../../components/ThemeContext"
 import {colors} from "../../../assets/styles/themes"
+
 
 
 const windowWidth = Dimensions.get('window').width;
@@ -70,13 +89,6 @@ export default function HomeScreen( props, {navigation } ) {
   } else {
     activeColors = colors['light'];
   }
-
-  //console.log('dark mode: ' + darkMode)
-  //console.log('activeColors: ' + JSON.stringify(activeColors))
-
-  //Theming
-  //const [darkMode, setDarkMode] = useState(false)
-  //const [theme, setTheme] = useState("light")
 
 
   //Modal
@@ -171,7 +183,27 @@ export default function HomeScreen( props, {navigation } ) {
       setModalVisible(!modalVisible);
       setNewUser(false)
     };
-  
+    
+    return (
+      <Dialog visible={modalVisible} onDismiss={() => setModalVisible(!modalVisible)}>
+        <DialogHeader title="Welcome to CronusFit!" />
+        <DialogContent>
+          <Text style={{letterSpacing: 1, lineHeight: 25, textAlign: 'center'}}>
+            CronusFit is focused on providing world-class fitness services to service 
+            members and civilians in order to educate and promote a lifestyle dedicated to excellence
+          </Text>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            title="Let's Go"
+            compact
+            variant="text"
+            color={activeColors.primary_text}
+            onPress={() => setModalVisible(false)}
+          />
+        </DialogActions>
+      </Dialog>
+    );
     return(
       <Modal
           animationType="fade" //slide or none
@@ -226,6 +258,54 @@ export default function HomeScreen( props, {navigation } ) {
     );
   }
   
+
+  return (
+    <SafeAreaView style={styles.container}>
+        <Flex fill>
+          <Box p={10} mb={10}>
+            <Text variant='h4'>Cody Quantock</Text>
+          </Box>
+          <Box >
+            <VStack m={4} spacing={6}>
+              <Surface
+                elevation={6}
+                category="medium"
+              >
+                <View style={{height: 50}}><Text>Testing text</Text></View>
+              </Surface>
+              <Surface
+                elevation={6}
+                category="medium"
+              >
+                <View style={{height: 50}}><Text>Testing text</Text></View>
+              </Surface>
+              <Surface
+                elevation={6}
+                category="medium"
+              >
+                <View style={{height: 50}}><Text>Testing text</Text></View>
+              </Surface>
+            </VStack>
+          </Box>
+          <Spacer />
+          <Box>
+          <Box mb={15}>
+            <Pressable onPress={openDiscord} justifyContent="center" alignItems="center">
+              <Text style={{ color: activeColors.primary_text, fontWeight: '600', fontSize: 16 }}>
+                Find us on
+              </Text>
+              {darkMode ? (
+                <Image source={discordLogoWhite} style={styles.icon} />
+              ) : (
+                <Image source={discordLogoBlack} style={styles.icon} />
+              )}
+            </Pressable>
+          </Box>
+          </Box>
+        </Flex>
+        <FirstTimeUserWelcome />
+    </SafeAreaView>
+  )
    
   {/*<View style={[styles.container, {backgroundColor: colors[theme].primary}]}>*/}
   {/*<View style={styles.container}></View>*/}
@@ -233,7 +313,7 @@ export default function HomeScreen( props, {navigation } ) {
     <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
 
      
-      <FirstTimeUserWelcome />
+    <FirstTimeUserWelcome />
       <ImageBackground source={require('../../../assets/images/CenteredBackgroundImage_Large.png')} style={styles.image}>
       
             <View style={styles.header}>
@@ -250,7 +330,11 @@ export default function HomeScreen( props, {navigation } ) {
                 </View>
               </View>
 
-              
+              <Stack fill center spacing={4}>
+                <Button title="Contained" color="blue" uppercase={false}/>
+                <Button variant="outlined" title="Outlined"  />
+                <Button variant="text" title="Text" />
+              </Stack>
             
             </ScrollView>
 
@@ -280,9 +364,7 @@ const statusBarHeight = Constants.statusBarHeight
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
     //justifyContent: 'space-between',
-    alignItems: 'center',
     //marginTop: statusBarHeight,
     //backgroundColor: activeColors.primary
   },  
@@ -301,8 +383,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    alignItems: 'center',
-    marginBottom: 50
+    alignItems: 'center'
   },
   marginTop: {
     marginTop: statusBarHeight,

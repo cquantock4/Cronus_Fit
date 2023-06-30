@@ -10,14 +10,14 @@ import { StripeProvider } from '@stripe/stripe-react-native';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 
-//Themes
-import { ThemeProvider } from "./src/components/ThemeContext";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { PaperProvider } from 'react-native-paper';
+//Themes
+import { ThemeProvider } from "./src/components/ThemeContext"
 
 //Main Navigation Controller
 import Navigation from "./src/navigation"
-
+import {Provider} from "@react-native-material/core";
 
 
 //Amplify imports
@@ -41,12 +41,16 @@ export default function App() {
 
 
   return (
-    <StripeProvider
-      publishableKey={stripePublishableKey}>
-      <ThemeProvider>
-          <Navigation />
-      </ThemeProvider>
-    </StripeProvider>
+    <SafeAreaProvider>
+      <StripeProvider
+        publishableKey={stripePublishableKey}>
+        <Provider>
+          <ThemeProvider>
+              <Navigation />
+          </ThemeProvider>
+        </Provider>
+      </StripeProvider>
+    </SafeAreaProvider>
   );
 }
 
