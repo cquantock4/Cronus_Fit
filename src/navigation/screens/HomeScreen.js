@@ -14,6 +14,7 @@ import PaymentScreen from '../../components/stripe'
 //import style from '../../assets/styles/style.scss';
 
 import Header from '../../components/ui/inputs/header';
+import { queryData } from '../../components/constants';
 
 import {
   VStack,
@@ -118,10 +119,6 @@ export default function HomeScreen( props, {navigation } ) {
       } catch (e) {
         setAuthSub(null);
       }
-
-        //Query User table for 
-
-        //const results = await DataStore.query(User, u => u.sub("eq", temp_sub));
 
         const results = await DataStore.query(User, (u) => u.sub.eq(temp_sub));
 

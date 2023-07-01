@@ -1,11 +1,14 @@
 import React, { useState , useEffect, useContext} from 'react';
-import { StyleSheet, Text, View, Pressable, ActivityIndicator, ScrollView, RefreshControl, SafeAreaView, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, Pressable, ActivityIndicator, ScrollView, RefreshControl, StatusBar } from 'react-native';
 import Constants from 'expo-constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Bubble_Button_Small } from '../../../components/ui/buttons'
 
 //import { listWorkoutsSubWorkouts_date,listTestQuery } from '../../../graphql/queries';
 
+import Header from '../../../components/ui/inputs/header';
+import Card from '../../../components/card';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 //Amplify DataStore
 import { Amplify, Auth, DataStore, Hub, API, Predicates } from 'aws-amplify';
@@ -18,10 +21,6 @@ import { format } from 'date-fns';
 //Themes
 import ThemeContext from '../../../components/ThemeContext'
 import {colors} from '../../../../assets/styles/themes'
-
-
-
-
 
 const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
@@ -293,6 +292,8 @@ export default function Leaderboard( {navigation} ) {
       const dateB = new Date(yearB, monthB - 1, dayB);
       return dateB - dateA;
     });
+
+    console.log(workouts)
 
     setWorkoutList(workouts)
 
@@ -658,22 +659,36 @@ export default function Leaderboard( {navigation} ) {
     );
   }
   
+
+  return(
+    <SafeAreaView style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+      <Header title="Leaderboards" />
+
+      <ScrollView style={{marginBottom: 50}}>
+          {workoutlist.map((item, index) => (
+            <Card
+              key={index}
+              title={item.title}
+              subtitle={item.date}
+              content=""
+              showArrow
+              onPress={() => {
+                // Handle the card press here
+                console.log('Card Pressed!');
+              }}
+            />
+          ))}
+        
+      </ScrollView>
+      
+    </SafeAreaView>
+
+    
+  )
   
   return(
-      <SafeAreaView style={[Platform.OS === 'ios' && styles.marginTop, {flex: 1, backgroundColor: activeColors.primary_bg }]}>
-
-      {/* Header with Search and Filtering Window 
-
-      <Header title='Leaderboards' showbackbutton={false} />        
-
-      */}
-
-        <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
-            <View>
-                <Text style={[styles.header_text, { color: activeColors.primary_text }]}>Leaderboards</Text>
-            </View>
-        </View>
-
+    <SafeAreaView style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+      <Header title="Leaderboards" />
 
       {/* LeaderBoard option buttons */}
       <View style={[styles.catcontainer, {backgroundColor: activeColors.primary_bg}]}>
@@ -731,7 +746,7 @@ const styles = StyleSheet.create({
   
   container: {
     flex: 1,
-    flexDirection: 'column',
+    //flexDirection: 'column',
     //marginTop: statusBarHeight,
     //backgroundColor: 'white'
   },  
