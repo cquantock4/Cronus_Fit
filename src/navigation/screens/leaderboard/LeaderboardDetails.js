@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { StyleSheet, Text, View, Image, ScrollView, KeyboardAvoidingView, FlatList, TouchableOpacity } from 'react-native';
-import { TextInput, Pressable, RefreshControl, Dimensions, SafeAreaView, Platform } from 'react-native';
+import { TextInput, Pressable, RefreshControl, Dimensions, Platform } from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 
+import Header from '../../../components/ui/inputs/header';
+import ListItem from '../../../components/ui/listItem';
+import LeaderBoardDisplay from '../../../components/ui/leaderboarddisplay';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 //Date Formatting
 import { parseISO,  format } from 'date-fns';
@@ -12,7 +16,7 @@ import { parseISO,  format } from 'date-fns';
 import {useRoute} from '@react-navigation/native';
 import {useForm} from 'react-hook-form';
 
-import { Amplify, Auth, DataStore, Hub } from 'aws-amplify';
+import { Amplify, Auth, DataStore, API, graphqlOperation } from 'aws-amplify';
 import { Workouts, User, Comments, WorkoutResults, SubWorkouts } from '../../../models';
 
 //Themes
@@ -35,6 +39,12 @@ export default function LeaderboardDetails( {navigation} ) {
   const route = useRoute();
   const {control, handleSubmit, formState: {errors}} = useForm();
   const [currleaderboard, setCurrLeaderboard] = useState(route?.params?.value);
+
+
+  //New Variables
+  const [workout, setWorkout] = useState([])
+  const [workoutleaderboard, setWorkoutLeaderboard] = useState([])
+  const [isloading, setIsLoading] = useState([]);
 
   const [hassubworkouts, setHasSubWorkouts] = useState([false]);
   const [workouts, setWorkouts] = useState([]);
@@ -80,163 +90,77 @@ export default function LeaderboardDetails( {navigation} ) {
   //Header
   const [showSearch, setShowSearch] = useState(true);
 
-  const groupAndAdd = (arr) => {
-    const res = [];
 
-    //console.log('Starting group and add')
+  useEffect(() => {
 
-    //console.log(arr)
-
-    arr.forEach(el => {
-  
-
-      let grouptitle = el.group + '. ' + el.grouptitle
-
-      //Checking to see if group exists
-      //If not exists, add group to array
-      if (!res[grouptitle]) {
-        res.push(grouptitle);
-      }
-
-      let info = {id: el.id, desc: el.desc, resultcat: el.resultcategory}
-
-      if(typeof res[grouptitle] === "undefined") {
-
-
-        res[grouptitle] = {group: grouptitle, info: [info]}
-
-      } else {
-
-        res[grouptitle].info.push(info);
-        //res[grouptitle].id.push(el.subWorkouts.id);
-
-      }
-      
-      
-    }, {});
-
-    //console.log('Here we are: ' + res)
-
-    setSubWorkouts(res);
-
-    //return(res)
-
-
-  }
-
-  /*
-  const buildUserDT = (arr, user_res) => {
-    const res = [];
-
-    function ordinal(n) {
-      var s = ["th", "st", "nd", "rd"];
-      var v = n%100;
-      //return n + (s[(v-20)%10] || s[v] || s[0]);
-      return (s[(v-20)%10] || s[v] || s[0]);
-    }
-    
-    //console.log('starting to build User DT')
-    //Loop over arr
-    //console.log(arr)
-    //console.log(user_res)
-
-    arr.subWorkouts.forEach(el => {
-      //console.log('category: ' + JSON.stringify(subworkouts[category]))
-
-      //console.log(el)
-
-      let userid = el.workoutresults.userID
-      let subworkoutid = el.id
-      let workoutResults =  el.workoutresults.value
-      let calc_workoutResults = el.workoutresults.value
-      let required =  el.required
-      let timecap =  el.timecap
-      let resultcategory = el.resultcategory
-
-
-      //Calculate total scores
-      let score
-
-      if (resultcategory === 'TIME') {
-
-        calc_workoutResults = timecap.replace(':', '').replace(':', '') - parseInt(calc_workoutResults.replace(':', '').replace(':', ''));
-      }
-      
-      if (calc_workoutResults != null && required) {
-        score = calc_workoutResults
-      } else if (calc_workoutResults != null) { 
-        score = calc_workoutResults * 0.25 //Scale to 25%
-      } else {  
-        score = 0
-      }
-
-
-      
-      if (!res[userid]) {
-        res.push(userid);
-      }
-
-      let results = {subWorkoutID: subworkoutid, value: workoutResults}
-
-      //Lookup User info
-
-      if (user_res.length != 0) {
-
-        let user_filtered = user_res.filter(obj => (obj.id == userid));
-
-        let user_name
-        
-        if (user_filtered.length != 0) {
-          user_name = user_filtered[0].name
+    const getWorkoutsQuery = `
+        query GetAllWorkouts {
+          listWorkouts {
+            items {
+              id
+              title
+              desc
+              date
+              workout_type
+              SubWorkouts {
+                items {
+                  id
+                  group
+                  grouptitle
+                  desc
+                  resultcategory
+                  required
+                  timecap
+                  WorkoutResults {
+                    items {
+                      id
+                      value
+                      userID
+                      User {
+                        name
+                      }
+                    }
+                  }
+                  numitems
+                  order
+                }
+              }
+            }
+          }
         }
+    `
+
+    const fetchWorkouts = async () => {
+      try {
+       
+            // Fetch workouts
+            const workoutResponse = await API.graphql(graphqlOperation(getWorkoutsQuery));
+
+            setWorkoutList(workoutResponse.data.listWorkouts.items)
+
+            // Filter the workouts with workout type FUNCTIONALFITNESS
+            const filteredList = workoutResponse.data.listWorkouts.items.filter(
+              (workout) => workout.id === currleaderboard
+            );
+
+            console.log('this: ' + JSON.stringify(filteredList))
+
+            setWorkout(filteredList[0])
+            setWorkoutLeaderboard(buildLeaderboard(filteredList[0]))
+
+          } catch (error) {
+            console.error('Error fetching workouts:', error);
+          }
+        };
+
+    fetchWorkouts().then(() => {
+      setIsLoading(false); // Set isLoading to false when the data is fetched successfully
+    });
+
+  }, [refreshing]);
 
 
-
-        //console.log('this: ' + workoutssubworkouts[0].workouts.id)
-        
-        if(typeof res[userid] === "undefined") {
-
-          //Create new row
-          //console.log('create new row')
-          res[userid] = {number: 0, ordinal: '', name: user_name, workoutID: arr.id, score: score, results: [results]}
-
-        } else {
-
-          res[userid].results.push(results);
-
-          res[userid].score = parseInt(res[userid].score) + parseInt(score);
-
-        }   
-
-      }
-
-    }, {});
-    
-
-    //Sort the list
-    res.sort((a, b) => (res[a].score < res[b].score) ? 1 : -1)
-
-    let count = 1
-
-    //Add numbering to table
-    res.forEach(el => {
-
-      res[el].ordinal = ordinal(count)
-      res[el].number = count;
-      count++;
-      //console.log(res[el].number)
-
-    }, {});
-
-
-    //console.log('Here it is: ' + JSON.stringify(res))
-
-    setWorkoutResults(res)
-
-  }
-  */
-
-  const buildUserDT = (arr, user_res) => {
+  const buildLeaderboard = (workoutResults) => {
     const res = [];
 
     function ordinal(n) {
@@ -245,28 +169,25 @@ export default function LeaderboardDetails( {navigation} ) {
       //return n + (s[(v-20)%10] || s[v] || s[0]);
       return (s[(v-20)%10] || s[v] || s[0]);
     }
-    
-    //console.log('starting to build User DT')
-    //Loop over arr
-    //console.log('This one this one: ' +JSON.stringify(arr))
-    //console.log(user_res)
 
-    arr.subWorkouts.forEach(el => {
-      //console.log('category: ' + JSON.stringify(subworkouts[category]))
 
-      //console.log(el)
+    workoutResults.SubWorkouts.items.forEach(el => {
 
       let subworkoutid = el.id
       let required =  el.required
+      let desc = el.desc
       let timecap =  el.timecap
       let resultcategory = el.resultcategory
+      let group = el.group
+      let grouptitle = el.grouptitle
 
 
-      el.workoutresults.forEach(item => {
+      el.WorkoutResults.items.forEach(item => {
 
         let userid = item.userID
         let workoutResults =  item.value
         let calc_workoutResults = item.value
+        let user_name = item.User.name
 
          //Calculate total scores
           let score
@@ -298,11 +219,8 @@ export default function LeaderboardDetails( {navigation} ) {
           }
           
           if (calc_workoutResults != null && required) {
-
             score = calc_workoutResults
-
           } else if (calc_workoutResults != null) { 
-            //This is to put lower scoring on non-required workouts
             score = calc_workoutResults * 0.25 //Scale to 25%
           } else {  
             score = 0
@@ -313,43 +231,29 @@ export default function LeaderboardDetails( {navigation} ) {
             res.push(userid);
           }
     
-          let results = {subWorkoutID: subworkoutid, value: workoutResults}
-    
-          //Lookup User info
-          if (user_res.length != 0) {
+          let results = {subWorkoutID: subworkoutid, value: workoutResults, group, grouptitle, desc, resultcategory}
 
-            let user_filtered = user_res.filter(obj => (obj.id == userid));
-    
-            let user_name
-            
-            if (user_filtered.length != 0) {
-              user_name = user_filtered[0].name
-            }
-    
-    
-    
-            //console.log('this: ' + JSON.stringify(res))
-            
-            if(typeof res[userid] === "undefined") {
-    
-              //Create new row
-              //console.log('create new row')
-              res[userid] = {number: 0, ordinal: '', name: user_name, workoutID: arr.id, score: score, results: [results]}
-    
-            } else {
-    
-              res[userid].results.push(results);
-    
-              res[userid].score = parseInt(res[userid].score) + parseInt(score);
-    
-            }   
-    
-          }
+  
+          
+          if(typeof res[userid] === "undefined") {
+            //Create new row
+            res[userid] = {number: 0, ordinal: '', name: user_name, workoutID: el.id, score: score, results: [results]}
+  
+          } else {
+  
+            res[userid].results.push(results);
+  
+            res[userid].score = parseInt(res[userid].score) + parseInt(score);
+  
+          }   
+  
+          
   
       })
 
 
     }, {});
+    
     
 
     //Sort the list
@@ -363,15 +267,12 @@ export default function LeaderboardDetails( {navigation} ) {
       res[el].ordinal = ordinal(count)
       res[el].number = count;
       count++;
-      //console.log(res[el].number)
 
     }, {});
 
-
-    //console.log(JSON.stringify(res))
-
-    setWorkoutResults(res)
-
+    console.log('HEre are the results: ' + JSON.stringify(res["d208bca8-2988-47d2-982f-0c33fedc0be6"]))
+    return(res)
+    
   }
 
   const postComment = async () => {
@@ -577,6 +478,7 @@ export default function LeaderboardDetails( {navigation} ) {
 
   }, []);
 
+
   useEffect(() => {
 
 
@@ -592,7 +494,7 @@ export default function LeaderboardDetails( {navigation} ) {
     
   }, [commentrefresh]);
 
-
+  /*
   useEffect(() => {
 
     const today = format(new Date(), 'MM/dd/yyyy');
@@ -606,7 +508,7 @@ export default function LeaderboardDetails( {navigation} ) {
 
 
   }, [refreshing]);
-
+*/
  
 
   async function getUser(){
@@ -933,140 +835,6 @@ export default function LeaderboardDetails( {navigation} ) {
     }
   }
 
-  /*
-    Leaderboard preview
-  */
-  
-  const LeaderBoardUserRow = (props) => {
-
-
-    const [expand, setExpand] = useState(false);
-    console.log('loading row: ' + props.curr_item)
-
-    //console.log('this: ' + JSON.stringify(workoutresults[props.curr_item]))
-    //console.log('Here: ' + JSON.stringify(workoutresults[props.curr_item].results))
-
-    //const dataset_ordered = 
-
-    //Loop over inner results list and create drop down
-    let datadisplayed = workoutresults[props.curr_item].results.map((item, index) => {
-
-      
-
-      try{
-
-        const subworkouts_filtered = workouts.subWorkouts.filter(
-          pe => pe.id === item.subWorkoutID
-        )
-
-        let formatted_sets, formatted_reps
-
-        if (subworkouts_filtered[0].resultcategory === 'SETSREPS') {
-          if (item.value.includes('-')) {
-            const [sets, reps] = item.value.split('-');
-            formatted_sets = sets
-            formatted_reps = reps
-         } 
-        }
-      
-        if (subworkouts_filtered.length != 0){
-          let curr_units = ''
-
-          if (subworkouts_filtered[0].resultcategory === 'TIME') {
-
-            curr_units = <View style={{flexDirection: 'row'}}>
-                            <Text style={{color: activeColors.primary_text}}>{item.value}</Text>
-                        </View>
-
-          } else if (subworkouts_filtered[0].resultcategory === 'SETSREPS') {
-
-            curr_units = <View style={{alignItems: 'flex-end'}}>
-                          <View style={{flexDirection: 'row'}}>
-                              <Text style={{color: activeColors.primary_text}}>{formatted_sets}&nbsp;</Text>
-                              <Text style={{color: activeColors.primary_text}}>sets</Text>
-                          </View>
-                          <View style={{flexDirection: 'row'}}>
-                              <Text style={{color: activeColors.primary_text}}>{formatted_reps}&nbsp;</Text>
-                              <Text style={{color: activeColors.primary_text}}>reps</Text>
-                          </View>
-                        </View>
-
-          } else if (subworkouts_filtered[0].resultcategory === 'WEIGHT') {
-
-            curr_units = <View style={{flexDirection: 'row'}}>
-                            <Text style={{color: activeColors.primary_text}}>{item.value}&nbsp;</Text>
-                            <Text style={{color: activeColors.primary_text}}>lbs</Text>
-                        </View>
-
-          }
-
-         
-
-          //Only return rows with a value entered
-          if (item.value != null) {
-            return (
-              <View key={item.subWorkoutID} style={{padding: 30, paddingVertical: 15, justifyContent: 'space-between', flexDirection:'row', borderBottomWidth: 0.25, borderBottomColor: activeColors.primary_text}}>
-                <View style={{maxWidth: 200}}>
-                  <Text style={{fontSize: 15, color: activeColors.secondary_text}}>{subworkouts_filtered[0].desc}</Text>
-                </View>
-                {curr_units}
-              </View>
-            );
-          }
-        }
-
-      } catch (e) {
-         console.log(e)
-      }
-      
-    })
-    
-    return(
-      <View>
-      <Pressable onPress={() => setExpand(!expand)}>
-        <View style={styles.container_userRow}>
-          <View style={{width: '20%'}}>
-            <View style={styles.rowNumber}>
-              { props.userid === userid ? (
-                <Text style={{ fontSize: 25, fontWeight: '600', color: activeColors.primary_text }}>Me</Text>
-              ) : (
-                <>
-                  <Text style={{ fontSize: 30, fontWeight: '600', color: activeColors.primary_text }}>{props.number}</Text>
-                  <Text style={{ fontSize: 10, fontWeight: '600', color: activeColors.primary_text }}>{props.ordinal}</Text>
-                </>
-              )}
-              
-            </View>
-          </View>
-          <View style={styles.rowMiddleSection}>
-            <Text style={{fontSize: 14, color: 'black', fontWeight: '500', color: activeColors.primary_text}}>{props.name}</Text>
-            {/*<Text style={{fontSize: 11, color: activeColors.accent_text}}>View Results</Text>*/}
-          </View>
-          <View style={styles.rowCounts}>
-            <View style={[styles.rowCountsContainer, {backgroundColor: activeColors.inverted_bg}]}>
-                <Text style={{fontSize: 10, color: activeColors.inverted_text, fontWeight: '400'}}>{props.score}</Text>
-            </View>
-          </View>
-        </View>
-      </Pressable>
-
-      
-
-        { expand ? (
-          <View>
-              {datadisplayed}
-          </View>
-        ) : (
-          <>
-          </>
-        )}
-
-      </View>
-      
-    );
-    
-  
-  }
   
   const Comment = (props) => {
 
@@ -1205,78 +973,6 @@ export default function LeaderboardDetails( {navigation} ) {
     return(
       <View style={{justifyContent: 'flex-end', flex: 1}}>
 
-
-          {/*
-          {showcomments ? (
-            <>
-
-              <ScrollView
-                  style={{marginBottom: 47}}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={refreshing}
-                      onRefresh={onRefresh}
-                    />
-                  }
-                >
-
-                <CommentSection />
-
-              </ScrollView>
-
-              <View style={{flexDirection: 'row', padding: 3, backgroundColor: activeColors.primary_bg, position: 'absolute', bottom: 0}}>
-                
-                  <TextInput 
-                    multiline 
-                    value={commenttext} 
-                    onChangeText={setCommentText}
-                    placeholder={'Write a comment'} 
-                    placeholderTextColor={activeColors.primary_text} 
-                    style={{flex: 1, borderRadius: 5,marginRight: 5, padding: 5, backgroundColor: activeColors.primary_bg, color: activeColors.secondary_text}}
-                  />
-                  <View style={{ justifyContent: 'flex-end'}}>
-                    <Pressable onPress={postComment} style={{height: 40, borderRadius: 5, padding: 10, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', backgroundColor: '#E1AB09'}}>
-                      <Text>Post</Text>
-                    </Pressable>
-                  </View>
-                
-                  
-              </View>
-            </>
-          ) : (
-            <ScrollView
-              style={{marginBottom: 47}}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={onRefresh}
-                />
-              }
-            >
-              <View style={styles.container_preview}>
-                <View style={styles.container_header}>
-                    <View style={{flex: 1}}>
-                      <Text style={{fontSize: 20, fontWeight: '600', color: activeColors.secondary_text}}>{props.title}</Text>
-                      <Text style={{fontSize: 14, fontWeight: '400', color: activeColors.secondary_text}}>{props.workout_date}</Text>
-                    </View>
-                    <Pressable onPress={viewComments} style={{flex: 1,  paddingleft: 10,  justifyContent: 'center', alignItems: 'flex-end'}}>
-                      <Text style={{color: activeColors.accent_text}}>View Comments</Text>
-                    </Pressable>
-                  </View>
-                
-                <View style={styles.container_userRows}>
-                  {datadisplayed}
-                </View>
-                
-              </View>
-            
-              
-            </ScrollView>
-
-            )
-          }
-          */}
-
         
       {showcomments ? (
         <>
@@ -1294,24 +990,6 @@ export default function LeaderboardDetails( {navigation} ) {
 
         </ScrollView>
 
-        {/*
-        <View style={{flexDirection: 'row', padding: 3, backgroundColor: activeColors.primary_bg, position: 'absolute', bottom: 0}}>
-          <TextInput 
-            multiline 
-            value={commenttext} 
-            onChangeText={setCommentText}
-            placeholder={'Write a comment'} 
-            placeholderTextColor={activeColors.primary_text} 
-            style={{flex: 1, borderRadius: 5,marginRight: 5, padding: 5, backgroundColor: activeColors.primary_bg, color: activeColors.secondary_text}}
-          />
-          <View style={{ justifyContent: 'flex-end'}}>
-            <Pressable onPress={postComment} style={{height: 40, borderRadius: 5, padding: 10, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', backgroundColor: '#E1AB09'}}>
-              <Text>Post</Text>
-            </Pressable>
-          </View>
-        
-        </View>
-        */}
         </>
       ) : (
         <ScrollView 
@@ -1346,140 +1024,63 @@ export default function LeaderboardDetails( {navigation} ) {
   
   }
 
-  /*
-      Header and Button Functions
-  */
+  const HeaderTitle = () => {
+      
+      const title = <Text style={{fontWeight: '500'}}>{workout.title}</Text>
+      const date = <Text style={{fontWeight: '400', fontSize: 13}}>   {workout.date}</Text>
 
-    const goBackPress = async () => {
 
-      if (showcomments){
-        setShowComments(false)
-      } else {
-        navigation.navigate('LeaderboardScreen')
-      }
-       
-    }
+      return(
+        <>
+          {title} {date}
+        </>
+      )
+  }
 
-    const onSearchPress = async () => {
-        //console.log('Search button pressed')
-        setShowSearch(false)
-    };
+  const handleCommentsOnPress = () => {
+    console.log('comment on press')
+  };
 
-    const onCancelPress = async () => {
-        //console.log('Cancel button pressed')
-        setShowSearch(true)
-    };
 
-    const onFilterPress = async () => {
-        //console.log('Filter button pressed')  
-        setModalVisible(!modalVisible)
-    };
+  return(
+    <SafeAreaView style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+       <Header title={workout ? <HeaderTitle /> : ""} />
+          <ScrollView>
+            <View>
+                  {  workoutleaderboard ? (
+                  <LeaderBoardDisplay onPress={() => handleCommentsOnPress(workout.id)} key={workout.id} userid={userid} workoutinfo={workout} results={workoutleaderboard} />
 
-    function Header(props) {        
-  
-        return (
-  
-            showSearch ? (
-                    <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
-                    <Pressable onPress={goBackPress}>
-                        <Ionicons name='chevron-back-outline' style={{fontSize: 30, color: activeColors.primary_text}}/>
-                    </Pressable>
-                    <View>
-                      {showcomments ? (
-                        <Text style={[styles.header_text, {color: activeColors.primary_text}]}>Comments</Text>
-                      ) : (
-                        <Text style={[styles.header_text, {color: activeColors.primary_text}]}>Leaderboards</Text>
-                      )}
-
-                        
-                    </View>
-                    {props.hidebuttons ? (
-                          <View style={{flexDirection: 'row'}}>
-                              <Pressable style={{padding: 5}} onPress={onSearchPress}>
-                                  { darkMode ? <Image style={styles.header_icons} source={require('../../../../assets/images/Search-White.png')} /> : <Image style={styles.header_icons} source={require('../../../../assets/images/Search-Black.png')} />}
-                              </Pressable>
-                              <Pressable style={{padding: 5}} onPress={onFilterPress}>
-                                  { darkMode ? <Image style={styles.header_icons_filter} source={require('../../../../assets/images/Filter-icon-white.png')}/> : <Image style={styles.header_icons_filter} source={require('../../../../assets/images/Filter-icon-black.png')}/>}
-                              </Pressable>
-                          </View>
-                          ) : (
-                      <>
-                      </>
-                    )}
-                </View>
-              ) : (
-              
-              <>
-              </>
-
-              )
-            
-          )
-    }
-    
-
-    {/*
-      <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
-
-        <Header />
-     
-        { (workoutresults.length > 0 && workouts) ? (
-
-            <LeaderBoardPreview id={workouts.id} title={workouts.title} workout_date={workouts.date} />
-            
-        ) : (
-          <>
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeColors.primary_bg}}>
-
-              <Text style={{color: activeColors.primary_text}}>No results to display</Text>
+                ) : (
+                <>
+                  <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeColors.primary_bg}}>
+                    <Text style={{color: activeColors.primary_text}}>No results to display</Text>
+                  </View>
+                </>
+              )}
             </View>
-          </>
-        )}
+        </ScrollView>
+    </SafeAreaView>
+  )
 
-            <SafeAreaView style={[styles.container_new, {backgroundColor: activeColors.primary_bg, paddingBottom}]}>
-            <View style={styles.content_new}>
-
-          <Header />
-
-          { (workoutresults.length > 0 && workouts) ? (
-
-            <LeaderBoardPreview id={workouts.id} title={workouts.title} workout_date={workouts.date} />
-
-          ) : (
-            <>
-              <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: activeColors.primary_bg}}>
-
-                <Text style={{color: activeColors.primary_text}}>No results to display</Text>
-              </View>
-            </>
-          )}
-
-        </View>
-             </SafeAreaView>
-      </View>
-        */}
 
     return(
-      <SafeAreaView style={[Platform.OS === 'ios' && styles.marginTop, {flex: 1, backgroundColor: activeColors.primary_bg }]}>
+      <SafeAreaView style={{flex: 1, backgroundColor: activeColors.primary_bg }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : ''}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
         style={{
           borderRadius: 10,
           flex: 1,
-          marginHorizontal: 10,
 
         }}>
           
-        <Header />
-        { (workoutresults.length > 0 && workouts) ? (
-
-          <LeaderBoardPreview id={workouts.id} title={workouts.title} workout_date={workouts.date} />
+        <Header title={workout ? <HeaderTitle /> : ""} />
+        {  workoutleaderboard ? (
+            <LeaderBoardDisplay onPress={() => handleCommentsOnPress(workout.id)} key={workout.id} userid={userid} workoutinfo={workout} results={workoutleaderboard} />
 
           ) : (
           <>
-            <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: activeColors.primary_bg}}>
-
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeColors.primary_bg}}>
               <Text style={{color: activeColors.primary_text}}>No results to display</Text>
             </View>
           </>
@@ -1507,21 +1108,6 @@ export default function LeaderboardDetails( {navigation} ) {
           <></>
         ) }
 
-        {/*
-      <View
-        style={{
-          padding: 16,
-          borderTopWidth: 1,
-          backgroundColor: 'white'
-        }}>
-        <TextInput
-          multiline={true}
-          blurOnSubmit={true}
-          numberOfLines={2}
-          placeholder="Leave a comment..."
-        />
-      </View>
-        */}
       </KeyboardAvoidingView>
 
       </SafeAreaView>
@@ -1535,14 +1121,11 @@ const statusBarHeight = Constants.statusBarHeight
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
+    //</ScrollView>flexDirection: 'column',
     //marginTop: statusBarHeight,
-    backgroundColor: '#EFEFEF',
-    marginBottom: 48
+    //backgroundColor: '#EFEFEF',
+    //marginBottom: 48
     //alignItems: 'center'
-  },
-  marginTop: {
-    marginTop: statusBarHeight,
   },
   container_new: {
     flex: 1,

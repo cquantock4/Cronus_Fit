@@ -29,7 +29,8 @@ export const colors = {
 
     //Header
     searchbox_bg: '#e0e0e0',
-    searchbox_text: '#000'
+    searchbox_text: '#000',
+
   },
 
   dark: {
@@ -59,7 +60,7 @@ export const colors = {
 
     //Header
     searchbox_bg: '#424242',
-    searchbox_text: '#e0e0e0'
+    searchbox_text: '#e0e0e0',
 
   },
 

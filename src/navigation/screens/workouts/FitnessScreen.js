@@ -22,6 +22,7 @@ const WorkoutsCard = ( { navigation }) => {
     const [workoutresultsallow, setWorkoutRestultsAllow] = useState(undefined)
     const [showAlert, setShowAlert] = useState(false);
     const [refresh, setRefresh] = useState(false);
+    const [modalvisiblesave, setModalVisibleSave] = useState(false)
   
     const theme = useContext(ThemeContext)
     const darkMode = theme.state.darkMode;
@@ -144,14 +145,14 @@ const WorkoutsCard = ( { navigation }) => {
           visible={showAlert}
           onRequestClose={() => {
             Alert.alert("Modal has been closed.");
-            setModalVisibleSave(!modalsisiblesave);
+            setModalVisibleSave(!modalvisiblesave);
           }}
         >
           <View style={styles.centeredViewSave}>
             <View style={styles.modalViewSave}>
               <Pressable
                 style={[styles.buttonCloseSave]}
-                onPress={() => setModalVisibleSave(!modalsisiblesave)}
+                onPress={() => setModalVisibleSave(!modalvisiblesave)}
               >
                 <Ionicons name='add-outline' style={{ fontSize: 40, transform: [{ rotateZ: "45deg" }] }} />
               </Pressable>

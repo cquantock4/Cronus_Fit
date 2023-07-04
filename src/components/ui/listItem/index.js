@@ -3,14 +3,14 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { IconButton } from "@react-native-material/core";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 //Themes
-import ThemeContext from '../ThemeContext';
-import { colors } from '../../../assets/styles/themes';
+import ThemeContext from '../../ThemeContext';
+import { colors } from '../../../../assets/styles/themes';
 
-const Card = ({
+const ListItem = ({
   title,
   subtitle,
-  content,
-  showArrow = false,
+  date,
+  navtext,
   onPress
 }) => {
 
@@ -28,24 +28,14 @@ const Card = ({
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={[styles.cardContainer, {backgroundColor: activeColors.primary_bg, borderColor: activeColors.secondary_text}]}>
-        <View style={styles.textContainer}>
-          <Text style={[styles.title, {color: activeColors.secondary_text}]}>{title}</Text>
-          {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+      <View style={[styles.resultsItemContainer, {backgroundColor: activeColors.primary_bg}]}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10}}>
+          <Text style={{fontSize: 20, color: activeColors.primary_text}}>{title}</Text>
+          <Text style={{fontSize: 15, color: activeColors.primary_text}}>{date}</Text>
         </View>
-        {content && (
-          <View style={styles.contentContainer}>
-            <Text style={styles.content}>{content}</Text>
-          </View>
-        )}
-        {showArrow && (
-          <View style={styles.arrowContainer}>
-            <IconButton
-              icon={<Ionicons name="arrow-forward-outline" size={20} style={{color: activeColors.secondary_text}}/>}
-              onPress={onPress}
-            />
-          </View>
-        )}
+        
+        <Text style={{fontSize: 14, marginBottom: 10, fontWeight: '300', color: activeColors.primary_text}}>{subtitle.slice(0,75)}...</Text>
+        <Text style={{fontSize: 12, justifyContent: 'flex-end', color: activeColors.accent_text}}>{navtext}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -80,6 +70,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   arrowContainer: {},
+  resultsItemContainer: {
+    padding: 10,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E6E6E6',
+    
+  },
 });
 
-export default Card;
+export default ListItem;

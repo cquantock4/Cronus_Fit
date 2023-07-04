@@ -151,6 +151,7 @@ type WorkoutResults @model @auth(rules: [{allow: public}]) {
   value: String
   userID: ID! @index(name: "byUser")
   subworkoutsID: ID! @index(name: "bySubWorkouts")
+  User: User @belongsTo(fields: ["userID"])
 }
 
 type Workouts @model @auth(rules: [{allow: public}]) {

@@ -287,8 +287,10 @@ export default function HomeScreen( props, {navigation } ) {
               <Surface
                 elevation={6}
                 category="medium"
-              >
-                <View style={{height: 50}}><Text>Testing text</Text></View>
+              ><Pressable onPress={() => DataStore.clear()}>
+                  <View style={{height: 50}}><Text>Clear Datastore</Text></View>
+              </Pressable>
+                
               </Surface>
             </VStack>
           </Box>

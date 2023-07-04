@@ -26,8 +26,7 @@ import {
 import ThemeContext from '../../ThemeContext';
 import { colors } from '../../../../assets/styles/themes';
 
-const Header = ({ title, searchable, messenger, onSearch, searchtitle="..." }) => {
-    const [searchMode, setSearchMode] = useState(false);
+const Header = ({ title, searchable, searchMode, onSearch, onCancelSearch, messenger, searchtitle="..." }) => {
     const [searchText, setSearchText] = useState('');
 
 
@@ -45,11 +44,11 @@ const Header = ({ title, searchable, messenger, onSearch, searchtitle="..." }) =
 
 
     const handleSearchPress = () => {
-        setSearchMode(true);
+        onSearch(searchText);
     };
-
+    
     const handleCancelPress = () => {
-        setSearchMode(false);
+        onCancelSearch();
         setSearchText('');
     };
 
@@ -73,27 +72,28 @@ const Header = ({ title, searchable, messenger, onSearch, searchtitle="..." }) =
             )}
             {searchable && !searchMode && (
                 <TouchableOpacity style={styles.right} onPress={handleSearchPress}>
-                <Ionicons name="search-outline" size={24} style={{color: activeColors.primary_text}} />
+                    <Ionicons name="search-outline" size={24} style={{ color: activeColors.primary_text }} />
                 </TouchableOpacity>
             )}
+
             {searchMode && (
-            <View style={[styles.searchContainer, {backgroundColor: activeColors.searchbox_bg}]}>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder={search_placeholder}
-                    placeholderTextColor={activeColors.primary_text}
-                    color={activeColors.searchbox_text}
-                    value={searchText}
-                    onChangeText={handleSearchTextChange}
-                />
-                <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPress}>
-                    <Text style={[styles.cancelButtonText, {color: activeColors.primary_text}]}>Cancel</Text>
-                </TouchableOpacity>
-            </View>
+                <View style={[styles.searchContainer, {backgroundColor: activeColors.searchbox_bg}]}>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder={search_placeholder}
+                        placeholderTextColor={activeColors.primary_text}
+                        color={activeColors.searchbox_text}
+                        value={searchText}
+                        onChangeText={handleSearchTextChange}
+                    />
+                    <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPress}>
+                        <Text style={[styles.cancelButtonText, {color: activeColors.primary_text}]}>Cancel</Text>
+                    </TouchableOpacity>
+                </View>
             )}
-            {messenger && !searchMode && (
+            {messenger && (
                 <TouchableOpacity style={styles.right} onPress={handleMessengerPress}>
-                    <Ionicons name="chatbox-outline" size={24} style={{color: activeColors.primary_text}} />
+                    <Ionicons name="chatbox-outline" size={24} style={{ color: activeColors.primary_text }} />
                 </TouchableOpacity>
             )}
         </View>
