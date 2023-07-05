@@ -98,7 +98,7 @@ const LeaderBoardUserRow = (props) => {
     return(
       <>
       <TouchableOpacity onPress={toggleExpand}>
-        <View style={[styles.container_userRow, { borderBottomColor: expand ? 'rgba(0, 0, 0, 0)' : activeColors.primary_text  }]}>
+        <View style={[styles.container_userRow, { borderBottomColor: expand ? 'rgba(0, 0, 0, 0)' : activeColors.primary_text }]}>
         
           <View style={{ width: '20%' }}>
             <View style={styles.rowNumber}>
@@ -123,9 +123,6 @@ const LeaderBoardUserRow = (props) => {
               <Text style={{ fontSize: 10, color: activeColors.inverted_text, fontWeight: '400' }}>{props.score}</Text>
             </View>
           </View>
-        
-
-        
         </View>
       </TouchableOpacity>
 
@@ -133,7 +130,7 @@ const LeaderBoardUserRow = (props) => {
           <View style={styles.expanded_container}>
             {Object.entries(groups).map(([groupTitle, results]) => (
               <View key={groupTitle}>
-                <Text style={[styles.expanded_group, {borderBottomColor: activeColors.primary_text}]}>{results[0].group}: {groupTitle}</Text>
+                <Text style={[styles.expanded_group, {borderBottomColor: activeColors.primary_text, color: activeColors.primary_text}]}>{results[0].group}: {groupTitle}</Text>
                 {results.map((result, index) => (
                   <ResultComponent key={index} result={result} />
                 ))}
@@ -378,8 +375,7 @@ const LeaderBoardDisplay = ({userid, workoutinfo, results, preview = false, onPr
     marginTop: 5,
     marginBottom: 5,
     fontWeight: 'bold',
-    fontSize: 14,
-    borderBottomWidth: 0.5,
+    fontSize: 14
   },
   expanded_resultContainer: {
     flexDirection: 'row',
