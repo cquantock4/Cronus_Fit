@@ -973,6 +973,65 @@ export const onCreateWorkoutResults = /* GraphQL */ `
       value
       userID
       subworkoutsID
+      User {
+        id
+        name
+        email
+        sub
+        nutrition_info
+        nutrition_coaching
+        q_experience
+        q_medical
+        q_calcmacros
+        coach_userid
+        theme
+        image
+        image_uri
+        Checkins {
+          nextToken
+          startedAt
+          __typename
+        }
+        Foodentries {
+          nextToken
+          startedAt
+          __typename
+        }
+        WorkoutResults {
+          nextToken
+          startedAt
+          __typename
+        }
+        Comments {
+          nextToken
+          startedAt
+          __typename
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+          __typename
+        }
+        coach_yn
+        updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+          __typename
+        }
+        workout_logs
+        WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        createdAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
       createdAt
       updatedAt
       _version
@@ -991,6 +1050,65 @@ export const onUpdateWorkoutResults = /* GraphQL */ `
       value
       userID
       subworkoutsID
+      User {
+        id
+        name
+        email
+        sub
+        nutrition_info
+        nutrition_coaching
+        q_experience
+        q_medical
+        q_calcmacros
+        coach_userid
+        theme
+        image
+        image_uri
+        Checkins {
+          nextToken
+          startedAt
+          __typename
+        }
+        Foodentries {
+          nextToken
+          startedAt
+          __typename
+        }
+        WorkoutResults {
+          nextToken
+          startedAt
+          __typename
+        }
+        Comments {
+          nextToken
+          startedAt
+          __typename
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+          __typename
+        }
+        coach_yn
+        updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+          __typename
+        }
+        workout_logs
+        WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        createdAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
       createdAt
       updatedAt
       _version
@@ -1009,6 +1127,65 @@ export const onDeleteWorkoutResults = /* GraphQL */ `
       value
       userID
       subworkoutsID
+      User {
+        id
+        name
+        email
+        sub
+        nutrition_info
+        nutrition_coaching
+        q_experience
+        q_medical
+        q_calcmacros
+        coach_userid
+        theme
+        image
+        image_uri
+        Checkins {
+          nextToken
+          startedAt
+          __typename
+        }
+        Foodentries {
+          nextToken
+          startedAt
+          __typename
+        }
+        WorkoutResults {
+          nextToken
+          startedAt
+          __typename
+        }
+        Comments {
+          nextToken
+          startedAt
+          __typename
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+          __typename
+        }
+        coach_yn
+        updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+          __typename
+        }
+        workout_logs
+        WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        createdAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
       createdAt
       updatedAt
       _version

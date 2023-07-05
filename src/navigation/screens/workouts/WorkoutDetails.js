@@ -155,6 +155,7 @@ export default function WorkoutDetails( {navigation} )  {
     }
 
     const searchFilterFunction = (text) => {
+      console.log(text)
       // Check if searched text is not blank
       if (text) {
         // Inserted text is not blank
@@ -183,6 +184,8 @@ export default function WorkoutDetails( {navigation} )  {
 
           const textData = text.toUpperCase();
 
+          console.log('made it here ' + item.date + ' ' + textData)
+
           const dateFormats = [
             'MM/dd/yyyy',
             'dd/MM/yyyy',
@@ -190,11 +193,17 @@ export default function WorkoutDetails( {navigation} )  {
           ];
 
           let dateMatch = false;
+
+          try {
             dateFormats.forEach(format => {
               if (formatDate(item.date, format).toUpperCase().indexOf(textData) > -1) {
                 dateMatch = true;
               }
             });
+          } catch (e) {
+            console.log(e.message)
+          }
+          
 
 
 
@@ -234,8 +243,10 @@ export default function WorkoutDetails( {navigation} )  {
         //Get the current workout
         //getTodaysWorkout();
 
+        console.log(item.workout_type)
+
         //Setting the Category
-        setWorkoutCategory(item.type)
+        setWorkoutCategory(item.workout_type)
 
         //Hide the search page
         setShowSearch(!showSearch)
@@ -704,6 +715,7 @@ export default function WorkoutDetails( {navigation} )  {
                   </View>
                 
                 </>
+             
               )
             
           )
@@ -1741,18 +1753,21 @@ export default function WorkoutDetails( {navigation} )  {
 
           
           {showSearch ? (
-              <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
-                <TextInput
-                  style={[styles.searchBar, { backgroundColor: activeColors.inverted_bg_alt}]}
-                  onChangeText={(text) => searchFilterFunction(text)}
-                  value={search}
-                  underlineColorAndroid="transparent"
-                  placeholder="Search Here"
-                />
-                <Pressable onPress={onCancelPress} style={{marginRight: 5}}>
-                  <Text style={{fontSize: 14, color: activeColors.primary_text}}>Cancel</Text>
-                </Pressable>
-              </View>
+
+            <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
+              <TextInput
+                style={[styles.searchBar, { backgroundColor: activeColors.inverted_bg_alt}]}
+                onChangeText={(text) => searchFilterFunction(text)}
+                value={search}
+                underlineColorAndroid="transparent"
+                placeholder="Search Here"
+              />
+              <Pressable onPress={onCancelPress} style={{marginRight: 5}}>
+                <Text style={{fontSize: 14, color: activeColors.primary_text}}>Cancel</Text>
+              </Pressable>
+            </View>
+              
+
             ) : (
               <Header />
           )}  

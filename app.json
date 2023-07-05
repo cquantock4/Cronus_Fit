@@ -11,7 +11,15 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "plugins": [],
+    "plugins": [
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "cronusfit.com.23298329i3h2kj3b2k",
+          "enableGooglePay": true
+        }
+      ]
+    ],
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -44,6 +52,7 @@
       "fatSecretAPISecret": "6d1733c4af524ff4bf9c32d43f7e1aa8",
       "fatSecretAPIClientID": "fa132652e7f24d40ac5b0de166d10a05",
       "fatSecretAPIClientSecret": "80e54ca4e9c540ddb23d169c30bbf78a",
+      "stripePublishableKey": "pk_test_51Lf7hYLEgVjilS7mLwv5xoMUoynFgMwqJUk3e92DT3qmuLG4GAwpC4dTIzhUTZO9IEgxeKzHjanYKALbNPeMCQVB00TVLm0ke9",
       "eas": {
         "projectId": "ccb6c5ec-5edf-46b2-bfe8-14514a2628d7"
       }

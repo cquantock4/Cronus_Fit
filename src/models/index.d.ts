@@ -478,6 +478,7 @@ type EagerWorkoutResults = {
   readonly value?: string | null;
   readonly userID: string;
   readonly subworkoutsID: string;
+  readonly User?: User | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -491,6 +492,7 @@ type LazyWorkoutResults = {
   readonly value?: string | null;
   readonly userID: string;
   readonly subworkoutsID: string;
+  readonly User: AsyncItem<User | undefined>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

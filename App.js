@@ -4,16 +4,20 @@ import 'core-js/full/symbol/async-iterator';
 import '@azure/core-asynciterator-polyfill'; 
 
 import React, { useContext } from 'react';
+import Constants from 'expo-constants'
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 //Themes
-import { ThemeProvider } from "./src/components/ThemeContext";
+import { ThemeProvider } from "./src/components/ThemeContext"
 
 //Main Navigation Controller
 import Navigation from "./src/navigation"
-
+import {Provider} from "@react-native-material/core";
 
 
 //Amplify imports
@@ -33,11 +37,20 @@ Amplify.configure({
 
 export default function App() {
 
+  const stripePublishableKey = Constants.expoConfig.extra.stripePublishableKey;
+
 
   return (
-      <ThemeProvider>
-          <Navigation />
-      </ThemeProvider>
+    <SafeAreaProvider>
+      <StripeProvider
+        publishableKey={stripePublishableKey}>
+        <Provider>
+          <ThemeProvider>
+              <Navigation />
+          </ThemeProvider>
+        </Provider>
+      </StripeProvider>
+    </SafeAreaProvider>
   );
 }
 

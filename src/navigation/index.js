@@ -232,7 +232,6 @@ const Navigation = () => {
 
   return (
     
-      <>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerTitle: () => header_label}}>
           {user ? (
@@ -254,8 +253,7 @@ const Navigation = () => {
 
         
       </NavigationContainer>
-      
-      </>
+
   );
 
  
