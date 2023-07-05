@@ -105,6 +105,8 @@ export default function Leaderboard( {navigation} ) {
             // Fetch workouts
             const workoutResponse = await API.graphql(graphqlOperation(getWorkoutsQuery));
 
+            //console.log('here is the list: ' + JSON.stringify(workoutResponse.data.listWorkouts.items))
+
             setWorkoutList(workoutResponse.data.listWorkouts.items)
 
             // Filter the workouts with workout type FUNCTIONALFITNESS

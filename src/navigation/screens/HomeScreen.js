@@ -120,18 +120,14 @@ export default function HomeScreen( props, {navigation } ) {
         setAuthSub(null);
       }
 
+
         const results = await DataStore.query(User, (u) => u.sub.eq(temp_sub));
 
-        //console.log('results: ' + JSON.stringify(results))
-
-        let nameresult = results.map((item, index) => {
-          return (
-              item.name
-          );
-        })
-        
         //Setting State Variable
-        setName(nameresult)
+        if (results.length === 1) {
+          setName(results[0].name)
+        }
+        
         
     
     }
@@ -285,14 +281,6 @@ export default function HomeScreen( props, {navigation } ) {
                 category="medium"
               >
                 <View style={{height: 50}}><Text>Testing text</Text></View>
-              </Surface>
-              <Surface
-                elevation={6}
-                category="medium"
-              ><Pressable onPress={() => DataStore.clear()}>
-                  <View style={{height: 50}}><Text>Clear Datastore</Text></View>
-              </Pressable>
-                
               </Surface>
             </VStack>
           </Box>
