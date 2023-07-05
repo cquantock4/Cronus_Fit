@@ -1,5 +1,5 @@
 import React, { useState , useEffect, useContext} from 'react';
-import { StyleSheet, Text, View, Pressable, ScrollView, RefreshControl, StatusBar } from 'react-native';
+import { StyleSheet, View, ScrollView, RefreshControl } from 'react-native';
 
 import Header from '../../../components/ui/inputs/header';
 import ListItem from '../../../components/ui/listItem';
@@ -9,9 +9,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {ActivityIndicator} from "@react-native-material/core";
 
 //Amplify DataStore
-import { Amplify, Auth, DataStore, Hub, API, Predicates } from 'aws-amplify';
+import {Auth, DataStore, API } from 'aws-amplify';
 import { graphqlOperation } from 'aws-amplify';
-import { Workouts, User, WorkoutResultsSubWorkouts, SubWorkouts, WorkoutResults } from '../../../models';
+import { User } from '../../../models';
 
 //Themes
 import ThemeContext from '../../../components/ThemeContext'

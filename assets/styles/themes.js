@@ -23,6 +23,8 @@ export const colors = {
     button_active: "#363636",
     button_inactive_text: '#363636',
     button_inactive: "#fff",
+    comment_btn_bg: "#363636",
+    comment_btn_text: "white",
     
     //status bar
     status_bar_bg: '#f3f4f6',
@@ -54,6 +56,8 @@ export const colors = {
     button_active: "#1C1C1C",
     button_inactive_text: '#C8C8C8',
     button_inactive: "#050605",
+    comment_btn_bg: "#E1E1E1",
+    comment_btn_text: "#363636",
 
     //status bar
     status_bar_bg: '#7a7979',

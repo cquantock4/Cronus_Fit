@@ -208,8 +208,6 @@ const LeaderBoardDisplay = ({userid, workoutinfo, results, preview = false, onPr
         } else {
 
             datadisplayed = results.map((category, index) => {
-
-              console.log('this this: ' + JSON.stringify(results[category]))
     
                 return (
                     <LeaderBoardUserRow 
@@ -232,6 +230,7 @@ const LeaderBoardDisplay = ({userid, workoutinfo, results, preview = false, onPr
     return(
 
             <View style={styles.container_preview}>
+              { preview ? ( 
                 <View style={styles.container_header}>
                     <View style={{flex: 1}}>
                         <Text style={{fontSize: 20, fontWeight: '600', color: activeColors.secondary_text}}>{workoutinfo.title}</Text>
@@ -243,6 +242,9 @@ const LeaderBoardDisplay = ({userid, workoutinfo, results, preview = false, onPr
                         </Pressable>
                     </View>
                 </View>
+                ) : ( 
+                  <></>
+                )}
 
                 { results ? (
                     <View style={styles.container_userRows}>

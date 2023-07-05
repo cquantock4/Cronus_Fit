@@ -26,7 +26,7 @@ import {
 import ThemeContext from '../../ThemeContext';
 import { colors } from '../../../../assets/styles/themes';
 
-const Header = ({ title, searchable, searchMode, onSearch, onCancelSearch, messenger, searchtitle="..." }) => {
+const Header = ({ title, searchable, searchMode, onSearch, onCancelSearch, messenger, searchtitle="...", navigation, backButtonPath}) => {
     const [searchText, setSearchText] = useState('');
 
 
@@ -65,6 +65,11 @@ const Header = ({ title, searchable, searchMode, onSearch, onCancelSearch, messe
 
     return (
         <View style={styles.container}>
+            {backButtonPath && (
+                <TouchableOpacity style={styles.left} onPress={() => navigation.navigate(backButtonPath)}>
+                    <Ionicons name="arrow-back" size={24} style={{ color: activeColors.primary_text }} />
+                </TouchableOpacity>
+            )}
             {!searchMode && (
                 <View style={styles.left}>
                     <Text style={[styles.title, {color: activeColors.primary_text}]}>{title}</Text>
