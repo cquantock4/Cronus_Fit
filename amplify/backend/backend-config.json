@@ -54,7 +54,6 @@
       "service": "Cognito"
     }
   },
-  "function": {},
   "storage": {
     "s3cronusfitstorage53141d21": {
       "dependsOn": [],
