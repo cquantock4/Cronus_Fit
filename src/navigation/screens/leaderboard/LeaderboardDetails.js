@@ -75,40 +75,40 @@ export default function LeaderboardDetails( {navigation} ) {
   useEffect(() => {
 
     const getWorkoutsQuery = `
-        query GetAllWorkouts {
-          listWorkouts {
-            items {
-              id
-              title
-              desc
-              date
-              workout_type
-              SubWorkouts {
-                items {
-                  id
-                  group
-                  grouptitle
-                  desc
-                  resultcategory
-                  required
-                  timecap
-                  WorkoutResults {
-                    items {
-                      id
-                      value
-                      userID
-                      User {
-                        name
-                      }
+      query GetAllWorkouts {
+        listWorkouts(filter: { _deleted: { ne: true } }) {
+          items {
+            id
+            title
+            desc
+            date
+            workout_type
+            SubWorkouts(filter: { _deleted: { ne: true } }) {
+              items {
+                id
+                group
+                grouptitle
+                desc
+                resultcategory
+                required
+                timecap
+                WorkoutResults {
+                  items {
+                    id
+                    value
+                    userID
+                    User {
+                      name
                     }
                   }
-                  numitems
-                  order
                 }
+                numitems
+                order
               }
             }
           }
         }
+      }
     `
 
     const fetchWorkouts = async () => {

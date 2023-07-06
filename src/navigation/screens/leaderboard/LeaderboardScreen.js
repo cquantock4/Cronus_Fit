@@ -63,40 +63,40 @@ export default function Leaderboard( {navigation} ) {
   useEffect(() => {
 
     const getWorkoutsQuery = `
-        query GetAllWorkouts {
-          listWorkouts {
-            items {
-              id
-              title
-              desc
-              date
-              workout_type
-              SubWorkouts {
-                items {
-                  id
-                  group
-                  grouptitle
-                  desc
-                  resultcategory
-                  required
-                  timecap
-                  WorkoutResults {
-                    items {
-                      id
-                      value
-                      userID
-                      User {
-                        name
-                      }
+      query GetAllWorkouts {
+        listWorkouts(filter: { _deleted: { ne: true } }) {
+          items {
+            id
+            title
+            desc
+            date
+            workout_type
+            SubWorkouts(filter: { _deleted: { ne: true } }) {
+              items {
+                id
+                group
+                grouptitle
+                desc
+                resultcategory
+                required
+                timecap
+                WorkoutResults {
+                  items {
+                    id
+                    value
+                    userID
+                    User {
+                      name
                     }
                   }
-                  numitems
-                  order
                 }
+                numitems
+                order
               }
             }
           }
         }
+      }
     `
 
     const fetchWorkouts = async () => {
@@ -105,7 +105,7 @@ export default function Leaderboard( {navigation} ) {
             // Fetch workouts
             const workoutResponse = await API.graphql(graphqlOperation(getWorkoutsQuery));
 
-            //console.log('here is the list: ' + JSON.stringify(workoutResponse.data.listWorkouts.items))
+            console.log('here is the list: ' + JSON.stringify(workoutResponse.data.listWorkouts.items))
 
             setWorkoutList(workoutResponse.data.listWorkouts.items)
 
