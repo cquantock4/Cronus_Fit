@@ -11,15 +11,6 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "plugins": [
-      [
-        "@stripe/stripe-react-native",
-        {
-          "merchantIdentifier": "cronusfit.com.23298329i3h2kj3b2k",
-          "enableGooglePay": true
-        }
-      ]
-    ],
     "assetBundlePatterns": [
       "**/*"
     ],
