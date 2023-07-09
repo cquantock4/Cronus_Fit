@@ -3028,7 +3028,6 @@ that would prevent my participation in the program.
             borderRadius: 10,
             flex: 1,
             marginHorizontal: 10,
-
           }}>
             
           <View style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
-import { TextInput, Pressable, RefreshControl, Dimensions, Platform } from 'react-native';
+import { TextInput, Pressable, RefreshControl, Dimensions, Platform, KeyboardAvoidingView } from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -501,9 +501,133 @@ export default function LeaderboardDetails( {navigation} ) {
     setShowComments(!showcomments);
   };
 
+   {/*
+              <View style={[styles.commentsContainer, { top: 56 + statusBarHeight }]}>
+                <View style={[styles.commentsHeader, {backgroundColor: activeColors.primary_bg}]}>
+                  <Text style={[styles.commentsHeaderText, {color: activeColors.primary_text}]}>Comments</Text>
+                  <TouchableOpacity style={[styles.collapseButton, {transform: [{ rotate: '45deg' }]}]} onPress={handleCommentsOnPress}>
+                    <Ionicons name={'add-outline'} size={32} style={[styles.drawerButtonIcon, {color: activeColors.primary_text}]} />
+                  </TouchableOpacity>
+                </View>
+                <ScrollView
+                      refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />
+                      }
+                    >
+                    <CommentSection />
+                    
+                </ScrollView>
+                <View style={{flexDirection: 'row', padding: 3, backgroundColor: activeColors.primary_bg}}>
+                    <TextInput 
+                      multiline 
+                      value={commenttext} 
+                      onChangeText={setCommentText}
+                      placeholder={'Write a comment'} 
+                      placeholderTextColor={activeColors.primary_text} 
+                      style={{flex: 1, borderRadius: 5,marginRight: 5, padding: 5, backgroundColor: activeColors.primary_bg, color: activeColors.secondary_text}}
+                    />
+                    <View style={{ justifyContent: 'flex-end'}}>
+                      <Pressable onPress={postComment} style={{height: 40, borderRadius: 5, padding: 10, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', backgroundColor: '#E1AB09'}}>
+                        <Text>Post</Text>
+                      </Pressable>
+                    </View>
 
+                  </View>
+              </View>
+            */}
+
+    {/*  
+      <TextInput
+        style={styles.textInput}
+        placeholder="Write a message"
+        // Other text input props
+      /> 
+    */}
+  
+  return (
+    
+    <SafeAreaView style={[styles.container, { backgroundColor: activeColors.primary_bg }]}>
+      <View style={{ flex: 1 }}>
+        <Header title={workout ? <HeaderTitle /> : ""} navigation={navigation} backButtonPath="LeaderboardScreen" />
+          {isLoading ? (
+            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+              <ActivityIndicator size="large" color={activeColors.accent_text} />
+            </View>
+          ) : (
+            <ScrollView style={{flex: 1}}>
+              <View>
+                {workoutleaderboard ? (
+                  <LeaderBoardDisplay onPress={() => handleCommentsOnPress(workout.id)} key={workout.id} userid={userid} workoutinfo={workout} results={workoutleaderboard} />
+
+                ) : (
+                    <>
+                      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeColors.primary_bg }}>
+                        <Text style={{ color: activeColors.primary_text }}>No results to display</Text>
+                      </View>
+                    </>
+                  )}
+              </View>
+            </ScrollView>
+          )}
+        {showcomments && (
+          <>
+            <View style={[styles.commentsHeader, { backgroundColor: activeColors.primary_bg }]}>
+              <Text style={[styles.commentsHeaderText, { color: activeColors.primary_text }]}>Comments</Text>
+              <TouchableOpacity style={[styles.collapseButton, { transform: [{ rotate: '45deg' }] }]} onPress={handleCommentsOnPress}>
+                <Ionicons name={'add-outline'} size={32} style={[styles.drawerButtonIcon, { color: activeColors.primary_text }]} />
+              </TouchableOpacity>
+            </View>
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }>
+              <CommentSection />
+            </ScrollView>
+            <View style={{flexDirection: 'row', padding: 3, paddingTop: 5, backgroundColor: activeColors.primary_bg, borderTopWidth: 1, borderColor: activeColors.secondary_text}}>
+                <View style={{flex: 1}} >
+                  <TextInput 
+                      multiline 
+                      value={commenttext} 
+                      onChangeText={setCommentText}
+                      placeholder={'Write a message'} 
+                      placeholderTextColor={activeColors.primary_text} 
+                      style={{marginRight: 5, padding: 5, backgroundColor: activeColors.primary_bg, color: activeColors.secondary_text}}
+                    />
+                  </View>
+              <View style={{ justifyContent: 'flex-end' }}>
+                <Pressable onPress={postComment} style={{ height: 40, borderRadius: 5, padding: 10, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', backgroundColor: '#E1AB09' }}>
+                  <Text>Send</Text>
+                </Pressable>
+              </View>
+            </View>
+          </>
+        )}
+        {!showcomments && (
+          <TouchableOpacity style={[styles.drawerButton, { backgroundColor: activeColors.comment_btn_bg }]} onPress={handleCommentsOnPress}>
+            <Text style={[styles.drawerButtonText, { color: activeColors.comment_btn_text }]}>View Comments</Text>
+            <Ionicons name={showcomments ? 'chevron-down' : 'chevron-up'} size={20} style={[styles.drawerButtonIcon, { color: activeColors.comment_btn_text }]} />
+          </TouchableOpacity>
+        )}
+      </View>
+    </SafeAreaView>
+
+  )
   return(
     <SafeAreaView style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+       <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : ''}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 75 : 0}
+          style={{
+            borderRadius: 10,
+            flex: 1,
+            marginHorizontal: 10,
+          }}>
        <Header title={workout ? <HeaderTitle /> : ""} navigation={navigation} backButtonPath="LeaderboardScreen" />
        {isLoading ? (
         <View style={[styles.container, {justifyContent: 'center', alignItems: 'center'}]}>
@@ -527,41 +651,41 @@ export default function LeaderboardDetails( {navigation} ) {
           </ScrollView>
           
           {showcomments && (
-            <View style={[styles.commentsContainer, { top: 56 + statusBarHeight }]}>
+            <View style={{flex: 1, justifyContent: 'space-between'}}>
               <View style={[styles.commentsHeader, {backgroundColor: activeColors.primary_bg}]}>
                 <Text style={[styles.commentsHeaderText, {color: activeColors.primary_text}]}>Comments</Text>
                 <TouchableOpacity style={[styles.collapseButton, {transform: [{ rotate: '45deg' }]}]} onPress={handleCommentsOnPress}>
                   <Ionicons name={'add-outline'} size={32} style={[styles.drawerButtonIcon, {color: activeColors.primary_text}]} />
                 </TouchableOpacity>
               </View>
-              <ScrollView
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={refreshing}
-                      onRefresh={onRefresh}
-                    />
-                  }
-                >
+                <ScrollView 
+                            refreshControl={
+                              <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                              />
+                            }>
                   <CommentSection />
-                  
-              </ScrollView>
-              <View style={{flexDirection: 'row', padding: 3, backgroundColor: activeColors.primary_bg}}>
-                  <TextInput 
-                    multiline 
-                    value={commenttext} 
-                    onChangeText={setCommentText}
-                    placeholder={'Write a comment'} 
-                    placeholderTextColor={activeColors.primary_text} 
-                    style={{flex: 1, borderRadius: 5,marginRight: 5, padding: 5, backgroundColor: activeColors.primary_bg, color: activeColors.secondary_text}}
-                  />
+                </ScrollView>
+      
+                <View style={{flexDirection: 'row', padding: 3, paddingTop: 10, backgroundColor: activeColors.primary_bg, borderTopWidth: 1, borderColor: activeColors.secondary_text}}>
+                      <TextInput 
+                      multiline 
+                      value={commenttext} 
+                      onChangeText={setCommentText}
+                      placeholder={'Write a message'} 
+                      placeholderTextColor={activeColors.primary_text} 
+                      style={{flex: 1, borderRadius: 5,marginRight: 5, padding: 5, backgroundColor: activeColors.primary_bg, color: activeColors.secondary_text}}
+                    />
                   <View style={{ justifyContent: 'flex-end'}}>
                     <Pressable onPress={postComment} style={{height: 40, borderRadius: 5, padding: 10, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', backgroundColor: '#E1AB09'}}>
-                      <Text>Post</Text>
+                      <Text>Send</Text>
                     </Pressable>
                   </View>
-
+              
                 </View>
             </View>
+           
           )}
           {!showcomments && (
             <TouchableOpacity style={[styles.drawerButton, {backgroundColor: activeColors.comment_btn_bg}]} onPress={handleCommentsOnPress}>
@@ -571,6 +695,7 @@ export default function LeaderboardDetails( {navigation} ) {
           )}
         </>
       )}
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 
@@ -632,5 +757,20 @@ const styles = StyleSheet.create({
   },
   drawerButtonIcon: {
     color: 'white',
+  },
+
+  //testing
+  textInputContainer: {
+    flexDirection: 'row',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  textInput: {
+    height: 40,
+    paddingHorizontal: 10,
+    backgroundColor: '#E1E1E1',
+    // Other text input styles
   },
 });

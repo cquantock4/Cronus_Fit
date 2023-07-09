@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useContext, useRef} from 'react';
-import {View, ActivityIndicator, Image, StyleSheet, Dimensions, SafeAreaView, KeyboardAvoidingView } from 'react-native';
+import {View, ActivityIndicator, Image, StyleSheet, Dimensions, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
@@ -125,7 +125,7 @@ const Navigation = () => {
                     //"paddingBottom": 10,
                     //"fontSize": 20
                 },
-                "tabBarHideOnKeyboard": true,
+                "tabBarHideOnKeyboard": Platform.OS === 'android' ? true : false,
                 "tabBarStyle": {
                   "paddingTop": 10,
                   "backgroundColor": activeColors.primary_bg,
