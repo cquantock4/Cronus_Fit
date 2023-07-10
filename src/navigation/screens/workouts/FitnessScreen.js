@@ -1,130 +1,297 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, Pressable, ScrollView, TouchableOpacity, Platform, Modal } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, Modal, Dimensions } from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import Header from '../../../components/ui/inputs/header';
+import ListItem from '../../../components/ui/listItem';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Amplify, Auth, DataStore, Hub } from 'aws-amplify';
 import { Workouts, User} from '../../../models';
 
 import { parseISO,  format, parse ,compareDesc} from 'date-fns';
 
+import {
+  HStack,
+  Pressable,
+  Button,
+  Dialog,
+  DialogHeader,
+  DialogContent,
+  DialogActions,
+} from "@react-native-material/core";
+
 //Themes
 import ThemeContext from '../../../components/ThemeContext'
 import {colors} from '../../../../assets/styles/themes'
 
+const screenWidth = Dimensions.get('window').width;
 
-const WorkoutsCard = ( { navigation }) => {
-
-    const date = new Date()
-    const workoutcategory = 'Functional Fitness'
-    const [workout, setWorkout] = useState(undefined);
-    const [user, setUser] = useState(undefined)
-    const [workoutresultsallow, setWorkoutRestultsAllow] = useState(undefined)
-    const [showAlert, setShowAlert] = useState(false);
-    const [refresh, setRefresh] = useState(false);
-    const [modalvisiblesave, setModalVisibleSave] = useState(false)
-  
-    const theme = useContext(ThemeContext)
-    const darkMode = theme.state.darkMode;
-
-    let activeColors = ''
-
-    if (darkMode) {
-      activeColors = colors['dark'];
-    } else {
-      activeColors = colors['light'];
-    }
+export default function WorkoutScreen( {navigation} ) {
+  const date = new Date()
+  const workoutcategory = 'Functional Fitness'
+  const [workouts, setWorkouts] = useState(undefined);
+  const [wod, setWOD] = useState(undefined)
+  const [user, setUser] = useState(undefined)
+  const [workoutresultsallow, setWorkoutRestultsAllow] = useState(undefined)
+  const [showAlert, setShowAlert] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  const [modalvisiblesave, setModalVisibleSave] = useState(false)
+  const [defaultworkouttype, setDefaultWorkoutType] = useState('FUNCTIONALFITNESS')
 
 
-    useEffect(() => {
-       const fetchWorkouts = async () => {
-        
-        try {
+  const [showsearch, setShowSearch] = useState(false);
+  const [searchtext, setSearchText] = useState('');
 
-          const authUser = await Auth.currentAuthenticatedUser({bypassCache: true});
-          //console.log(authUser.attributes.sub)
-          //setAuthSub(authUser.attributes.sub)
-  
-         
-          //Get local User Id for Query
-          const user = await DataStore.query(User, sw =>
-            sw.sub.eq(authUser.attributes.sub)
-          )
-        
-  
-          //Query Matrix Table to find list of ids  
-          if (user[0]) {
-            setUser(user[0])
+  const theme = useContext(ThemeContext)
+  const darkMode = theme.state.darkMode;
 
-            setWorkoutRestultsAllow(user[0].workout_logs)
-        
-            const sub = DataStore.observeQuery(Workouts).subscribe(({ items }) => {
+  let activeColors = ''
 
-              const filteredItems = items.filter(
-                (item) =>
-                  item.workout_type === user[0].default_workout_type
-              );
+  if (darkMode) {
+    activeColors = colors['dark'];
+  } else {
+    activeColors = colors['light'];
+  }
 
-              console.log('filtered items: ' + filteredItems)
-          
-              filteredItems.sort((a, b) => {
-                const dateA = parse(a.date, 'MM/dd/yyyy', new Date());
-                const dateB = parse(b.date, 'MM/dd/yyyy', new Date());
-                return compareDesc(dateA, dateB);
-              });
-          
-              setWorkout(filteredItems[0]);
-          });
-        
-          return () => {
-            sub.unsubscribe();
-          };
-
-        }
-
-
-        } catch (error) {
-          console.log('Error: ' + error)
-        }
-
-
-       }
-
-       fetchWorkouts()
+  useEffect(() => {
+      const fetchWorkouts = async () => {
       
-    }, [refresh]);
-  
+      try {
 
+        const authUser = await Auth.currentAuthenticatedUser({bypassCache: true});
+        //console.log(authUser.attributes.sub)
+        //setAuthSub(authUser.attributes.sub)
 
-    const handleWorkoutResultsSignup = async (text) => {
-      console.log('Signing up')
+        
+        //Get local User Id for Query
+        const user = await DataStore.query(User, sw =>
+          sw.sub.eq(authUser.attributes.sub)
+        )
+      
 
-      if (user) {
-        user.workout_logs = true;
-        await DataStore.save(user);
+        //Query Matrix Table to find list of ids  
+        if (user[0]) {
+          setUser(user[0])
+          setDefaultWorkoutType(user[0].default_workout_type)
+          setWorkoutRestultsAllow(user[0].workout_logs)
+      
+          const sub = DataStore.observeQuery(Workouts).subscribe(({ items }) => {
+
+            //Assigning All Workouts for search
+            setWorkouts(items)
+
+            const filteredItems = items.filter(
+              (item) =>
+                item.workout_type === user[0].default_workout_type
+            );
+
+            console.log('filtered items: ' + filteredItems)
+        
+            filteredItems.sort((a, b) => {
+              const dateA = parse(a.date, 'MM/dd/yyyy', new Date());
+              const dateB = parse(b.date, 'MM/dd/yyyy', new Date());
+              return compareDesc(dateA, dateB);
+            });
+            
+            setWOD(filteredItems[0]);
+        });
+      
+        return () => {
+          sub.unsubscribe();
+        };
+
       }
-     
 
-      setShowAlert(true);
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 2500); // Change the timeout duration as needed
 
-      setRefresh(!refresh)
+      } catch (error) {
+        console.log('Error: ' + error)
+      }
+
+
+      }
+
+      fetchWorkouts()
+    
+  }, [refresh]);
+
+  const handleWorkoutResultsSignup = async (text) => {
+    console.log('Signing up')
+
+    if (user) {
+      user.workout_logs = true;
+      await DataStore.save(user);
+    }
+    
+
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 5000); // Change the timeout duration as needed
+
+    setRefresh(!refresh)
+  };
+
+  const shadowStyle = Platform.select({
+    ios: {
+      shadowColor: 'black',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+    },
+    android: {
+      elevation: 4,
+    },
+  });
+
+  const handleItemListPress = (key) => {
+    navigation.navigate('LeaderboardDetails', { value: key });
+  };
+
+  const handleSearch = (text) => {
+    setSearchText(text);
+    setShowSearch(true);
+  };
+  
+  const handleCancelSearch = () => {
+    setSearchText('');
+    setShowSearch(false);
+  };
+
+  const SubscribeToRecordingDataNotification = () => {
+
+
+    return (
+      <Dialog visible={showAlert} onDismiss={() => setModalVisibleSave(!modalvisiblesave)} style={{backgroundColor: activeColors.primary_bg}}>
+        <DialogHeader title="Welcome to CronusFit!" />
+        <DialogContent>
+          <Text style={{letterSpacing: 1, lineHeight: 25, textAlign: 'center', color:  activeColors.primary_text}}>
+          You have now signed up to record and track all workout results! *Payment Details will be collected after this notification
+          </Text>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            title="Let's Go"
+            compact
+            variant="text"
+            color={activeColors.accent_text}
+            onPress={() => setModalVisibleSave(false)}
+          />
+        </DialogActions>
+      </Dialog>
+    );
+  
+  }
+
+
+  // Filter the list based on the search text
+  const filteredList = showsearch
+    ? workouts.filter((item) =>
+        item.title.toLowerCase().includes(searchtext.toLowerCase()) ||
+        item.date.toLowerCase().includes(searchtext.toLowerCase()) ||
+        item.desc.toLowerCase().includes(searchtext.toLowerCase())
+      )
+    : workouts;
+
+
+    const icons = [
+      { name: 'document-text-outline', label: 'Programs', path: 'checkin' },
+      { name: 'body-outline', label: 'My Workouts' },
+      { name: 'document-text-outline', label: 'Blank button' },
+    ];
+  
+    const renderIcons = () => {
+
+      const iconContainerWidth = screenWidth / icons.length;
+
+      return icons.map((icon, index) => (
+        <TouchableOpacity key={index} style={[styles.iconContainer, { width: iconContainerWidth }]} onPress={() => onGoToNutritionDetails(icon.path)}>
+          <Ionicons name={icon.name} size={30} color={activeColors.primary_text} />
+          <Text style={{ color: activeColors.primary_text }}>{icon.label}</Text>
+        </TouchableOpacity>
+      ));
     };
 
-    const shadowStyle = Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 4,
-      },
-    });
+    const NavigationIcon = (props) => {
+        
+        return (
+          <Pressable style={styles.iconContainer}>
+            <Ionicons name={props.icon} size={20} color={activeColors.primary_text} />
+            <Text style={{ color: activeColors.primary_text }}>{props.label}</Text>
+          </Pressable>
+        )
+    }
 
+  return(
+    <SafeAreaView style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+      <Header title="Fitness and Programming" searchable
+      onSearch={handleSearch} 
+      searchMode={showsearch}
+      onCancelSearch={handleCancelSearch} />
+      <SubscribeToRecordingDataNotification />
+      <View style={{flex: 1}}>
+        { showsearch ? (
+          <ScrollView>
+            {filteredList.map((item, index) => (
+              <ListItem
+                key={index}
+                id={item.id}
+                title={item.title}
+                subtitle={item.desc}
+                date={item.date}
+                navtext="View Leaderboard"
+                onPress={() => handleItemListPress(item.id)}
+              />
+            ))}
+        
+        </ScrollView>
+        ) : (
+          <>
+            {workoutresultsallow ? (
+              <></>
+            ) : (
+              <View style={{ padding: 5}}>
+              <TouchableOpacity style={[styles.signupbutton, shadowStyle, {backgroundColor: activeColors.secondary_bg}]} onPress={handleWorkoutResultsSignup}> 
+                <Text style={{color: activeColors.primary_text, textAlign: 'center', fontWeight: 500}}>Sign up to log all workout results!</Text>
+              </TouchableOpacity>
+            </View>
+            )}
+            <View style={{flex: 1, color: activeColors.primary_text}}>
+              <View style={{ flex: 1, padding: 5, paddingTop: 10}}>
+               <Pressable onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype})} style={{marginBottom: 10, paddingBottom: 5, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5, flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <View style={{justifyContent: 'center'}}>
+                    <Text style={{fontSize: 25, fontWeight: '500', color: activeColors.primary_text}}>Workout of the Day</Text>
+                  </View>
+                  <View style={{justifyContent: 'center'}}>
+                    <Text style={{color: activeColors.accent_text}}>View Details</Text>
+                  </View>
+                </Pressable>
+                
+                  <ScrollView nestedScrollEnabled = {true}>
+                    {wod ? (
+                      <>
+                        <Text style={{color: activeColors.primary_text, marginBottom: 5}}>{wod.workout_type === 'FUNCTIONALFITNESS' ? ('Functional Fitness') : ('Military Prep')}</Text>
+                        <Text style={{color: activeColors.primary_text, marginBottom: 5}}>{wod.date}</Text>
+                        <Text style={{color: activeColors.primary_text, lineHeight: 25, marginBottom: 50}}>{wod.desc}</Text>
+                      </>
+                    ) : (
+                      <Text style={{color: activeColors.primary_text, marginBottom: 5}}>Today's workout hasn't been added yet</Text>
+                    )}
+                    
+                  </ScrollView>
+              </View>
+              <View style={[styles.iconGrid, {padding: 10, paddingHorizontal: 5}]}>
+                  <NavigationIcon label="Programs" icon="document-text-outline" />
+                  <NavigationIcon label="My Workouts" icon="document-text-outline" />
+                  <NavigationIcon label="Blank" icon="document-text-outline" />
+              </View>
+            </View>
+          </>
+        )}
+      </View>
+    </SafeAreaView>
+  )
 
   return(
     <View style={{padding: 5, flexDirection: 'row', justifyContent: 'space-evenly', flexWrap: 'wrap', backgroundColor: activeColors.primary_bg}}>
@@ -169,11 +336,11 @@ const WorkoutsCard = ( { navigation }) => {
         </View>
         
           <ScrollView nestedScrollEnabled = {true}>
-          {workout ? (
+          {wod ? (
             <>
-              <Text style={{color: activeColors.primary_text, marginBottom: 5}}>{workout.workout_type === 'FUNCTIONALFITNESS' ? ('Functional Fitness') : ('Military Prep')}</Text>
-              <Text style={{color: activeColors.primary_text, marginBottom: 5}}>{workout.date}</Text>
-              <Text style={{color: activeColors.primary_text, lineHeight: 25, marginBottom: 50}}>{workout.desc}</Text>
+              <Text style={{color: activeColors.primary_text, marginBottom: 5}}>{wod.workout_type === 'FUNCTIONALFITNESS' ? ('Functional Fitness') : ('Military Prep')}</Text>
+              <Text style={{color: activeColors.primary_text, marginBottom: 5}}>{wod.date}</Text>
+              <Text style={{color: activeColors.primary_text, lineHeight: 25, marginBottom: 50}}>{wod.desc}</Text>
             </>
             ) : (
               <Text style={{color: activeColors.primary_text, marginBottom: 5}}>Today's workout hasn't been added yet</Text>
@@ -207,42 +374,28 @@ const WorkoutsCard = ( { navigation }) => {
     </View>
   );
 
-}
-
-export default function WorkoutScreen( {navigation} ) {
-
-  const theme = useContext(ThemeContext)
-  const darkMode = theme.state.darkMode;
-
-  let activeColors = ''
-
-  if (darkMode) {
-    activeColors = colors['dark'];
-  } else {
-    activeColors = colors['light'];
-  }
 
 
-    return(
-        
+  return(
       
-      <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
-           <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
-            <View>
-                <Text style={[styles.header_text, { color: activeColors.primary_text }]}>Fitness and Programming</Text>
-            </View>
+    
+    <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
+          <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
+          <View>
+              <Text style={[styles.header_text, { color: activeColors.primary_text }]}>Fitness and Programming</Text>
           </View>
-
-          
-
-          <ScrollView  style={{marginBottom: 50, width: '100%'}} nestedScrollEnabled = {true}>
-            <View style={{alignItems: 'center'}}>
-              <WorkoutsCard navigation={navigation} />
-            </View>
-          </ScrollView>
         </View>
-      
-    );
+
+        
+
+        <ScrollView  style={{marginBottom: 50, width: '100%'}} nestedScrollEnabled = {true}>
+          <View style={{alignItems: 'center'}}>
+            <WorkoutsCard navigation={navigation} />
+          </View>
+        </ScrollView>
+      </View>
+    
+  );
 }
 
 const statusBarHeight = Constants.statusBarHeight
@@ -252,10 +405,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    //marginTop: statusBarHeight,
-    //backgroundColor: 'white',
-    //alignItems: 'center',
-    //paddingTop: 40
   },  
   marginTop: {
     marginTop: statusBarHeight,
@@ -383,5 +532,19 @@ const styles = StyleSheet.create({
     fontSize: 20, // Adjusted font size to make it slightly smaller
     lineHeight: 25
   },
-  
+
+  iconGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  iconContainer: {
+    width: '32%',
+    aspectRatio: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+  },
 });

@@ -64,7 +64,7 @@ const Header = ({ title, searchable, searchMode, onSearch, onCancelSearch, messe
     const search_placeholder = "Search " + searchtitle
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: activeColors.header}]}>
             {backButtonPath && (
                 <TouchableOpacity style={styles.left} onPress={() => navigation.navigate(backButtonPath)}>
                     <Ionicons name="arrow-back" size={24} style={{ color: activeColors.primary_text }} />

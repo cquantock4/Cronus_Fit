@@ -201,28 +201,6 @@ export default function HomeScreen( props, {navigation } ) {
         </DialogActions>
       </Dialog>
     );
-    return(
-      <Modal
-          animationType="fade" //slide or none
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.alertModel}>
-              <Text style={{fontSize: 20}}>Welcome to CronusFit!</Text>
-              <Text>You will now be able to view all workouts and other information</Text>
-              <Text>This is some more welcome information</Text>
-              <Pressable style={styles.modalFooter} onPress={() => onDismissPress()}>
-                <Text>Dismiss</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-    );
   
   }
 

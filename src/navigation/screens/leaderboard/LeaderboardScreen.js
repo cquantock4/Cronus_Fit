@@ -3,8 +3,9 @@ import { StyleSheet, View, ScrollView, RefreshControl } from 'react-native';
 
 import Header from '../../../components/ui/inputs/header';
 import ListItem from '../../../components/ui/listItem';
-import LeaderBoardDisplay from '../../../components/ui/leaderboarddisplay';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import LeaderBoardDisplay from '../../../components/ui/leaderboarddisplay';
+
 
 import {ActivityIndicator} from "@react-native-material/core";
 
@@ -149,7 +150,7 @@ export default function Leaderboard( {navigation} ) {
           } catch (error) {
             console.error('Error fetching workouts:', error);
           }
-        };
+    };
 
     fetchWorkouts().then(() => {
       setIsLoading(false); // Set isLoading to false when the data is fetched successfully
@@ -333,7 +334,7 @@ export default function Leaderboard( {navigation} ) {
         </View>
       ) : (
       showsearch ? (
-        <ScrollView style={{marginBottom: 50}}>
+        <ScrollView>
           {filteredList.map((item, index) => (
             <ListItem
               key={index}

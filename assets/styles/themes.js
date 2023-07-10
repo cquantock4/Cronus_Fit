@@ -10,6 +10,7 @@ export const colors = {
     inverted_bg_alt: '#A9A9A9',
     grey_transparent: "rgba(0, 0, 0, 0.6)",
     just_gray: 'gray',
+    header: '#e8e6e6',
 
     //texts
     primary_text: "#000",
@@ -43,6 +44,7 @@ export const colors = {
     inverted_bg_alt: '#E5E5E5',
     grey_transparent: "rgba(36, 39, 41, 0.6)",
     just_gray: 'gray',
+    header: '#1a1a1a',
 
     //texts
     primary_text: "#979797",
