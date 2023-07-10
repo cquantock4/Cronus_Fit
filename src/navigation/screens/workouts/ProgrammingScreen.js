@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, Image, Switch, TextInput, Pressable, Linking } from 'react-native';
+import { StyleSheet, Text, View, Pressable, Linking } from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import { Storage, Auth, DataStore, Hub } from 'aws-amplify';
+import { Storage, DataStore } from 'aws-amplify';
 import { Programs } from '../../../models';
 
-import {useRoute} from '@react-navigation/native';
+import Header from '../../../components/ui/inputs/header';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {Badge, Switch } from "@react-native-material/core";
 
 //Themes
 import ThemeContext from '../../../components/ThemeContext'
@@ -14,7 +16,6 @@ import {colors} from '../../../../assets/styles/themes'
 
 
 export default function ProgrammingScreen( {navigation} ) {
-  const route = useRoute();
 
   const [showProgramView, setShowProgramView] = useState(false);
   const [downloadTrigger, setDownloadTrigger] = useState(false);
@@ -22,29 +23,29 @@ export default function ProgrammingScreen( {navigation} ) {
   const [downloadurl, setDownloadUrl] = useState('');
   const [cardID, setCardID] = useState('');
   const [cardDesc, setCardDesc] = useState('');
+  const [programs, setPrograms] = useState(undefined);
 
-  //Search Filtering
-  const [search, setSearch] = useState('');
-  const [filteredDataSource, setFilteredDataSource] = useState([]);
-  const [masterDataSource, setMasterDataSource] = useState([]);
-  const [showSearch, setShowSearch] = useState(true);
-  const [filterexpand, setFilterExpand] = useState(false);
+  const [showsearch, setShowSearch] = useState(false);
+  const [searchtext, setSearchText] = useState('');
 
-  //Toggles
   //Toggle
   const [isenabledfree, setIsEnabledFree] = useState(false);
   const [isenabledmyprograms, setIsEnabledMyPrograms] = useState(false);
-  //const toggleSwitchFree = () => setIsEnabledFree(previousState => !previousState);
+
   const toggleSwitchPrograms = () => setIsEnabledMyPrograms(previousState => !previousState);
 
   const toggleSwitchFree = async () => {
-
-    searchFilterFunction('', !isenabledfree)
     setIsEnabledFree(previousState => !previousState);
-
   };
 
- const [programs, setPrograms] = useState(undefined);
+  const truncateText = (text, maxLength) => {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + '...';
+    }
+    return text;
+  };
+
+ 
 
  //Theme
  const theme = useContext(ThemeContext)
@@ -72,7 +73,6 @@ export default function ProgrammingScreen( {navigation} ) {
 
   }, []);
 
-  
   async function listPDFFiles(folderPath, storagePaths) {
 
     try {
@@ -89,80 +89,15 @@ export default function ProgrammingScreen( {navigation} ) {
 
   }
   
-
   async function getPrograms(){
-      
-    //console.log(workoutcategory)
+    
 
     const this_program = await DataStore.query(Programs)
 
-    console.log(this_program)
-
     setPrograms(this_program)
-
-    //Gather Storage Paths
-    //const storagePaths = this_program.map((item) => item.downloadurl);
-    //console.log(storagePaths)
-    //listPDFFiles('programs', storagePaths);
-
-    setFilteredDataSource(this_program);
-    setMasterDataSource(this_program);
-
-
-    
 
   }
 
-  const searchFilterFunction = (text, free) => {
-    // Check if searched text is not blank
-    if (text) {
-      // Inserted text is not blank
-      // Filter the masterDataSource and update FilteredDataSource
-      const newData = masterDataSource.filter(function (item) {
-
-        // Applying filter for the inserted text in search bar
-        const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
-
-        const textData = text.toUpperCase();
-
-        return (itemData.indexOf(textData) > -1);
-      });
-
-      setFilteredDataSource(newData);
-      setSearch(text);
-
-    } else {
-
-      // Inserted text is blank
-      // Update FilteredDataSource with masterDataSource
-      setFilteredDataSource(masterDataSource);
-      setSearch(text);
-
-    }
-
-    if (free) {
-      // Inserted text is not blank
-      // Filter the masterDataSource and update FilteredDataSource
-      const newData = masterDataSource.filter(function (item) {
-
-        const freeData = item.free ? true : false;
-
-        return freeData;
-      });
-
-      setFilteredDataSource(newData);
-
-    } else {
-
-      // Inserted text is blank
-      // Update FilteredDataSource with masterDataSource
-      setFilteredDataSource(masterDataSource);
-      setSearch(text);
-
-    }
-  };
-
-  
   const onProgramCardPress = (id, cardtitle, desc, url) => {
     setShowProgramView(true)
 
@@ -183,22 +118,27 @@ export default function ProgrammingScreen( {navigation} ) {
     const curr_carddesc = props.desc;
     const curr_free = props.free;
     const curr_url = props.url;
+    const curr_price = props.price;
 
     //console.log(curr_free)
   
     return(
       
-      <Pressable style={styles.programCard} onPress={() => onProgramCardPress(curr_cardid, curr_cardtitle, curr_carddesc, curr_url)}>
-          <Text style={{color: 'white', marginTop: 10}}>{curr_cardtitle}</Text> 
-          <Image style={styles.cardLogo} source={require('../../../../assets/images/Cronus_Fit_Clean_Logo.png')} />
-
+      <Pressable style={[styles.programCard, {backgroundColor: activeColors.primary_bg, borderWidth: 2, borderColor: activeColors.secondary_bg}]} onPress={() => onProgramCardPress(curr_cardid, curr_cardtitle, curr_carddesc, curr_url)}>
+          <View style={{backgroundColor: '#303030', alignItems: 'center', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 5}}>
+            <Text style={{color: activeColors.secondary_text, fontWeight: '500'}}>{curr_cardtitle}</Text> 
+          </View>
+          <View style={{padding: 5}}>
+            <Text style={{color: activeColors.primary_text, lineHeight: 20}}>{truncateText(curr_carddesc, 75)}</Text>
+          </View>
+          
           <View style={{alignItems: 'flex-end', width: '100%', padding: 7, paddingRight: 10, borderBottomEndRadius: 5, borderBottomLeftRadius: 5}}>
               { curr_free ? (
-                <Text style={{color: 'white', fontSize: 10, fontWeight: '500'}}>
-                  FREE
+                <Text style={{fontSize: 12}}>
+                  <Badge label="FREE" color='green' labelStyle={{fontWeight: '500'}} />
                 </Text>
               ) : (
-                <Text style={{color: 'white', fontSize: 10, fontWeight: '500'}}></Text>
+                <Text style={{color: 'white', fontSize: 15, fontWeight: '500'}}>${curr_price}</Text>
               )}
               
           </View>
@@ -285,154 +225,97 @@ export default function ProgrammingScreen( {navigation} ) {
     )
   }
 
-    /*
-        Header and Button Functions
-    */
 
-    const goBackPress = async () => {
-        navigation.navigate('FitnessScreen')
-        //console.log('Go to Profile Screen')
-    }
-
-    const onSearchPress = async () => {
-        //console.log('Search button pressed')
-        setShowSearch(false)
+    const handleSearch = (text) => {
+      setSearchText(text);
+      setShowSearch(true);
+    };
+    
+    const handleCancelSearch = () => {
+      setSearchText('');
+      setShowSearch(false);
     };
 
-    const onCancelPress = async () => {
-        //console.log('Cancel button pressed')
-        setShowSearch(true)
+    // Apply the "Free" filter
+    const applyFreeFilter = (data) => {
+      if (isenabledfree) {
+        return data.filter((item) => item.free);
+      }
+      return data;
     };
 
+    // Filter the list based on the search text and the "Free" toggle
+    const filteredList = showsearch && programs
+      ? applyFreeFilter(
+          programs.filter(
+            (item) =>
+              item.title.toLowerCase().includes(searchtext.toLowerCase()) ||
+              item.desc.toLowerCase().includes(searchtext.toLowerCase())
+          )
+        )
+      : applyFreeFilter(programs);
 
-    const clearFilters = () => {
-
-      //Clear Search
-      searchFilterFunction('', false)
-
-      //Set Toggles back to false
-      setIsEnabledFree(false);
-      setIsEnabledMyPrograms(false);
-
-      //Hide filter window
-      setFilterExpand(!filterexpand)
-  
-    };
-
-  function Header() {        
-  
     return (
-          <View>
-            <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
-                <Pressable onPress={goBackPress}>
-                    <Ionicons name='chevron-back-outline' style={{fontSize: 30, color: activeColors.primary_text}}/>
-                </Pressable>
-                <View>
-                    <Text style={[styles.header_text, {color: activeColors.primary_text}]}>Programs</Text>
-                </View>
-                <View style={{flexDirection: 'row'}}>
-                    <Pressable style={{padding: 5}} onPress={onSearchPress}>
-                        { darkMode ? <Image style={styles.header_icons} source={require('../../../../assets/images/Search-White.png')} /> : <Image style={styles.header_icons} source={require('../../../../assets/images/Search-Black.png')} />}
-                    </Pressable>
-                    <Pressable style={{padding: 5}} onPress={() => setFilterExpand(!filterexpand)}>
-                        { darkMode ? <Image style={styles.header_icons_filter} source={require('../../../../assets/images/Filter-icon-white.png')}/> : <Image style={styles.header_icons_filter} source={require('../../../../assets/images/Filter-icon-black.png')}/>}
-                    </Pressable>
-                    </View>
-            </View>
-
-            { filterexpand ? (
-              <View style={[styles.filter_expanded, {backgroundColor: activeColors.secondary_bg}]}>
-                <View style={styles.filter_expanded_row}>
-                  <Text style={{color: activeColors.primary_text}}>Free</Text>
-                    <Switch
-                      //363636
-                        trackColor={{ false: "#767577", true: "#363636" }}
-                        thumbColor={isenabledfree ? "#F8BE13" : "#f4f3f4"}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleSwitchFree}
-                        value={isenabledfree}
-                        style={{marginTop: -5}}
-                      />
-                </View>
-                <View style={styles.filter_expanded_row}>
-                  <Text style={{color: activeColors.primary_text}}>My Programs</Text>
-                  <Switch
-                      //363636
-                        trackColor={{ false: "#767577", true: "#363636" }}
-                        thumbColor={isenabledmyprograms ? "#F8BE13" : "#f4f3f4"}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleSwitchPrograms}
-                        value={isenabledmyprograms}
-                        style={{marginTop: -5}}
-                      />
-                </View>
-                <Pressable onPress={clearFilters}>
-                  <Text style={{color: activeColors.primary_text}}>Clear</Text>
-                </Pressable>
-              </View>
-                
-            ) : (
-              <></>
-            )}
+      <SafeAreaView style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+        <Header title="Programs" searchable
+        onSearch={handleSearch} 
+        searchMode={showsearch}
+        onCancelSearch={handleCancelSearch} />
+        {showProgramView ? (
+          <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
+            <DownloadScreenDisplay />
           </View>
-
-
-        
-      )
-    }
-
-
-    
-
-    
-    return(
-      <>
-      {showProgramView ? (
-        <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
-          <DownloadScreenDisplay />
-        </View>
-      ) : (
-        <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
-            { showSearch ? (
-              <Header />
-            ) : (
-              <View>
-                <View style={[styles.header, {backgroundColor: activeColors.primary_bg, color: activeColors.primary_text}]}>
-                      <TextInput
-                        style={[styles.searchBar, {color: activeColors.primary_text}]}
-                        onChangeText={(text) => searchFilterFunction(text, false)}
-                        value={search}
-                        underlineColorAndroid="transparent"
-                        placeholder="Search here"
-                        placeholderTextColor={activeColors.primary_text}
-                      />
-                      <Pressable onPress={onCancelPress} style={{marginRight: 5}}>
-                        <Text style={{fontSize: 14, color: activeColors.primary_text}}>Cancel</Text>
-                      </Pressable>
-                </View>
-
+        ) : (
+          <>
+        <View style={{padding: 5, flexDirection:'row', justifyContent: 'space-evenly'}}>
+          <View style={styles.filter_expanded_row}>
+            <View style={{justifyContent: 'center'}}>
+              <Text style={{color: activeColors.primary_text}}>Free</Text>
+            </View>
+            <View style={{justifyContent: 'center'}}>
+              <Switch
+                //363636
+                  trackColor={{ false: "#767577", true: "#363636" }}
+                  thumbColor={isenabledfree ? "#F8BE13" : "#f4f3f4"}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitchFree}
+                  value={isenabledfree}
+                />
+            </View>
+          </View>
+          <View style={styles.filter_expanded_row}>
+            <View style={{justifyContent: 'center'}}>
+              <Text style={{color: activeColors.primary_text}}>My Programs</Text>
+            </View>
+            <View style={{justifyContent: 'center'}}>
+              <Switch
+                //363636
+                  trackColor={{ false: "#767577", true: "#363636" }}
+                  thumbColor={isenabledmyprograms ? "#F8BE13" : "#f4f3f4"}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitchPrograms}
+                  value={isenabledmyprograms}
+                />
               </View>
-            )}
-            
-  
-              <View style={{flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', flexWrap: 'wrap'}}>
-                    { filteredDataSource ? (
-                        filteredDataSource.map((item, index) => {
-                          return (
-                            <ProgramDisplayCard title={item.title} id={item.id} key={item.id} desc={item.desc} free={item.free} url={item.downloadurl}/>
-                          );
-                        })
-                      ) : (
-                        <></>
-                      )
-                    } 
-              </View> 
-              
+          </View>
         </View>
+        <View style={{flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', flexWrap: 'wrap'}}>
+            { filteredList ? (
+                filteredList.map((item, index) => {
+                  return (
+                    <ProgramDisplayCard title={item.title} id={item.id} key={item.id} desc={item.desc} free={item.free} url={item.downloadurl} price={item.price}/>
+                  );
+                })
+              ) : (
+                <></>
+              )
+            } 
+        </View> 
+        </>
       )}
-      </>
-      
-    );
+      </SafeAreaView>
+    )
+
 }
 
 const statusBarHeight = Constants.statusBarHeight
@@ -441,12 +324,6 @@ const styles = StyleSheet.create({
   
   container: {
     flex: 1,
-    flexDirection: 'column',
-    //marginTop: statusBarHeight,
-    //backgroundColor: 'white',
-    //alignItems: 'center',
-    //backgroundColor: 'blue'
-    //paddingTop: 40
   },  
   marginTop: {
     marginTop: statusBarHeight,
@@ -510,25 +387,16 @@ const styles = StyleSheet.create({
  filter_expanded_row: {
   flexDirection: 'row',
   justifyContent: 'space-between',
-  width: '70%',
-  marginVertical: 10
  },
 
 
   programCard: {
     width: 150, 
-    height: 200, 
-    backgroundColor: '#363636', 
+    height: 175,
     margin: 10, 
-    alignItems: 'center', 
     justifyContent: 'center',
-    borderRadius: 10,
+    borderRadius: 7,
     justifyContent: 'space-between'
   },
-  cardLogo: {
-    height: 125,
-    width: 75,
-    marginBottom: 5
-  }
   
 });

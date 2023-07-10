@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, Modal, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, Modal, Dimensions,useWindowDimensions  } from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Header from '../../../components/ui/inputs/header';
 import ListItem from '../../../components/ui/listItem';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import {ActivityIndicator} from "@react-native-material/core";
 
 import { Amplify, Auth, DataStore, Hub } from 'aws-amplify';
 import { Workouts, User} from '../../../models';
@@ -25,6 +26,7 @@ import {
 //Themes
 import ThemeContext from '../../../components/ThemeContext'
 import {colors} from '../../../../assets/styles/themes'
+import Workout_Button from '../../../components/ui/buttons';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -39,6 +41,7 @@ export default function WorkoutScreen( {navigation} ) {
   const [refresh, setRefresh] = useState(false);
   const [modalvisiblesave, setModalVisibleSave] = useState(false)
   const [defaultworkouttype, setDefaultWorkoutType] = useState('FUNCTIONALFITNESS')
+  const [isLoading, setIsLoading] = useState(true);
 
 
   const [showsearch, setShowSearch] = useState(false);
@@ -111,10 +114,13 @@ export default function WorkoutScreen( {navigation} ) {
 
 
       }
-
-      fetchWorkouts()
+      fetchWorkouts().then(() => {
+        setIsLoading(false); // Set isLoading to false when the data is fetched successfully
+      });
     
   }, [refresh]);
+
+  
 
   const handleWorkoutResultsSignup = async (text) => {
     console.log('Signing up')
@@ -193,35 +199,19 @@ export default function WorkoutScreen( {navigation} ) {
         item.desc.toLowerCase().includes(searchtext.toLowerCase())
       )
     : workouts;
-
-
-    const icons = [
-      { name: 'document-text-outline', label: 'Programs', path: 'checkin' },
-      { name: 'body-outline', label: 'My Workouts' },
-      { name: 'document-text-outline', label: 'Blank button' },
-    ];
   
-    const renderIcons = () => {
 
-      const iconContainerWidth = screenWidth / icons.length;
 
-      return icons.map((icon, index) => (
-        <TouchableOpacity key={index} style={[styles.iconContainer, { width: iconContainerWidth }]} onPress={() => onGoToNutritionDetails(icon.path)}>
-          <Ionicons name={icon.name} size={30} color={activeColors.primary_text} />
-          <Text style={{ color: activeColors.primary_text }}>{icon.label}</Text>
-        </TouchableOpacity>
-      ));
-    };
-
-    const NavigationIcon = (props) => {
+    const NavigationIcon = ({icon, label, onPress}) => {
         
         return (
-          <Pressable style={styles.iconContainer}>
-            <Ionicons name={props.icon} size={20} color={activeColors.primary_text} />
-            <Text style={{ color: activeColors.primary_text }}>{props.label}</Text>
+          <Pressable style={styles.iconContainer} onPress={onPress}>
+            <Ionicons name={icon} size={20} color={activeColors.primary_text} />
+            <Text style={{ color: activeColors.primary_text }}>{label}</Text>
           </Pressable>
         )
     }
+
 
   return(
     <SafeAreaView style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
@@ -248,41 +238,63 @@ export default function WorkoutScreen( {navigation} ) {
         </ScrollView>
         ) : (
           <>
-            {workoutresultsallow ? (
-              <></>
+            {!workoutresultsallow ? (
+               <View style={{ padding: 5}}>
+                <TouchableOpacity style={[styles.signupbutton, shadowStyle, {backgroundColor: activeColors.secondary_bg}]} onPress={handleWorkoutResultsSignup}> 
+                  <Text style={{color: activeColors.primary_text, textAlign: 'center', fontWeight: 500}}>Sign up to log all workout results!</Text>
+                </TouchableOpacity>
+              </View>
             ) : (
-              <View style={{ padding: 5}}>
-              <TouchableOpacity style={[styles.signupbutton, shadowStyle, {backgroundColor: activeColors.secondary_bg}]} onPress={handleWorkoutResultsSignup}> 
-                <Text style={{color: activeColors.primary_text, textAlign: 'center', fontWeight: 500}}>Sign up to log all workout results!</Text>
-              </TouchableOpacity>
-            </View>
+              <></>
             )}
             <View style={{flex: 1, color: activeColors.primary_text}}>
+            {isLoading ? (
+                <View style={[styles.container, {justifyContent: 'center', alignItems: 'center'}]}>
+                  <ActivityIndicator size="large" color={activeColors.accent_text} />
+                </View>
+              ) : (
               <View style={{ flex: 1, padding: 5, paddingTop: 10}}>
                <Pressable onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype})} style={{marginBottom: 10, paddingBottom: 5, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5, flexDirection: 'row', justifyContent: 'space-between' }}>
                   <View style={{justifyContent: 'center'}}>
-                    <Text style={{fontSize: 25, fontWeight: '500', color: activeColors.primary_text}}>Workout of the Day</Text>
+                    <Text style={{fontSize: 25, fontWeight: '500', color: activeColors.accent_text}}>WOD</Text>
                   </View>
                   <View style={{justifyContent: 'center'}}>
-                    <Text style={{color: activeColors.accent_text}}>View Details</Text>
+                    <Text style={{color: activeColors.accent_text}}>Go to Workout</Text>
                   </View>
                 </Pressable>
                 
                   <ScrollView nestedScrollEnabled = {true}>
-                    {wod ? (
-                      <>
-                        <Text style={{color: activeColors.primary_text, marginBottom: 5}}>{wod.workout_type === 'FUNCTIONALFITNESS' ? ('Functional Fitness') : ('Military Prep')}</Text>
-                        <Text style={{color: activeColors.primary_text, marginBottom: 5}}>{wod.date}</Text>
-                        <Text style={{color: activeColors.primary_text, lineHeight: 25, marginBottom: 50}}>{wod.desc}</Text>
-                      </>
-                    ) : (
-                      <Text style={{color: activeColors.primary_text, marginBottom: 5}}>Today's workout hasn't been added yet</Text>
-                    )}
-                    
+                    <View style={{paddingHorizontal: 5}}>
+                      {wod && wod.desc ? (
+                        <>
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10}}>
+                          <View style={{justifyContent: 'center'}}>
+                            <Text style={{color: activeColors.primary_text, marginBottom: 5, fontSize: 20}}>{wod.date}</Text>
+                          </View>
+                          <View style={{justifyContent: 'center'}}>
+                            <Text style={{color: activeColors.primary_text, marginBottom: 5}}>{wod.workout_type === 'FUNCTIONALFITNESS' ? ('Functional Fitness') : ('Military Prep')}</Text>
+                          </View>
+                        </View>
+                          
+                          <Text style={{color: activeColors.primary_text, lineHeight: 25, marginBottom: 50}}>
+                            {wod.desc.replace(/\\n/g, '\n')}
+                          </Text>
+                        </>
+                      ) : (
+                        <Text style={{color: activeColors.primary_text, marginBottom: 5}}>
+                          Today's workout hasn't been added yet
+                        </Text>
+                      )}
+                    </View>
                   </ScrollView>
               </View>
+              )}
               <View style={[styles.iconGrid, {padding: 10, paddingHorizontal: 5}]}>
-                  <NavigationIcon label="Programs" icon="document-text-outline" />
+                  <NavigationIcon
+                      icon="document-text-outline"
+                      label="Programs"
+                      onPress={() => navigation.navigate('ProgrammingScreen', { value: 'Free' })}
+                    />
                   <NavigationIcon label="My Workouts" icon="document-text-outline" />
                   <NavigationIcon label="Blank" icon="document-text-outline" />
               </View>
