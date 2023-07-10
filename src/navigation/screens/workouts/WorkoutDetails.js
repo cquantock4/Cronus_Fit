@@ -5,6 +5,11 @@ import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Bubble_Button, Bubble_Button_Small, Button_Link } from '../../../components/ui/buttons'
 
+import Header from '../../../components/ui/inputs/header';
+import ListItem from '../../../components/ui/listItem';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {ActivityIndicator} from "@react-native-material/core";
+
 import Modal from 'react-native-modal';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 //import Swipeable  from 'react-native-gesture-handler/Swipeable'
@@ -18,7 +23,6 @@ import {useForm} from 'react-hook-form';
 import ThemeContext from '../../../components/ThemeContext'
 import {colors} from '../../../../assets/styles/themes'
 
-//import Header from '../../../ui/components/headers/header'
 
 import { Amplify, Auth, DataStore, Hub } from 'aws-amplify';
 import { Workouts, User, WorkoutNotes, SavedWorkouts, WorkoutResults, SubWorkouts} from '../../../models';
@@ -31,12 +35,15 @@ export default function WorkoutDetails( {navigation} )  {
   const {control, handleSubmit, formState: {errors}} = useForm();
   const [workoutcategory, setWorkoutCategory] = useState(route?.params?.value);
   const [workoutslog, setWorkoutsLog] = useState(false);
+  const [workouts, setWorkouts] = useState(false);
 
   //Modal
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleNotes, setModalVisibleNotes] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
   const [showfilter, setShowFilter] = useState(false);
+
+  const [showsearch, setShowSearch] = useState(false);
+  const [searchtext, setSearchText] = useState('');
   
   //Toggle
   const [isEnabledIndSave, setIsEnabledIndSave] = useState(false);
@@ -135,10 +142,10 @@ export default function WorkoutDetails( {navigation} )  {
 
         //console.log(items)
 
-        //setWorkouts(items)
+        setWorkouts(items)
 
-        setFilteredDataSource(items);
-        setMasterDataSource(items);
+        //setFilteredDataSource(items);
+        //setMasterDataSource(items);
         
       });
 
@@ -685,42 +692,6 @@ export default function WorkoutDetails( {navigation} )  {
         setShowFilter(!showfilter)
         setShowSearch(true)
     };
-
-    function Header() {        
-  
-        return (
-  
-            showSearch ? (
- 
-                <>
-                </>
-             ) : (
-              
-                <>
-                  <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
-                      <Pressable onPress={goBackPress}>
-                          <Ionicons name='chevron-back-outline' style={{fontSize: 30, color: activeColors.primary_text}}/>
-                      </Pressable>
-                      <View>
-                          <Text style={[styles.header_text, {color: activeColors.primary_text}]}>{workoutcategory}</Text>
-                      </View>
-                      <View style={{flexDirection: 'row'}}>
-                          <Pressable style={{padding: 5}} onPress={onSearchPress}>
-                              { darkMode ? <Image style={styles.header_icons} source={require('../../../../assets/images/Search-White.png')} /> : <Image style={styles.header_icons} source={require('../../../../assets/images/Search-Black.png')} />}
-                          </Pressable>
-                          <Pressable style={{padding: 5}} onPress={onFilterPress}>
-                              { darkMode ? <Image style={styles.header_icons_filter} source={require('../../../../assets/images/Filter-icon-white.png')}/> : <Image style={styles.header_icons_filter} source={require('../../../../assets/images/Filter-icon-black.png')}/>}
-                          </Pressable>
-                      </View>
-                  </View>
-                
-                </>
-             
-              )
-            
-          )
-    }
-
 
     const FilterModal = () => {
 
@@ -1722,6 +1693,57 @@ export default function WorkoutDetails( {navigation} )  {
     
     }
 
+
+    const handleSearch = (text) => {
+      setSearchText(text);
+      setShowSearch(true);
+    };
+    
+    const handleCancelSearch = () => {
+      setSearchText('');
+      setShowSearch(false);
+    };
+
+    // Filter the list based on the search text
+    const filteredList = showsearch
+    ? workouts.filter((item) =>
+        item.title.toLowerCase().includes(searchtext.toLowerCase()) ||
+        item.date.toLowerCase().includes(searchtext.toLowerCase()) ||
+        item.desc.toLowerCase().includes(searchtext.toLowerCase())
+      )
+    : workouts;
+
+    return(
+      <SafeAreaView style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
+        <Header title={workoutcategory === 'FUNCTIONALFITNESS' ? 'Functional Fitness' : 'Military Prep'} searchable
+        onSearch={handleSearch} 
+        searchMode={showsearch}
+        onCancelSearch={handleCancelSearch} />
+        <View style={{flex: 1}}>
+          { showsearch ? (
+            <ScrollView>
+              {filteredList.map((item, index) => (
+                <ListItem
+                  key={index}
+                  id={item.id}
+                  title={item.title}
+                  subtitle={item.desc}
+                  date={item.date}
+                  navtext="View Leaderboard"
+                  onPress={() => handleItemListPress(item.id)}
+                />
+              ))}
+          
+          </ScrollView>
+          ) : (
+            <View>
+              <Text style={{color: 'white'}} >Placeholder</Text>
+            </View>
+          )}
+        </View>
+
+      </SafeAreaView>
+    )
 
     return(
       
