@@ -117,7 +117,7 @@ type Programs @model @auth(rules: [{allow: public}]) {
   price: String
   downloadurl: String
   data_type: String
-  userID: ID! @index(name: "byUser")
+  users: [User] @manyToMany(relationName: "UserPrograms")
 }
 
 type Comments @model @auth(rules: [{allow: public}]) {
@@ -193,6 +193,6 @@ type User @model @auth(rules: [{allow: public}]) {
   CheckListItems: [CheckListItems] @manyToMany(relationName: "UserCheckListItems")
   workout_logs: Boolean
   WorkoutNotes: [WorkoutNotes] @hasMany(indexName: "byUser", fields: ["id"])
-  Programs: [Programs] @hasMany(indexName: "byUser", fields: ["id"])
+  Programs: [Programs] @manyToMany(relationName: "UserPrograms")
 }
  

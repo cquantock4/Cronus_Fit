@@ -327,7 +327,8 @@ export default function Leaderboard( {navigation} ) {
       <Header title="Leaderboards" searchable 
       onSearch={handleSearch} 
       searchMode={showsearch}
-      onCancelSearch={handleCancelSearch} />
+      onCancelSearch={handleCancelSearch}
+       />
        {isLoading ? (
         <View style={[styles.container, {justifyContent: 'center', alignItems: 'center'}]}>
           <ActivityIndicator size="large" color={activeColors.accent_text} />

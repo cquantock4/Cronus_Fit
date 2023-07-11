@@ -3,8 +3,8 @@ import { StyleSheet, Text, View, Pressable, Linking } from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import { Storage, DataStore } from 'aws-amplify';
-import { Programs } from '../../../models';
+import { Storage, DataStore, Auth } from 'aws-amplify';
+import { Programs, UserPrograms, User } from '../../../models';
 
 import Header from '../../../components/ui/inputs/header';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,12 +18,14 @@ import {colors} from '../../../../assets/styles/themes'
 export default function ProgrammingScreen( {navigation} ) {
 
   const [showProgramView, setShowProgramView] = useState(false);
+  const [user, setUser] = useState(undefined);
   const [downloadTrigger, setDownloadTrigger] = useState(false);
   const [cardTitle, setCardTitle] = useState('');
   const [downloadurl, setDownloadUrl] = useState('');
   const [cardID, setCardID] = useState('');
   const [cardDesc, setCardDesc] = useState('');
   const [programs, setPrograms] = useState(undefined);
+  const [myprograms, setMyPrograms] = useState(undefined);
 
   const [showsearch, setShowSearch] = useState(false);
   const [searchtext, setSearchText] = useState('');
@@ -91,10 +93,32 @@ export default function ProgrammingScreen( {navigation} ) {
   
   async function getPrograms(){
     
+    try {
+      const authUser = await Auth.currentAuthenticatedUser({bypassCache: true});
+      const user = await DataStore.query(User, (u) => u.sub.eq(authUser.attributes.sub));
+    
 
-    const this_program = await DataStore.query(Programs)
+      //Query Matrix Table to find list of ids  
+      if (user[0]) {
+        //Set state variable
+        setUser(user[0])
 
-    setPrograms(this_program)
+      }
+
+
+      const this_program = await DataStore.query(Programs)
+
+      const user_programs = await DataStore.query(UserPrograms, (u) => u.userId.eq(user[0].id));
+  
+  
+      setPrograms(this_program)
+      setMyPrograms(user_programs)
+
+    } catch (e) {
+      console.log('Error: ' + e)
+    }
+
+   
 
   }
 
@@ -237,6 +261,37 @@ export default function ProgrammingScreen( {navigation} ) {
     };
 
     // Apply the "Free" filter
+const applyFreeFilter = (data) => {
+  if (isenabledfree) {
+    return data.filter((item) => item.free);
+  }
+  return data;
+};
+
+// Apply the "My Programs" filter
+const applyMyProgramsFilter = (data) => {
+  if (isenabledmyprograms) {
+    // Filter the data based on the user's connected programs
+    return data.filter((item) => myprograms.some((program) => program.programsId === item.id));
+  }
+  return data;
+};
+
+// Filter the list based on the search text, "Free" toggle, and "My Programs" toggle
+const filteredList = showsearch && programs
+  ? applyFreeFilter(
+      applyMyProgramsFilter(
+        programs.filter(
+          (item) =>
+            item.title.toLowerCase().includes(searchtext.toLowerCase()) ||
+            item.desc.toLowerCase().includes(searchtext.toLowerCase())
+        )
+      )
+    )
+  : applyFreeFilter(applyMyProgramsFilter(programs));
+
+    /*
+    // Apply the "Free" filter
     const applyFreeFilter = (data) => {
       if (isenabledfree) {
         return data.filter((item) => item.free);
@@ -254,13 +309,16 @@ export default function ProgrammingScreen( {navigation} ) {
           )
         )
       : applyFreeFilter(programs);
+    */
 
     return (
       <SafeAreaView style={[styles.container, {backgroundColor: activeColors.primary_bg}]}>
         <Header title="Programs" searchable
         onSearch={handleSearch} 
         searchMode={showsearch}
-        onCancelSearch={handleCancelSearch} />
+        onCancelSearch={handleCancelSearch}
+        backButtonPath="FitnessScreen"
+        navigation={navigation} />
         {showProgramView ? (
           <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
             <DownloadScreenDisplay />

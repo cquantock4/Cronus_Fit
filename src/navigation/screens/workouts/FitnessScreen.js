@@ -151,8 +151,8 @@ export default function WorkoutScreen( {navigation} ) {
     },
   });
 
-  const handleItemListPress = (key) => {
-    navigation.navigate('LeaderboardDetails', { value: key });
+  const handleItemListPress = (key, id) => {
+    navigation.navigate('WorkoutDetails', { value: key, workoutid: id});
   };
 
   const handleSearch = (text) => {
@@ -231,7 +231,7 @@ export default function WorkoutScreen( {navigation} ) {
                 subtitle={item.desc}
                 date={item.date}
                 navtext="View Leaderboard"
-                onPress={() => handleItemListPress(item.id)}
+                onPress={() => handleItemListPress(item.id, item.id)}
               />
             ))}
         

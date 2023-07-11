@@ -1042,7 +1042,22 @@ export const getPrograms = /* GraphQL */ `
       price
       downloadurl
       data_type
-      userID
+      users {
+        items {
+          id
+          programsId
+          userId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        nextToken
+        startedAt
+        __typename
+      }
       createdAt
       updatedAt
       _version
@@ -1067,7 +1082,11 @@ export const listPrograms = /* GraphQL */ `
         price
         downloadurl
         data_type
-        userID
+        users {
+          nextToken
+          startedAt
+          __typename
+        }
         createdAt
         updatedAt
         _version
@@ -1102,44 +1121,11 @@ export const syncPrograms = /* GraphQL */ `
         price
         downloadurl
         data_type
-        userID
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      nextToken
-      startedAt
-      __typename
-    }
-  }
-`;
-export const programsByUserID = /* GraphQL */ `
-  query ProgramsByUserID(
-    $userID: ID!
-    $sortDirection: ModelSortDirection
-    $filter: ModelProgramsFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    programsByUserID(
-      userID: $userID
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        title
-        desc
-        free
-        price
-        downloadurl
-        data_type
-        userID
+        users {
+          nextToken
+          startedAt
+          __typename
+        }
         createdAt
         updatedAt
         _version
@@ -2100,13 +2086,8 @@ export const getUser = /* GraphQL */ `
       Programs {
         items {
           id
-          title
-          desc
-          free
-          price
-          downloadurl
-          data_type
-          userID
+          programsId
+          userId
           createdAt
           updatedAt
           _version
@@ -2604,6 +2585,379 @@ export const userCheckListItemsByUserId = /* GraphQL */ `
           key
           value
           frequency
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        user {
+          id
+          name
+          email
+          sub
+          nutrition_info
+          nutrition_coaching
+          q_experience
+          q_medical
+          q_calcmacros
+          coach_userid
+          theme
+          image
+          image_uri
+          coach_yn
+          updatedAt
+          default_workout_type
+          workout_logs
+          createdAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      nextToken
+      startedAt
+      __typename
+    }
+  }
+`;
+export const getUserPrograms = /* GraphQL */ `
+  query GetUserPrograms($id: ID!) {
+    getUserPrograms(id: $id) {
+      id
+      programsId
+      userId
+      programs {
+        id
+        title
+        desc
+        free
+        price
+        downloadurl
+        data_type
+        users {
+          nextToken
+          startedAt
+          __typename
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      user {
+        id
+        name
+        email
+        sub
+        nutrition_info
+        nutrition_coaching
+        q_experience
+        q_medical
+        q_calcmacros
+        coach_userid
+        theme
+        image
+        image_uri
+        Checkins {
+          nextToken
+          startedAt
+          __typename
+        }
+        Foodentries {
+          nextToken
+          startedAt
+          __typename
+        }
+        WorkoutResults {
+          nextToken
+          startedAt
+          __typename
+        }
+        Comments {
+          nextToken
+          startedAt
+          __typename
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+          __typename
+        }
+        coach_yn
+        updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+          __typename
+        }
+        workout_logs
+        WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        Programs {
+          nextToken
+          startedAt
+          __typename
+        }
+        createdAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+  }
+`;
+export const listUserPrograms = /* GraphQL */ `
+  query ListUserPrograms(
+    $filter: ModelUserProgramsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUserPrograms(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        programsId
+        userId
+        programs {
+          id
+          title
+          desc
+          free
+          price
+          downloadurl
+          data_type
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        user {
+          id
+          name
+          email
+          sub
+          nutrition_info
+          nutrition_coaching
+          q_experience
+          q_medical
+          q_calcmacros
+          coach_userid
+          theme
+          image
+          image_uri
+          coach_yn
+          updatedAt
+          default_workout_type
+          workout_logs
+          createdAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      nextToken
+      startedAt
+      __typename
+    }
+  }
+`;
+export const syncUserPrograms = /* GraphQL */ `
+  query SyncUserPrograms(
+    $filter: ModelUserProgramsFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncUserPrograms(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        programsId
+        userId
+        programs {
+          id
+          title
+          desc
+          free
+          price
+          downloadurl
+          data_type
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        user {
+          id
+          name
+          email
+          sub
+          nutrition_info
+          nutrition_coaching
+          q_experience
+          q_medical
+          q_calcmacros
+          coach_userid
+          theme
+          image
+          image_uri
+          coach_yn
+          updatedAt
+          default_workout_type
+          workout_logs
+          createdAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      nextToken
+      startedAt
+      __typename
+    }
+  }
+`;
+export const userProgramsByProgramsId = /* GraphQL */ `
+  query UserProgramsByProgramsId(
+    $programsId: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelUserProgramsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    userProgramsByProgramsId(
+      programsId: $programsId
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        programsId
+        userId
+        programs {
+          id
+          title
+          desc
+          free
+          price
+          downloadurl
+          data_type
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        user {
+          id
+          name
+          email
+          sub
+          nutrition_info
+          nutrition_coaching
+          q_experience
+          q_medical
+          q_calcmacros
+          coach_userid
+          theme
+          image
+          image_uri
+          coach_yn
+          updatedAt
+          default_workout_type
+          workout_logs
+          createdAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      nextToken
+      startedAt
+      __typename
+    }
+  }
+`;
+export const userProgramsByUserId = /* GraphQL */ `
+  query UserProgramsByUserId(
+    $userId: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelUserProgramsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    userProgramsByUserId(
+      userId: $userId
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        programsId
+        userId
+        programs {
+          id
+          title
+          desc
+          free
+          price
+          downloadurl
+          data_type
           createdAt
           updatedAt
           _version

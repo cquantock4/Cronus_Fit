@@ -761,7 +761,22 @@ export const onCreatePrograms = /* GraphQL */ `
       price
       downloadurl
       data_type
-      userID
+      users {
+        items {
+          id
+          programsId
+          userId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        nextToken
+        startedAt
+        __typename
+      }
       createdAt
       updatedAt
       _version
@@ -781,7 +796,22 @@ export const onUpdatePrograms = /* GraphQL */ `
       price
       downloadurl
       data_type
-      userID
+      users {
+        items {
+          id
+          programsId
+          userId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        nextToken
+        startedAt
+        __typename
+      }
       createdAt
       updatedAt
       _version
@@ -801,7 +831,22 @@ export const onDeletePrograms = /* GraphQL */ `
       price
       downloadurl
       data_type
-      userID
+      users {
+        items {
+          id
+          programsId
+          userId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        nextToken
+        startedAt
+        __typename
+      }
       createdAt
       updatedAt
       _version
@@ -1660,13 +1705,8 @@ export const onCreateUser = /* GraphQL */ `
       Programs {
         items {
           id
-          title
-          desc
-          free
-          price
-          downloadurl
-          data_type
-          userID
+          programsId
+          userId
           createdAt
           updatedAt
           _version
@@ -1845,13 +1885,8 @@ export const onUpdateUser = /* GraphQL */ `
       Programs {
         items {
           id
-          title
-          desc
-          free
-          price
-          downloadurl
-          data_type
-          userID
+          programsId
+          userId
           createdAt
           updatedAt
           _version
@@ -2030,13 +2065,8 @@ export const onDeleteUser = /* GraphQL */ `
       Programs {
         items {
           id
-          title
-          desc
-          free
-          price
-          downloadurl
-          data_type
-          userID
+          programsId
+          userId
           createdAt
           updatedAt
           _version
@@ -2265,6 +2295,309 @@ export const onDeleteUserCheckListItems = /* GraphQL */ `
         key
         value
         frequency
+        users {
+          nextToken
+          startedAt
+          __typename
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      user {
+        id
+        name
+        email
+        sub
+        nutrition_info
+        nutrition_coaching
+        q_experience
+        q_medical
+        q_calcmacros
+        coach_userid
+        theme
+        image
+        image_uri
+        Checkins {
+          nextToken
+          startedAt
+          __typename
+        }
+        Foodentries {
+          nextToken
+          startedAt
+          __typename
+        }
+        WorkoutResults {
+          nextToken
+          startedAt
+          __typename
+        }
+        Comments {
+          nextToken
+          startedAt
+          __typename
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+          __typename
+        }
+        coach_yn
+        updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+          __typename
+        }
+        workout_logs
+        WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        Programs {
+          nextToken
+          startedAt
+          __typename
+        }
+        createdAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+  }
+`;
+export const onCreateUserPrograms = /* GraphQL */ `
+  subscription OnCreateUserPrograms(
+    $filter: ModelSubscriptionUserProgramsFilterInput
+  ) {
+    onCreateUserPrograms(filter: $filter) {
+      id
+      programsId
+      userId
+      programs {
+        id
+        title
+        desc
+        free
+        price
+        downloadurl
+        data_type
+        users {
+          nextToken
+          startedAt
+          __typename
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      user {
+        id
+        name
+        email
+        sub
+        nutrition_info
+        nutrition_coaching
+        q_experience
+        q_medical
+        q_calcmacros
+        coach_userid
+        theme
+        image
+        image_uri
+        Checkins {
+          nextToken
+          startedAt
+          __typename
+        }
+        Foodentries {
+          nextToken
+          startedAt
+          __typename
+        }
+        WorkoutResults {
+          nextToken
+          startedAt
+          __typename
+        }
+        Comments {
+          nextToken
+          startedAt
+          __typename
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+          __typename
+        }
+        coach_yn
+        updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+          __typename
+        }
+        workout_logs
+        WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        Programs {
+          nextToken
+          startedAt
+          __typename
+        }
+        createdAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateUserPrograms = /* GraphQL */ `
+  subscription OnUpdateUserPrograms(
+    $filter: ModelSubscriptionUserProgramsFilterInput
+  ) {
+    onUpdateUserPrograms(filter: $filter) {
+      id
+      programsId
+      userId
+      programs {
+        id
+        title
+        desc
+        free
+        price
+        downloadurl
+        data_type
+        users {
+          nextToken
+          startedAt
+          __typename
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      user {
+        id
+        name
+        email
+        sub
+        nutrition_info
+        nutrition_coaching
+        q_experience
+        q_medical
+        q_calcmacros
+        coach_userid
+        theme
+        image
+        image_uri
+        Checkins {
+          nextToken
+          startedAt
+          __typename
+        }
+        Foodentries {
+          nextToken
+          startedAt
+          __typename
+        }
+        WorkoutResults {
+          nextToken
+          startedAt
+          __typename
+        }
+        Comments {
+          nextToken
+          startedAt
+          __typename
+        }
+        SavedWorkouts {
+          nextToken
+          startedAt
+          __typename
+        }
+        coach_yn
+        updatedAt
+        default_workout_type
+        CheckListItems {
+          nextToken
+          startedAt
+          __typename
+        }
+        workout_logs
+        WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        Programs {
+          nextToken
+          startedAt
+          __typename
+        }
+        createdAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteUserPrograms = /* GraphQL */ `
+  subscription OnDeleteUserPrograms(
+    $filter: ModelSubscriptionUserProgramsFilterInput
+  ) {
+    onDeleteUserPrograms(filter: $filter) {
+      id
+      programsId
+      userId
+      programs {
+        id
+        title
+        desc
+        free
+        price
+        downloadurl
+        data_type
         users {
           nextToken
           startedAt

@@ -8,7 +8,7 @@ import { Bubble_Button, Bubble_Button_Small, Button_Link } from '../../../compon
 import Header from '../../../components/ui/inputs/header';
 import ListItem from '../../../components/ui/listItem';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {ActivityIndicator} from "@react-native-material/core";
+import {ActivityIndicator, select} from "@react-native-material/core";
 
 import Modal from 'react-native-modal';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
@@ -24,7 +24,7 @@ import ThemeContext from '../../../components/ThemeContext'
 import {colors} from '../../../../assets/styles/themes'
 
 
-import { Amplify, Auth, DataStore, Hub } from 'aws-amplify';
+import { Amplify, Auth, DataStore, SortDirection  } from 'aws-amplify';
 import { Workouts, User, WorkoutNotes, SavedWorkouts, WorkoutResults, SubWorkouts} from '../../../models';
 
 
@@ -34,8 +34,10 @@ export default function WorkoutDetails( {navigation} )  {
   const route = useRoute();
   const {control, handleSubmit, formState: {errors}} = useForm();
   const [workoutcategory, setWorkoutCategory] = useState(route?.params?.value);
+  const [selectedworkoutid, setSelectedWorkoutID] = useState(route?.params?.workoutid);
   const [workoutslog, setWorkoutsLog] = useState(false);
   const [workouts, setWorkouts] = useState(false);
+  const [changedDate, setChangedDate] = useState(false);
 
   //Modal
   const [modalVisible, setModalVisible] = useState(false);
@@ -129,7 +131,7 @@ export default function WorkoutDetails( {navigation} )  {
       };
 
 
-    }, [date, refresh, userid]);
+    }, [date, refresh, userid, selectedworkoutid]);
 
     /*
       Search
@@ -445,21 +447,60 @@ export default function WorkoutDetails( {navigation} )  {
 
         const formatted_date = isValidDate(date)
 
-       console.log('fdate: ' + formatted_date)
-
-        //const formatted_date = format(new Date(date), 'MM/dd/yyyy').toString()
-
-        // Find today's workout
-        const currworkout = (await DataStore.query(Workouts)).filter(
-          pe => pe.date === formatted_date && pe.workout_type === workoutcategory.toString()
-        )
-
         console.log(workoutcategory)
-        console.log('here we are: ' + currworkout.length + ' ' + userid )
+        //console.log('here we are: ' + currworkout.length + ' ' + userid )
+
+        let currworkout;
+
+        if (selectedworkoutid) {
+          // Query the workout based on the provided workoutId
+          const workoutId = selectedworkoutid; // Assuming selectedWorkout is the workoutId
+
+          currworkout = (await DataStore.query(Workouts)).filter(
+            pe => pe.id === workoutId
+          )
+
+          console.log(currworkout)
+          setSelectedWorkoutID(null)
+
+        } else if (changedDate) {
+          console.log('here we are: ')
+          // Query the workout based on the changed date and workoutcategory
+          const filteredWorkouts = (await DataStore.query(Workouts)).filter(
+            pe => pe.workout_type === workoutcategory.toString() && pe.date === formatted_date
+          );
+
+          console.log(filteredWorkouts)
+
+          currworkout = filteredWorkouts
+          setChangedDate(false)
+
+        } else {
+          // Query the latest workout for the provided workoutcategory
+          // Find today's workout
+          currworkout = (await DataStore.query(Workouts)).filter(
+            pe => pe.workout_type === workoutcategory.toString()
+          )
+
+          currworkout.sort((a, b) => {
+            const [monthA, dayA, yearA] = a.date.split('/');
+            const [monthB, dayB, yearB] = b.date.split('/');
+            const dateA = new Date(yearA, monthA - 1, dayA);
+            const dateB = new Date(yearB, monthB - 1, dayB);
+            return dateB - dateA;
+          });
+
+        
+
+
+        }
 
        
         if (currworkout.length > 0 && userid) {
           const workoutId = currworkout[0].id;
+
+          setWorkout(currworkout[0])
+          setNewDate(currworkout[0].date)
 
           console.log(workoutId)
   
@@ -629,9 +670,6 @@ export default function WorkoutDetails( {navigation} )  {
             sw.sub.eq(authUser.attributes.sub)
           )
 
-
-        
-  
           //Query Matrix Table to find list of ids  
           if (user[0]) {
             //Set state variable
@@ -891,7 +929,7 @@ export default function WorkoutDetails( {navigation} )  {
       }
   
       const addADay = () => {
-        // console.log('here: ' + date)
+        console.log('here: ' + date)
   
           let isoDateString = ''
   
@@ -911,7 +949,7 @@ export default function WorkoutDetails( {navigation} )  {
   
           console.log('res: ' +result)
           //console.log('res formatted: ' + result.setDate(result.getDate() + 1 ))
-  
+          setChangedDate(true)
           setNewDate(result.setDate(result.getDate() + 1 ));
         };
       
@@ -933,7 +971,7 @@ export default function WorkoutDetails( {navigation} )  {
   
         console.log('res: ' +result)
         //console.log('res formatted: ' + result.setDate(result.getDate() + 1 ))
-  
+        setChangedDate(true)
         setNewDate(result.setDate(result.getDate() - 1 ));
       };
       
@@ -1699,6 +1737,11 @@ export default function WorkoutDetails( {navigation} )  {
       );
     
     }
+
+    const handleItemListPress = (id) => {
+      setSelectedWorkoutID(id)
+      setShowSearch(false);
+    };
 
     const handleSearch = (text) => {
       setSearchText(text);

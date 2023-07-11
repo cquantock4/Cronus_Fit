@@ -365,7 +365,7 @@ type EagerPrograms = {
   readonly price?: string | null;
   readonly downloadurl?: string | null;
   readonly data_type?: string | null;
-  readonly userID: string;
+  readonly users?: (UserPrograms | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -382,7 +382,7 @@ type LazyPrograms = {
   readonly price?: string | null;
   readonly downloadurl?: string | null;
   readonly data_type?: string | null;
-  readonly userID: string;
+  readonly users: AsyncCollection<UserPrograms>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -578,7 +578,7 @@ type EagerUser = {
   readonly CheckListItems?: (UserCheckListItems | null)[] | null;
   readonly workout_logs?: boolean | null;
   readonly WorkoutNotes?: (WorkoutNotes | null)[] | null;
-  readonly Programs?: (Programs | null)[] | null;
+  readonly Programs?: (UserPrograms | null)[] | null;
   readonly createdAt?: string | null;
 }
 
@@ -611,7 +611,7 @@ type LazyUser = {
   readonly CheckListItems: AsyncCollection<UserCheckListItems>;
   readonly workout_logs?: boolean | null;
   readonly WorkoutNotes: AsyncCollection<WorkoutNotes>;
-  readonly Programs: AsyncCollection<Programs>;
+  readonly Programs: AsyncCollection<UserPrograms>;
   readonly createdAt?: string | null;
 }
 
@@ -653,4 +653,38 @@ export declare type UserCheckListItems = LazyLoading extends LazyLoadingDisabled
 
 export declare const UserCheckListItems: (new (init: ModelInit<UserCheckListItems>) => UserCheckListItems) & {
   copyOf(source: UserCheckListItems, mutator: (draft: MutableModel<UserCheckListItems>) => MutableModel<UserCheckListItems> | void): UserCheckListItems;
+}
+
+type EagerUserPrograms = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UserPrograms, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly programsId?: string | null;
+  readonly userId?: string | null;
+  readonly programs: Programs;
+  readonly user: User;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyUserPrograms = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UserPrograms, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly programsId?: string | null;
+  readonly userId?: string | null;
+  readonly programs: AsyncItem<Programs>;
+  readonly user: AsyncItem<User>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type UserPrograms = LazyLoading extends LazyLoadingDisabled ? EagerUserPrograms : LazyUserPrograms
+
+export declare const UserPrograms: (new (init: ModelInit<UserPrograms>) => UserPrograms) & {
+  copyOf(source: UserPrograms, mutator: (draft: MutableModel<UserPrograms>) => MutableModel<UserPrograms> | void): UserPrograms;
 }
