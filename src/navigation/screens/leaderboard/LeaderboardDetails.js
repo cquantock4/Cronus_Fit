@@ -40,7 +40,7 @@ export default function LeaderboardDetails( {navigation} ) {
   //New Variables
   const [workout, setWorkout] = useState([])
   const [workoutleaderboard, setWorkoutLeaderboard] = useState([])
-  const [isLoading, setIsLoading] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState(undefined);
   const [commentsworkouts, setCommentsWorkouts] = useState(undefined);
 

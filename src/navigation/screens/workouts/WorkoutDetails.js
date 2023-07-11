@@ -34,10 +34,13 @@ export default function WorkoutDetails( {navigation} )  {
   const route = useRoute();
   const {control, handleSubmit, formState: {errors}} = useForm();
   const [workoutcategory, setWorkoutCategory] = useState(route?.params?.value);
-  const [selectedworkoutid, setSelectedWorkoutID] = useState(route?.params?.workoutid);
+  const [selectedworkoutid, setSelectedWorkoutID] = useState(route?.params?.id);
+  const [selectedWorkoutIndex, setSelectedWorkoutIndex] = useState(0);
   const [workoutslog, setWorkoutsLog] = useState(false);
   const [workouts, setWorkouts] = useState(false);
   const [changedDate, setChangedDate] = useState(false);
+
+
 
   //Modal
   const [modalVisible, setModalVisible] = useState(false);
@@ -58,6 +61,7 @@ export default function WorkoutDetails( {navigation} )  {
   const [userid, setUserID] = useState(undefined);
 
   const [workout, setWorkout] = useState(undefined);
+  const [isLoading, setIsLoading] = useState(true);
   const [workoutid, setWorkoutID] = useState(undefined);
   const [workoutresults, setWorkoutResults] = useState(undefined);
   const [workoutresults_lookup, setWorkoutResultsLookup] = useState(undefined);
@@ -118,8 +122,140 @@ export default function WorkoutDetails( {navigation} )  {
      // Return the function to unsubscribe from the event so it gets removed on unmount
      return unsubscribe;
     }, [navigation]);
-  
 
+    useEffect(() => {
+
+
+      const workoutsub = DataStore.observeQuery(Workouts).subscribe(() => getWorkoutInfo().then(() => {
+        setIsLoading(false); 
+      }));
+
+
+      return () => {
+        workoutsub.unsubscribe();
+      };
+
+
+    }, [selectedworkoutid]);
+
+
+    async function getWorkoutInfo() {
+
+      console.log('Here is the selected workout ID to load in: ' + selectedworkoutid)
+
+      const allworkouts = (await DataStore.query(Workouts)).filter(
+        pe => pe.workout_type === workoutcategory
+      )
+
+      allworkouts.sort((a, b) => {
+        const [monthA, dayA, yearA] = a.date.split('/');
+        const [monthB, dayB, yearB] = b.date.split('/');
+        const dateA = new Date(yearA, monthA - 1, dayA);
+        const dateB = new Date(yearB, monthB - 1, dayB);
+        return dateB - dateA;
+      });
+
+      console.log(allworkouts)
+      setWorkouts(allworkouts)
+
+      let selectedWorkoutIndex;
+
+      if (selectedworkoutid === 0) {
+        selectedWorkoutIndex = 0;
+      } else {
+        selectedWorkoutIndex = allworkouts.findIndex(workout => workout.id === selectedworkoutid);
+      }
+
+      if (selectedWorkoutIndex !== -1) {
+        setSelectedWorkoutIndex(selectedWorkoutIndex);
+        let curr_workout = allworkouts[selectedWorkoutIndex]
+        setWorkout(curr_workout)
+        getWorkoutDetails(curr_workout)
+      }
+
+        
+
+    }
+
+    async function getWorkoutDetails(currworkout) {
+
+      console.log('workoout details: ' + workoutid)
+
+        // Find the subworkouts associated with the workout
+        const subWorkouts = await DataStore.query(SubWorkouts, (s) =>
+          s.workoutsID.eq(currworkout.id)
+        );
+
+       // Get all the subworkoutIds
+       const subWorkoutIds = subWorkouts.map((sw) => sw.id);
+
+       //Query all WorkoutResults
+       const workoutResults = await DataStore.query(WorkoutResults, (s) =>
+           s.userID.eq(userid)
+       );
+
+       setWorkoutResultsLookup(workoutResults)
+
+       const workoutResults_filtered = workoutResults.filter(({subworkoutsID}) => subWorkoutIds.includes(subworkoutsID));
+    
+      const subWorkoutsWithResults = subWorkouts.map(subWorkout => {
+        // Get the workout result for this sub workout from the results table
+        //const workoutResult = workoutResults_filtered.find(result => result.subworkoutsID === subWorkout.id);
+        const workoutResult = workoutResults_filtered.filter(result => result.subworkoutsID === subWorkout.id);
+  
+        // console.log(subWorkout.id)
+        //console.log('workout Results: ' + JSON.stringify(workoutResult))
+      
+        // If there is no workout result for this sub workout, return the sub workout object as is
+        if (!workoutResult) {
+          return subWorkout;
+        }
+  
+      
+        // If there is a workout result for this sub workout, add it as a property of the sub workout object
+        
+        return {
+          ...subWorkout,
+          workoutresults: workoutResult.map(result => ({
+            id: result.id,
+            subworkoutsID: result.subworkoutsID,
+            value: result.value,
+            userID: result.userID
+          })) 
+        };
+  
+  
+      });
+
+
+      //Defining starting data structer for top level workouts
+      const dt = {
+        id: currworkout.id,
+        title: currworkout.title,
+        desc: currworkout.desc,
+        date: currworkout.date,
+        type: currworkout.type,
+      }
+  
+  
+      //console.log('this this this: ' + JSON.stringify(subWorkoutsWithResults))
+      
+      // Add the subWorkoutsWithResults array to the dt object
+      const dtWithResults = {
+        ...dt,
+        subWorkouts: subWorkoutsWithResults
+      };
+  
+      console.log('Here is the value: ' + JSON.stringify(dtWithResults))
+      setWorkoutResults(dtWithResults)
+  
+      if (dtWithResults.subWorkouts) {
+        groupAndAdd(dtWithResults)
+      }
+
+    }
+  
+    /*
     useEffect(() => {
 
 
@@ -133,9 +269,6 @@ export default function WorkoutDetails( {navigation} )  {
 
     }, [date, refresh, userid, selectedworkoutid]);
 
-    /*
-      Search
-    */
     useEffect(() => {
 
       const subs = DataStore.observeQuery(Workouts).subscribe((snapshot) => {
@@ -157,6 +290,7 @@ export default function WorkoutDetails( {navigation} )  {
       };
 
     }, []);
+    */
 
     function formatDate(dateString, formatString) {
       const date = new Date(dateString);
@@ -909,7 +1043,42 @@ export default function WorkoutDetails( {navigation} )  {
         Workout Display
     */
 
+        const DatePickerArrows_test = () => {
+
+          const navigateForward = () => {
+            console.log(selectedWorkoutIndex)
+
+            if (selectedWorkoutIndex < workouts.length - 1) {
+              setSelectedWorkoutIndex(selectedWorkoutIndex + 1);
+              setWorkout(workouts[selectedWorkoutIndex + 1]);
+              getWorkoutDetails(workouts[selectedWorkoutIndex + 1]);
+            }
+          };
+          
+          const navigateBackward = () => {
+
+            console.log(selectedWorkoutIndex)
+
+            if (selectedWorkoutIndex > 0) {
+              setSelectedWorkoutIndex(selectedWorkoutIndex - 1);
+              setWorkout(workouts[selectedWorkoutIndex - 1]);
+              getWorkoutDetails(workouts[selectedWorkoutIndex - 1]);
+            }
+          };
     
+          return (
+            <View style={[styles.datePickerArrowsContainer]}>
+              <Pressable style={{padding: 10, paddingHorizontal: 15}} onPress={navigateForward}>
+                <Ionicons name='caret-back-outline' style={{fontSize: 25 , color: activeColors.primary_text}}/>
+              </Pressable>
+              <Pressable style={{padding: 10, paddingHorizontal: 15,}} onPress={navigateBackward}>
+                <Ionicons  name='caret-forward-outline' style={{fontSize: 25, color: activeColors.primary_text}}/>
+              </Pressable>
+            </View>
+          )
+
+        
+        }
 
     const DatePickerArrows = () => {
 
@@ -1555,6 +1724,7 @@ export default function WorkoutDetails( {navigation} )  {
         
     }
 
+
     const WorkoutInfoView = () => {
 
         function isValidDate(dateString) {
@@ -1576,71 +1746,85 @@ export default function WorkoutDetails( {navigation} )  {
           date_final = format(new Date(date), 'MM/dd/yyyy')
         }
 
+
         return (
             <>
               <View style={styles.infoViewContainer}>
-                <View style={styles.datePicker}>
-                  <View style={{justifyContent: 'center'}}>
-                   <Text style={{color: activeColors.primary_text, fontSize: 27}}>{date_final}</Text>
+              {isLoading ? (
+                  <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                    <ActivityIndicator size="large" color={activeColors.accent_text} />
                   </View>
-                  <View style={{paddingRight: 10}}>
-                    <DatePickerArrows />
-                  </View>
-                </View>
-                <ScrollView >
-                    {workout ? (
-
-                    <View key={workout.id} style={{ alignItems: 'center', paddingHorizontal: 3, paddingTop: 10 }}>
-                      <View>
-                        <Text style={{ fontWeight: '400', lineHeight: 25, textAlign: 'left', color: activeColors.primary_text }}>{textDisplay(workout.desc)}</Text>
+                ) : (
+                  <>
+                    <View style={styles.datePicker}>
+                      <View style={{justifyContent: 'center'}}>
+                        { workout ? (
+                          <Text style={{color: activeColors.primary_text, fontSize: 27}}>{workout.date}</Text>
+                        ) : (
+                          <></>
+                        )}
+                          
                       </View>
+                      <View style={{paddingRight: 10}}>
+                        <DatePickerArrows_test />
+                      </View>
+                    </View>
+                    
+                    <ScrollView >
+                        {workout ? (
 
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginTop: 10, paddingHorizontal: 10 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                          <Text style={{ fontWeight: '500', color: activeColors.primary_text, marginRight: 5 }}>Save</Text>
-                          <Switch
-                            trackColor={{ false: "#767577", true: "#363636" }}
-                            thumbColor={isEnabledIndSave ? "#F8BE13" : "#f4f3f4"}
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={toggleSwitchIndSave}
-                            value={isEnabledIndSave}
-                          />
+                        <View key={workout.id} style={{ alignItems: 'center', paddingHorizontal: 3, paddingTop: 10 }}>
+                          <View>
+                            <Text style={{ fontWeight: '400', lineHeight: 25, textAlign: 'left', color: activeColors.primary_text }}>{textDisplay(workout.desc)}</Text>
+                          </View>
+
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginTop: 10, paddingHorizontal: 10 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                              <Text style={{ fontWeight: '500', color: activeColors.primary_text, marginRight: 5 }}>Save</Text>
+                              <Switch
+                                trackColor={{ false: "#767577", true: "#363636" }}
+                                thumbColor={isEnabledIndSave ? "#F8BE13" : "#f4f3f4"}
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={toggleSwitchIndSave}
+                                value={isEnabledIndSave}
+                              />
+                            </View>
+                            
+                            <TouchableOpacity style={{padding: 10,flexDirection: 'row',borderRadius: 5, backgroundColor: activeColors.accent_text }} onPress={onAddNotesPress}>
+                              <View style={{ justifyContent: 'center' }}>
+                                <Ionicons name='add-outline' style={{ fontSize: 20, color: '#363636', fontWeight: '600' }} />
+                              </View>
+                              <View style={{ justifyContent: 'center' }}>
+                                <Text style={{ color: '#363636', fontWeight: '600' }}>Notes</Text>
+                              </View>
+                            </TouchableOpacity>
+
+                            
+                          </View>
                         </View>
-                        
-                        <TouchableOpacity style={{padding: 10,flexDirection: 'row',borderRadius: 5, backgroundColor: activeColors.accent_text }} onPress={onAddNotesPress}>
-                          <View style={{ justifyContent: 'center' }}>
-                            <Ionicons name='add-outline' style={{ fontSize: 20, color: '#363636', fontWeight: '600' }} />
+                          
+                        ) : (
+                          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 200}}>
+                            <Text style={{fontWeight: '400', lineHeight: 25, color: activeColors.primary_text}}>No workout posted today</Text>
                           </View>
-                          <View style={{ justifyContent: 'center' }}>
-                            <Text style={{ color: '#363636', fontWeight: '600' }}>Notes</Text>
-                          </View>
-                        </TouchableOpacity>
+                        )}
 
-                        
-                      </View>
-                    </View>
-                      
-                    ) : (
-                      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 200}}>
-                        <Text style={{fontWeight: '400', lineHeight: 25, color: activeColors.primary_text}}>No workout posted today</Text>
-                      </View>
-                    )}
+                        <View style={{paddingBottom: 75}}>
+                        {subworkouts ? (
+                            subworkouts.map((category, index) => {
+                              return(
+                                  <WorkoutItem key={subworkouts[category].group} category={category} />
+                              )
 
-                    <View style={{paddingBottom: 75}}>
-                    {subworkouts ? (
-                        subworkouts.map((category, index) => {
-                          return(
-                              <WorkoutItem key={subworkouts[category].group} category={category} />
+                            })
+                          ) : (
+                            <></>
                           )
-
-                        })
-                      ) : (
-                        <></>
-                      )
-                    }
-                    </View>
-                  </ScrollView>
-     
+                        }
+                        </View>
+                    </ScrollView>
+                  </>
+                )}
                     
                     {/*workout ? (
                       <>
@@ -1738,8 +1922,9 @@ export default function WorkoutDetails( {navigation} )  {
     
     }
 
-    const handleItemListPress = (id) => {
+    const handleItemListPress = (id, type) => {
       setSelectedWorkoutID(id)
+      setWorkoutCategory(type)
       setShowSearch(false);
     };
 
@@ -1767,7 +1952,9 @@ export default function WorkoutDetails( {navigation} )  {
         <Header title={workoutcategory === 'FUNCTIONALFITNESS' ? 'Functional Fitness' : 'Military Prep'} searchable
         onSearch={handleSearch} 
         searchMode={showsearch}
-        onCancelSearch={handleCancelSearch} />
+        onCancelSearch={handleCancelSearch}
+        backButtonPath="FitnessScreen"
+        navigation={navigation} />
         {/* Modals */}
         <NotesModal value={workoutnotes} onPress={(text) => onSaveNotesPress(text)}/>
         <View style={{flex: 1}}>
@@ -1781,7 +1968,7 @@ export default function WorkoutDetails( {navigation} )  {
                   subtitle={item.desc}
                   date={item.date}
                   navtext="View Leaderboard"
-                  onPress={() => handleItemListPress(item.id)}
+                  onPress={() => handleItemListPress(item.id, item.workout_type)}
                 />
               ))}
           

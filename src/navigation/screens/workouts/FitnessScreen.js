@@ -151,8 +151,8 @@ export default function WorkoutScreen( {navigation} ) {
     },
   });
 
-  const handleItemListPress = (key, id) => {
-    navigation.navigate('WorkoutDetails', { value: key, workoutid: id});
+  const handleItemListPress = (id, type) => {
+    navigation.navigate('WorkoutDetails', { value: type, id: id});
   };
 
   const handleSearch = (text) => {
@@ -231,7 +231,7 @@ export default function WorkoutScreen( {navigation} ) {
                 subtitle={item.desc}
                 date={item.date}
                 navtext="View Leaderboard"
-                onPress={() => handleItemListPress(item.id, item.id)}
+                onPress={() => handleItemListPress(item.id, item.workout_type)}
               />
             ))}
         
@@ -254,7 +254,7 @@ export default function WorkoutScreen( {navigation} ) {
                 </View>
               ) : (
               <View style={{ flex: 1, padding: 5, paddingTop: 10}}>
-               <Pressable onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype})} style={{marginBottom: 10, paddingHorizontal: 10,  paddingVertical: 15, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5, flexDirection: 'row', justifyContent: 'space-between' }}>
+               <Pressable onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype ,id: wod.id})} style={{marginBottom: 10, paddingHorizontal: 10,  paddingVertical: 15, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5, flexDirection: 'row', justifyContent: 'space-between' }}>
                   <View style={{justifyContent: 'center'}}>
                     <Text style={{fontSize: 25, fontWeight: '500', color: activeColors.accent_text}}>WOD</Text>
                   </View>
@@ -296,7 +296,11 @@ export default function WorkoutScreen( {navigation} ) {
                       onPress={() => navigation.navigate('ProgrammingScreen', { value: 'Free' })}
                     />
                   <NavigationIcon label="My Workouts" icon="document-text-outline" />
-                  <NavigationIcon label="Blank" icon="document-text-outline" />
+                  <NavigationIcon 
+                    label={defaultworkouttype === "FUNCTIONALFITNESS" ? "Military Prep" : "Functional Fitness"} 
+                    icon="document-text-outline" 
+                    onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype === "FUNCTIONALFITNESS" ? "MILITARYPREP" : "FUNCTIONALFITNESS", id: 0})}
+                    />
               </View>
             </View>
           </>
