@@ -1216,16 +1216,9 @@ export default function WorkoutDetails( {navigation} )  {
 
     const WorkoutItem = ({category}) => {
 
-        //console.log('here we are: ' + JSON.stringify(subworkouts[category]))
-
       const [expand, setExpand] = useState((savecategory === subworkouts[category].group) ? true : false);
-
       const [values, setValues] = useState(subworkouts[category].info.sort((a, b) => a.order - b.order));
-      
-      //console.log('workoutresults: ' + JSON.stringify(values))
-
-      //console.log(subworkouts[category].info)
-
+  
 
       const onSavePress = async () => {
 
@@ -1383,7 +1376,6 @@ export default function WorkoutDetails( {navigation} )  {
 
       //console.log('this is it: ' + JSON.stringify(subworkouts[category].info))
 
-
       const expandRow = async () => {
 
         //Clear out saveCategory
@@ -1399,9 +1391,8 @@ export default function WorkoutDetails( {navigation} )  {
       return (
 
         <View>
-
           <Pressable onPress={expandRow}>
-            <View style={styles.subWorkoutblock}>
+            <View style={[styles.subWorkoutblock, {borderBottomColor: activeColors.primary_text}]}>
               <Text style={{fontWeight: '600', fontSize: 20, color: activeColors.primary_text}}>{subworkouts[category].group}</Text>
             </View>
           </Pressable>
@@ -1411,7 +1402,6 @@ export default function WorkoutDetails( {navigation} )  {
               keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -100}
               style={{ flex: 1 }}
             >
-
             {expand ? (
 
                   values.map((item, index) => {
@@ -1549,9 +1539,7 @@ export default function WorkoutDetails( {navigation} )  {
         }
 
         return (
-          <>
-                
-
+            <>
               <View style={styles.infoViewContainer}>
                 <View style={styles.datePicker}>
                   <View style={{justifyContent: 'center'}}>
@@ -1602,20 +1590,12 @@ export default function WorkoutDetails( {navigation} )  {
 
                     <View style={{paddingBottom: 75}}>
                     {subworkouts ? (
-
-                 
                         subworkouts.map((category, index) => {
-
-                          //console.log('category: ' + JSON.stringify(subworkouts[category]))
-
                           return(
                               <WorkoutItem key={subworkouts[category].group} category={category} />
                           )
 
                         })
-
-            
-
                       ) : (
                         <></>
                       )
@@ -1720,7 +1700,6 @@ export default function WorkoutDetails( {navigation} )  {
     
     }
 
-
     const handleSearch = (text) => {
       setSearchText(text);
       setShowSearch(true);
@@ -1765,9 +1744,7 @@ export default function WorkoutDetails( {navigation} )  {
           
           </ScrollView>
           ) : (
-         
-                  
-              <WorkoutInfoView />
+            <WorkoutInfoView />
           )}
         </View>
 
@@ -1775,7 +1752,6 @@ export default function WorkoutDetails( {navigation} )  {
     )
 
     return(
-      
       <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
 
           {/* Modals */}
@@ -1854,8 +1830,8 @@ export default function WorkoutDetails( {navigation} )  {
                 </ScrollView>
               )}
               
-          </View>
-      );
+      </View>
+    );
   }
 
 const statusBarHeight = Constants.statusBarHeight
@@ -2034,8 +2010,6 @@ const styles = StyleSheet.create({
   //Sub Workout
   subWorkoutblock: {
     padding: 15, 
-    //backgroundColor: 'white', 
-    borderBottomColor: 'gray', 
     borderBottomWidth: 0.75,
     paddingVertical: 20,
     flexDirection: 'row',

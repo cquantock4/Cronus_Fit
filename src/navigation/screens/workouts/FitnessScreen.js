@@ -254,7 +254,7 @@ export default function WorkoutScreen( {navigation} ) {
                 </View>
               ) : (
               <View style={{ flex: 1, padding: 5, paddingTop: 10}}>
-               <Pressable onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype})} style={{marginBottom: 10, paddingHorizontal: 10,  paddingVertical: 15,  borderBottomWidth: 0.5, flexDirection: 'row', justifyContent: 'space-between' }}>
+               <Pressable onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype})} style={{marginBottom: 10, paddingHorizontal: 10,  paddingVertical: 15, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5, flexDirection: 'row', justifyContent: 'space-between' }}>
                   <View style={{justifyContent: 'center'}}>
                     <Text style={{fontSize: 25, fontWeight: '500', color: activeColors.accent_text}}>WOD</Text>
                   </View>
@@ -267,14 +267,14 @@ export default function WorkoutScreen( {navigation} ) {
                     <View style={{paddingHorizontal: 5}}>
                       {wod && wod.desc ? (
                         <>
-                        <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10}}>
-                          <View style={{justifyContent: 'center'}}>
-                            <Text style={{color: activeColors.primary_text, marginBottom: 5, fontSize: 20}}>{wod.date}</Text>
+                          <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10}}>
+                            <View style={{justifyContent: 'center'}}>
+                              <Text style={{color: activeColors.primary_text, marginBottom: 5, fontSize: 20}}>{wod.date}</Text>
+                            </View>
+                            <View style={{justifyContent: 'center'}}>
+                              <Text style={{color: activeColors.primary_text, marginBottom: 5}}>{wod.workout_type === 'FUNCTIONALFITNESS' ? ('Functional Fitness') : ('Military Prep')}</Text>
+                            </View>
                           </View>
-                          <View style={{justifyContent: 'center'}}>
-                            <Text style={{color: activeColors.primary_text, marginBottom: 5}}>{wod.workout_type === 'FUNCTIONALFITNESS' ? ('Functional Fitness') : ('Military Prep')}</Text>
-                          </View>
-                        </View>
                           
                           <Text style={{color: activeColors.primary_text, lineHeight: 25, marginBottom: 50}}>
                             {wod.desc.replace(/\\n/g, '\n')}
