@@ -254,7 +254,7 @@ export default function WorkoutScreen( {navigation} ) {
                 </View>
               ) : (
               <View style={{ flex: 1, padding: 5, paddingTop: 10}}>
-               <Pressable onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype})} style={{marginBottom: 10, paddingBottom: 5, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5, flexDirection: 'row', justifyContent: 'space-between' }}>
+               <Pressable onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype})} style={{marginBottom: 10, paddingHorizontal: 10,  paddingVertical: 15,  borderBottomWidth: 0.5, flexDirection: 'row', justifyContent: 'space-between' }}>
                   <View style={{justifyContent: 'center'}}>
                     <Text style={{fontSize: 25, fontWeight: '500', color: activeColors.accent_text}}>WOD</Text>
                   </View>

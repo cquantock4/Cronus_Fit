@@ -797,6 +797,11 @@ export const getUserInfo = /* GraphQL */ `
           startedAt
           __typename
         }
+        Programs {
+          nextToken
+          startedAt
+          __typename
+        }
         createdAt
         _version
         _deleted
@@ -1037,6 +1042,7 @@ export const getPrograms = /* GraphQL */ `
       price
       downloadurl
       data_type
+      userID
       createdAt
       updatedAt
       _version
@@ -1061,6 +1067,7 @@ export const listPrograms = /* GraphQL */ `
         price
         downloadurl
         data_type
+        userID
         createdAt
         updatedAt
         _version
@@ -1095,6 +1102,44 @@ export const syncPrograms = /* GraphQL */ `
         price
         downloadurl
         data_type
+        userID
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        __typename
+      }
+      nextToken
+      startedAt
+      __typename
+    }
+  }
+`;
+export const programsByUserID = /* GraphQL */ `
+  query ProgramsByUserID(
+    $userID: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelProgramsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    programsByUserID(
+      userID: $userID
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        title
+        desc
+        free
+        price
+        downloadurl
+        data_type
+        userID
         createdAt
         updatedAt
         _version
@@ -1467,6 +1512,11 @@ export const getWorkoutResults = /* GraphQL */ `
           startedAt
           __typename
         }
+        Programs {
+          nextToken
+          startedAt
+          __typename
+        }
         createdAt
         _version
         _deleted
@@ -1781,6 +1831,7 @@ export const getWorkouts = /* GraphQL */ `
         startedAt
         __typename
       }
+      legacy
       createdAt
       updatedAt
       _version
@@ -1823,6 +1874,7 @@ export const listWorkouts = /* GraphQL */ `
           startedAt
           __typename
         }
+        legacy
         createdAt
         updatedAt
         _version
@@ -1875,6 +1927,7 @@ export const syncWorkouts = /* GraphQL */ `
           startedAt
           __typename
         }
+        legacy
         createdAt
         updatedAt
         _version
@@ -2044,6 +2097,27 @@ export const getUser = /* GraphQL */ `
         startedAt
         __typename
       }
+      Programs {
+        items {
+          id
+          title
+          desc
+          free
+          price
+          downloadurl
+          data_type
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        nextToken
+        startedAt
+        __typename
+      }
       createdAt
       _version
       _deleted
@@ -2108,6 +2182,11 @@ export const listUsers = /* GraphQL */ `
         }
         workout_logs
         WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        Programs {
           nextToken
           startedAt
           __typename
@@ -2186,6 +2265,11 @@ export const syncUsers = /* GraphQL */ `
         }
         workout_logs
         WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        Programs {
           nextToken
           startedAt
           __typename
@@ -2274,6 +2358,11 @@ export const getUserCheckListItems = /* GraphQL */ `
         }
         workout_logs
         WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        Programs {
           nextToken
           startedAt
           __typename

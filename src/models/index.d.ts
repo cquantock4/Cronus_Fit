@@ -365,6 +365,7 @@ type EagerPrograms = {
   readonly price?: string | null;
   readonly downloadurl?: string | null;
   readonly data_type?: string | null;
+  readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -381,6 +382,7 @@ type LazyPrograms = {
   readonly price?: string | null;
   readonly downloadurl?: string | null;
   readonly data_type?: string | null;
+  readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -517,6 +519,7 @@ type EagerWorkouts = {
   readonly SavedWorkouts?: (SavedWorkouts | null)[] | null;
   readonly workout_type?: WorkoutType | keyof typeof WorkoutType | null;
   readonly WorkoutNotes?: (WorkoutNotes | null)[] | null;
+  readonly legacy?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -535,6 +538,7 @@ type LazyWorkouts = {
   readonly SavedWorkouts: AsyncCollection<SavedWorkouts>;
   readonly workout_type?: WorkoutType | keyof typeof WorkoutType | null;
   readonly WorkoutNotes: AsyncCollection<WorkoutNotes>;
+  readonly legacy?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -574,6 +578,7 @@ type EagerUser = {
   readonly CheckListItems?: (UserCheckListItems | null)[] | null;
   readonly workout_logs?: boolean | null;
   readonly WorkoutNotes?: (WorkoutNotes | null)[] | null;
+  readonly Programs?: (Programs | null)[] | null;
   readonly createdAt?: string | null;
 }
 
@@ -606,6 +611,7 @@ type LazyUser = {
   readonly CheckListItems: AsyncCollection<UserCheckListItems>;
   readonly workout_logs?: boolean | null;
   readonly WorkoutNotes: AsyncCollection<WorkoutNotes>;
+  readonly Programs: AsyncCollection<Programs>;
   readonly createdAt?: string | null;
 }
 

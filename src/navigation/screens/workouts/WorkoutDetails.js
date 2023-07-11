@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Image, Alert, ScrollView, Button } from 'react-native';
-import { TextInput, Pressable, Switch, Input, FlatList, KeyboardAvoidingView} from 'react-native';
+import { TextInput, Pressable, Switch, Input, FlatList, KeyboardAvoidingView, TouchableOpacity, Keyboard} from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Bubble_Button, Bubble_Button_Small, Button_Link } from '../../../components/ui/buttons'
@@ -63,6 +63,7 @@ export default function WorkoutDetails( {navigation} )  {
   const [subworkout_archive, setSubWorkoutArchive] = useState(undefined);
   const [savedworkouts, setSavedWorkouts] = useState(undefined)
   const [workoutnotes, setWorkoutNotes] = useState(undefined)
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   const [date, setNewDate] = useState(new Date());
 
@@ -948,6 +949,16 @@ export default function WorkoutDetails( {navigation} )  {
 
       //console.log(date_final)
 
+      return (
+        <View style={[styles.datePickerArrowsContainer]}>
+          <Pressable style={{padding: 10, paddingHorizontal: 15}} onPress={subADay}>
+            <Ionicons name='caret-back-outline' style={{fontSize: 25 , color: activeColors.primary_text}}/>
+          </Pressable>
+          <Pressable style={{padding: 10, paddingHorizontal: 15,}} onPress={addADay}>
+            <Ionicons  name='caret-forward-outline' style={{fontSize: 25, color: activeColors.primary_text}}/>
+          </Pressable>
+        </View>
+      )
     
       return(
         <View style={styles.datePickerArrowsContainer}>
@@ -1518,39 +1529,70 @@ export default function WorkoutDetails( {navigation} )  {
 
     const WorkoutInfoView = () => {
 
+        function isValidDate(dateString) {
+          const pattern = /^\d{2}\/\d{2}\/\d{4}$/; // pattern for MM/dd/yyyy
+    
+          if (!pattern.test(dateString)) {
+            return false;
+          }
+    
+          return true;
+    
+        }
 
+        let date_final = ''
+
+        if (isValidDate(date)) {
+          date_final = date.toString()
+        } else {
+          date_final = format(new Date(date), 'MM/dd/yyyy')
+        }
 
         return (
-          
-            <View style={styles.workoutCategory}>
-              {/*<Text>{route?.params?.value}</Text>*/}
+          <>
+                
+
               <View style={styles.infoViewContainer}>
-  
-                    { 
-                      /*
-                        Show Workout Desc
-                      */
+                <View style={styles.datePicker}>
+                  <View style={{justifyContent: 'center'}}>
+                   <Text style={{color: activeColors.primary_text, fontSize: 27}}>{date_final}</Text>
+                  </View>
+                  <View style={{paddingRight: 10}}>
+                    <DatePickerArrows />
+                  </View>
+                </View>
+                <ScrollView >
+                    {workout ? (
 
-                      workout ? (
-                        <>
-                          <View key={workout.id} style={{alignItems: 'center', padding: 20, paddingBottom: 0, paddingHorizontal: 15}}>
-                            {/*<Text style={{fontSize: 18, fontWeight: '500', marginBottom: 20}}>{workout.title}</Text>*/}
-                            <Text style={{fontWeight: '400', lineHeight: 25, textAlign: 'left', color: activeColors.primary_text}}>{textDisplay(workout.desc)}</Text>
-                            <View style={{backgroundColor: 'transparent',alignSelf: 'flex-end', justifyContent:'flex-end', flexDirection: 'row', alignItems: 'center'}}>
-                              <Text style={{fontWeight: '500', color: activeColors.primary_text, marginTop: -5}}>Save</Text>
-                              <Switch
-                              //363636
-                                trackColor={{ false: "#767577", true: "#363636" }}
-                                thumbColor={isEnabledIndSave ? "#F8BE13" : "#f4f3f4"}
-                                ios_backgroundColor="#3e3e3e"
-                                onValueChange={toggleSwitchIndSave}
-                                value={isEnabledIndSave}
-                                style={{marginTop: -5}}
-                              />
-                            </View>
+                    <View key={workout.id} style={{ alignItems: 'center', paddingHorizontal: 3, paddingTop: 10 }}>
+                      <View>
+                        <Text style={{ fontWeight: '400', lineHeight: 25, textAlign: 'left', color: activeColors.primary_text }}>{textDisplay(workout.desc)}</Text>
+                      </View>
+
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginTop: 10, paddingHorizontal: 10 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                          <Text style={{ fontWeight: '500', color: activeColors.primary_text, marginRight: 5 }}>Save</Text>
+                          <Switch
+                            trackColor={{ false: "#767577", true: "#363636" }}
+                            thumbColor={isEnabledIndSave ? "#F8BE13" : "#f4f3f4"}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={toggleSwitchIndSave}
+                            value={isEnabledIndSave}
+                          />
+                        </View>
+                        
+                        <TouchableOpacity style={{padding: 10,flexDirection: 'row',borderRadius: 5, backgroundColor: activeColors.accent_text }} onPress={onAddNotesPress}>
+                          <View style={{ justifyContent: 'center' }}>
+                            <Ionicons name='add-outline' style={{ fontSize: 20, color: '#363636', fontWeight: '600' }} />
                           </View>
+                          <View style={{ justifyContent: 'center' }}>
+                            <Text style={{ color: '#363636', fontWeight: '600' }}>Notes</Text>
+                          </View>
+                        </TouchableOpacity>
 
-                        </>
+                        
+                      </View>
+                    </View>
                       
                     ) : (
                       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 200}}>
@@ -1558,52 +1600,52 @@ export default function WorkoutDetails( {navigation} )  {
                       </View>
                     )}
 
-                    {
-                      /*
-                        Show Sub Workout Items
-                      */
-                        subworkouts ? (
+                    <View style={{paddingBottom: 75}}>
+                    {subworkouts ? (
 
+                 
+                        subworkouts.map((category, index) => {
 
-                          subworkouts.map((category, index) => {
+                          //console.log('category: ' + JSON.stringify(subworkouts[category]))
 
-                            //console.log('category: ' + JSON.stringify(subworkouts[category]))
+                          return(
+                              <WorkoutItem key={subworkouts[category].group} category={category} />
+                          )
 
-                            return(
-                                <WorkoutItem key={subworkouts[category].group} category={category} />
-                            )
+                        })
 
-                          })
+            
 
-
-                        ) : (
-                          <></>
-                        )
-                    }
-
-                {workout ? (
-                  <>
-                  <View style={{justifyContent: 'center', alignItems: 'center', padding: 5, marginTop: 10}}>
-                    <Text style={{color: activeColors.primary_text, fontSize: 18, fontWeight: 600}}>Notes</Text>
-                  </View>
-                    <Pressable onPress={onAddNotesPress} style={{margin: 5, borderWidth: 1, borderColor:activeColors.just_gray, padding: 5, borderRadius: 5, minHeight: 75 }}>
-                      {workoutnotes ? (
-                        <Text style={{color: activeColors.just_gray}}>{workoutnotes}</Text>
                       ) : (
-                        <Text style={{color: activeColors.just_gray}}>Enter Notes Here</Text>
-                      )}
-                    </Pressable>
-                  </>
-                ) : (
-                  <>
-                  </>
-                )}
+                        <></>
+                      )
+                    }
+                    </View>
+                  </ScrollView>
+     
+                    
+                    {/*workout ? (
+                      <>
+                      
+                      <View style={{justifyContent: 'center', alignItems: 'center', padding: 5, marginTop: 10}}>
+                        <Text style={{color: activeColors.primary_text, fontSize: 18, fontWeight: 600}}>Notes</Text>
+                      </View>
+                        <Pressable onPress={onAddNotesPress} style={{margin: 5, borderWidth: 1, borderColor:activeColors.just_gray, padding: 5, borderRadius: 5, minHeight: 75 }}>
+                          {workoutnotes ? (
+                            <Text style={{color: activeColors.just_gray}}>{workoutnotes}</Text>
+                          ) : (
+                            <Text style={{color: activeColors.just_gray}}>Enter Notes Here</Text>
+                          )}
+                        </Pressable>
+                      </>
+                    ) : (
+                      <>
+                      </>
+                    )*/}
                    
 
               </View>
-              
-            </View>
-          
+            </>
           )
       };
     
@@ -1633,34 +1675,19 @@ export default function WorkoutDetails( {navigation} )  {
             }}
           >
             <View style={[styles.centeredView, ]}>
-                <View style={[styles.modalHeader, {backgroundColor: activeColors.secondary_bg}]}>
+              <View style={{backgroundColor: activeColors.secondary_bg, padding: 15}}>
+                <View style={[styles.modalHeader, {marginBottom: 10}]}>
                   <Pressable
-                    style={{justifyContent: 'center', paddingLeft: 10, paddingRight: 5}}
+                    style={{justifyContent: 'flex-start', paddingRight: 5}}
                     onPress={() => setModalVisibleNotes(!modalVisibleNotes)}
                   >
                     <Ionicons name='add-outline' color={activeColors.primary_text} style={{fontSize: 32, transform: [{rotate: '45deg'}]}}/>
                   </Pressable>
-                  <View style={{justifyContent: 'center', marginRight: 40}}>
-                    <Text style={{color: activeColors.primary_text, fontSize: 18, fontWeight: '700'}}>Workout Notes</Text>
-                  </View>
-                  
-                  <View style={{justifyContent: 'center', paddingRight: 10, paddingLeft: 5}}>
-                    <Text style={{color: activeColors.primary_text}}></Text>
+                  <View style={{justifyContent: 'center',  marginRight: 90}}>
+                    <Text style={{color: activeColors.primary_text, fontSize: 25, fontWeight: '700'}}>Workout Notes</Text>
                   </View>
                   
                 </View>
-            {/*
-                <View style={{minHeight: 100, backgroundColor: activeColors.secondary_bg, padding: 10}}>
-                  <TextInput
-                    style={[{textAlignVertical: 'top', borderRadius: 5, borderWidth: 1, borderColor: activeColors.inverted_bg_alt, color: activeColors.primary_text, padding: 5}]}
-                    onChangeText={(text) => setWorkoutNotes(text)}
-                    value={workoutnotes}
-                    multiline  
-                    placeholder="Enter Notes Here"
-                    placeholderTextColor={activeColors.primary_text}
-                  />
-                </View>
-          */}
 
                 <View style={[styles.modalBody, { backgroundColor: activeColors.secondary_bg }]}>
                   <TextInput
@@ -1686,6 +1713,7 @@ export default function WorkoutDetails( {navigation} )  {
                     tstyle={{fontWeight: '900'}}
                   />
                 </View>
+              </View>
             </View>
           </Modal>
       );
@@ -1737,14 +1765,9 @@ export default function WorkoutDetails( {navigation} )  {
           
           </ScrollView>
           ) : (
-            <ScrollView style={{marginBottom: -50}}>
-                <View style={styles.datePicker}>
-                  <DatePickerArrows />
-                </View>
+         
                   
               <WorkoutInfoView />
-                  
-            </ScrollView>
           )}
         </View>
 
@@ -1907,25 +1930,14 @@ const styles = StyleSheet.create({
   },
 
   datePicker: {
-    justifyContent: 'center',
-    flexDirection: 'row'
-  },
-  workoutCategory: {
-    //backgroundColor: 'blue',
-    //paddingLeft: 10,
-    //paddingRight: 10,
-    paddingBottom: 100,
-    marginBottom: 100,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    marginTop: 10,
+    marginHorizontal: 10
   },
   datePickerArrowsContainer: {
-    //backgroundColor: '#EFEFEF',
-    borderRadius: 2,
     flexDirection: 'row',
     justifyContent: 'center',
-    //paddingRight: 60,
-    paddingBottom: 0,
-    paddingTop: 20,
-    width: 200
   },
   header_icon_container: {
     flexDirection: 'row',
@@ -1954,15 +1966,12 @@ const styles = StyleSheet.create({
     //backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalHeader: {
-    height: 40,
-    backgroundColor: 'white',
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderTopEndRadius: 5,
     borderTopStartRadius: 5
   },
   modalBody: {
-    paddingTop: 20,
     backgroundColor: '#E3E3E3',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -1976,8 +1985,8 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderRadius: 5,
-    borderWidth: 1,
     padding: 5,
+    fontSize: 20,
     width: '95%', // Adjust the width as needed
   },
   modalInputBoxRegular: {
@@ -2106,6 +2115,15 @@ const styles = StyleSheet.create({
     flex: 1, 
     textAlign: 'center', 
     borderWidth: 1
-  }
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 20, // Adjust the desired distance from the bottom
+    right: 20, // Adjust the desired distance from the right
+    margin: 0,
+    padding: 10,
+    flexDirection: 'row',
+    borderRadius: 5,
+  },
   
 });

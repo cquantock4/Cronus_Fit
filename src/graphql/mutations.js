@@ -517,6 +517,11 @@ export const createUserInfo = /* GraphQL */ `
           startedAt
           __typename
         }
+        Programs {
+          nextToken
+          startedAt
+          __typename
+        }
         createdAt
         _version
         _deleted
@@ -609,6 +614,11 @@ export const updateUserInfo = /* GraphQL */ `
           startedAt
           __typename
         }
+        Programs {
+          nextToken
+          startedAt
+          __typename
+        }
         createdAt
         _version
         _deleted
@@ -697,6 +707,11 @@ export const deleteUserInfo = /* GraphQL */ `
         }
         workout_logs
         WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        Programs {
           nextToken
           startedAt
           __typename
@@ -797,6 +812,7 @@ export const createPrograms = /* GraphQL */ `
       price
       downloadurl
       data_type
+      userID
       createdAt
       updatedAt
       _version
@@ -819,6 +835,7 @@ export const updatePrograms = /* GraphQL */ `
       price
       downloadurl
       data_type
+      userID
       createdAt
       updatedAt
       _version
@@ -841,6 +858,7 @@ export const deletePrograms = /* GraphQL */ `
       price
       downloadurl
       data_type
+      userID
       createdAt
       updatedAt
       _version
@@ -1096,6 +1114,11 @@ export const createWorkoutResults = /* GraphQL */ `
           startedAt
           __typename
         }
+        Programs {
+          nextToken
+          startedAt
+          __typename
+        }
         createdAt
         _version
         _deleted
@@ -1174,6 +1197,11 @@ export const updateWorkoutResults = /* GraphQL */ `
           startedAt
           __typename
         }
+        Programs {
+          nextToken
+          startedAt
+          __typename
+        }
         createdAt
         _version
         _deleted
@@ -1248,6 +1276,11 @@ export const deleteWorkoutResults = /* GraphQL */ `
         }
         workout_logs
         WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        Programs {
           nextToken
           startedAt
           __typename
@@ -1351,6 +1384,7 @@ export const createWorkouts = /* GraphQL */ `
         startedAt
         __typename
       }
+      legacy
       createdAt
       updatedAt
       _version
@@ -1444,6 +1478,7 @@ export const updateWorkouts = /* GraphQL */ `
         startedAt
         __typename
       }
+      legacy
       createdAt
       updatedAt
       _version
@@ -1537,6 +1572,7 @@ export const deleteWorkouts = /* GraphQL */ `
         startedAt
         __typename
       }
+      legacy
       createdAt
       updatedAt
       _version
@@ -1693,6 +1729,27 @@ export const createUser = /* GraphQL */ `
           id
           note
           workoutsID
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        nextToken
+        startedAt
+        __typename
+      }
+      Programs {
+        items {
+          id
+          title
+          desc
+          free
+          price
+          downloadurl
+          data_type
           userID
           createdAt
           updatedAt
@@ -1872,6 +1929,27 @@ export const updateUser = /* GraphQL */ `
         startedAt
         __typename
       }
+      Programs {
+        items {
+          id
+          title
+          desc
+          free
+          price
+          downloadurl
+          data_type
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        nextToken
+        startedAt
+        __typename
+      }
       createdAt
       _version
       _deleted
@@ -2039,6 +2117,27 @@ export const deleteUser = /* GraphQL */ `
         startedAt
         __typename
       }
+      Programs {
+        items {
+          id
+          title
+          desc
+          free
+          price
+          downloadurl
+          data_type
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          __typename
+        }
+        nextToken
+        startedAt
+        __typename
+      }
       createdAt
       _version
       _deleted
@@ -2122,6 +2221,11 @@ export const createUserCheckListItems = /* GraphQL */ `
         }
         workout_logs
         WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        Programs {
           nextToken
           startedAt
           __typename
@@ -2220,6 +2324,11 @@ export const updateUserCheckListItems = /* GraphQL */ `
           startedAt
           __typename
         }
+        Programs {
+          nextToken
+          startedAt
+          __typename
+        }
         createdAt
         _version
         _deleted
@@ -2310,6 +2419,11 @@ export const deleteUserCheckListItems = /* GraphQL */ `
         }
         workout_logs
         WorkoutNotes {
+          nextToken
+          startedAt
+          __typename
+        }
+        Programs {
           nextToken
           startedAt
           __typename

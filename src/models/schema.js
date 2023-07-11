@@ -961,6 +961,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "userID": {
+                    "name": "userID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -984,6 +991,15 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byUser",
+                        "fields": [
+                            "userID"
+                        ]
+                    }
                 },
                 {
                     "type": "auth",
@@ -1446,6 +1462,13 @@ export const schema = {
                         ]
                     }
                 },
+                "legacy": {
+                    "name": "legacy",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1726,6 +1749,22 @@ export const schema = {
                         ]
                     }
                 },
+                "Programs": {
+                    "name": "Programs",
+                    "isArray": true,
+                    "type": {
+                        "model": "Programs"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "userID"
+                        ]
+                    }
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1894,5 +1933,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.4.4",
-    "version": "c0e16e7c3b3b7867f1d68373febfc7f0"
+    "version": "7e2da458ef05aa8d27b1cdbace8ce925"
 };
