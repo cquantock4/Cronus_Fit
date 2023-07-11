@@ -67,7 +67,6 @@ export default function WorkoutDetails( {navigation} )  {
   const [date, setNewDate] = useState(new Date());
 
   //Search Filtering
-  
   const [search, setSearch] = useState('');
   const [filteredDataSource, setFilteredDataSource] = useState([]);
   const [masterDataSource, setMasterDataSource] = useState([]);
@@ -1719,6 +1718,8 @@ export default function WorkoutDetails( {navigation} )  {
         onSearch={handleSearch} 
         searchMode={showsearch}
         onCancelSearch={handleCancelSearch} />
+        {/* Modals */}
+        <NotesModal value={workoutnotes} onPress={(text) => onSaveNotesPress(text)}/>
         <View style={{flex: 1}}>
           { showsearch ? (
             <ScrollView>
@@ -1736,9 +1737,14 @@ export default function WorkoutDetails( {navigation} )  {
           
           </ScrollView>
           ) : (
-            <View>
-              <Text style={{color: 'white'}} >Placeholder</Text>
-            </View>
+            <ScrollView style={{marginBottom: -50}}>
+                <View style={styles.datePicker}>
+                  <DatePickerArrows />
+                </View>
+                  
+              <WorkoutInfoView />
+                  
+            </ScrollView>
           )}
         </View>
 
