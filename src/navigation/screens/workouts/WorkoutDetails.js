@@ -8,12 +8,9 @@ import { Bubble_Button, Bubble_Button_Small, Button_Link } from '../../../compon
 import Header from '../../../components/ui/inputs/header';
 import ListItem from '../../../components/ui/listItem';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {ActivityIndicator, select} from "@react-native-material/core";
+import {ActivityIndicator, Snackbar} from "@react-native-material/core";
 
 import Modal from 'react-native-modal';
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
-//import Swipeable  from 'react-native-gesture-handler/Swipeable'
-
 import { parse,  format } from 'date-fns';
 
 import {useRoute} from '@react-navigation/native';
@@ -1961,6 +1958,26 @@ export default function WorkoutDetails( {navigation} )  {
           ) : (
             <WorkoutInfoView />
           )}
+          <Modal
+            animationType='slide'
+            transparent={true}
+            visible={modalsisiblesave}
+            onRequestClose={() => {
+              setModalVisibleSave(!modalsisiblesave);
+            }}
+          >
+            <View style={styles.centeredViewSave}>
+              <View style={[styles.modalViewSave , {backgroundColor: activeColors.primary_bg, borderWidth: 0.5, borderColor: activeColors.primary_text}]}>
+                <Text style={[styles.modalTextSave, {color: activeColors.primary_text}]}>Workout Results Saved!</Text>
+                <Pressable
+                  style={[styles.buttonCloseSave]}
+                  onPress={() => setModalVisibleSave(!modalsisiblesave)}
+                >
+                  <Ionicons name='add-outline' style={{fontSize: 40, color:activeColors.primary_text, transform: [{ rotateZ: "45deg" }]}}/>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
         </View>
 
       </SafeAreaView>
@@ -2239,7 +2256,6 @@ const styles = StyleSheet.create({
   modalViewSave: {
     width: '95%',
     flexDirection: 'row',
-    backgroundColor: "white",
     justifyContent: 'space-between',
     borderRadius: 5,
     margin: 20,
