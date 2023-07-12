@@ -152,7 +152,7 @@ export default function WorkoutScreen( {navigation} ) {
   });
 
   const handleItemListPress = (id, type) => {
-    navigation.navigate('WorkoutDetails', { value: type, id: id});
+    navigation.navigate('WorkoutDetails', { value: type, id: id, userid: user.id});
   };
 
   const handleSearch = (text) => {
@@ -254,7 +254,7 @@ export default function WorkoutScreen( {navigation} ) {
                 </View>
               ) : (
               <View style={{ flex: 1, padding: 5, paddingTop: 10}}>
-               <Pressable onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype ,id: wod.id})} style={{marginBottom: 10, paddingHorizontal: 10,  paddingVertical: 15, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5, flexDirection: 'row', justifyContent: 'space-between' }}>
+               <Pressable onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype ,id: wod.id, userid: user.id})} style={{marginBottom: 10, paddingHorizontal: 10,  paddingVertical: 15, borderBottomColor: activeColors.primary_text, borderBottomWidth: 0.5, flexDirection: 'row', justifyContent: 'space-between' }}>
                   <View style={{justifyContent: 'center'}}>
                     <Text style={{fontSize: 25, fontWeight: '500', color: activeColors.accent_text}}>WOD</Text>
                   </View>
@@ -299,7 +299,7 @@ export default function WorkoutScreen( {navigation} ) {
                   <NavigationIcon 
                     label={defaultworkouttype === "FUNCTIONALFITNESS" ? "Military Prep" : "Functional Fitness"} 
                     icon="document-text-outline" 
-                    onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype === "FUNCTIONALFITNESS" ? "MILITARYPREP" : "FUNCTIONALFITNESS", id: 0})}
+                    onPress={() => navigation.navigate('WorkoutDetails', {value: defaultworkouttype === "FUNCTIONALFITNESS" ? "MILITARYPREP" : "FUNCTIONALFITNESS", id: 0, userid: user.id})}
                     />
               </View>
             </View>

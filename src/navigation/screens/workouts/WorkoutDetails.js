@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, Image, Alert, ScrollView, Button } from 'react-native';
-import { TextInput, Pressable, Switch, Input, FlatList, KeyboardAvoidingView, TouchableOpacity, Keyboard} from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView } from 'react-native';
+import { TextInput, Pressable, Switch, FlatList, KeyboardAvoidingView, TouchableOpacity} from 'react-native';
 import Constants from 'expo-constants'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Bubble_Button, Bubble_Button_Small, Button_Link } from '../../../components/ui/buttons'
+import { Bubble_Button } from '../../../components/ui/buttons'
 
 import Header from '../../../components/ui/inputs/header';
 import ListItem from '../../../components/ui/listItem';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {ActivityIndicator, Snackbar} from "@react-native-material/core";
+import {ActivityIndicator} from "@react-native-material/core";
 
 import Modal from 'react-native-modal';
 import { parse,  format } from 'date-fns';
@@ -21,7 +21,7 @@ import ThemeContext from '../../../components/ThemeContext'
 import {colors} from '../../../../assets/styles/themes'
 
 
-import { Amplify, Auth, DataStore, SortDirection  } from 'aws-amplify';
+import { Auth, DataStore  } from 'aws-amplify';
 import { Workouts, User, WorkoutNotes, SavedWorkouts, WorkoutResults, SubWorkouts} from '../../../models';
 
 
@@ -30,56 +30,40 @@ import { Workouts, User, WorkoutNotes, SavedWorkouts, WorkoutResults, SubWorkout
 export default function WorkoutDetails( {navigation} )  {
   const route = useRoute();
   const {control, handleSubmit, formState: {errors}} = useForm();
+
+  //Workout Variables
   const [workoutcategory, setWorkoutCategory] = useState(route?.params?.value);
   const [selectedworkoutid, setSelectedWorkoutID] = useState(route?.params?.id);
   const [selectedWorkoutIndex, setSelectedWorkoutIndex] = useState(0);
-  const [workoutslog, setWorkoutsLog] = useState(false);
   const [workouts, setWorkouts] = useState(false);
-  const [changedDate, setChangedDate] = useState(false);
+  const [workout, setWorkout] = useState(undefined);
+  const [workoutid, setWorkoutID] = useState(undefined);
+  const [workoutresults, setWorkoutResults] = useState(undefined);
+  const [workoutresults_lookup, setWorkoutResultsLookup] = useState(undefined);
+  const [subworkouts, setSubWorkouts] = useState(undefined);
+  const [workoutnotes, setWorkoutNotes] = useState(undefined)
 
-
+  //Permission
+  const [workoutslog, setWorkoutsLog] = useState(false);
 
   //Modal
-  const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleNotes, setModalVisibleNotes] = useState(false);
   const [showfilter, setShowFilter] = useState(false);
-
   const [showsearch, setShowSearch] = useState(false);
   const [searchtext, setSearchText] = useState('');
   
   //Toggle
   const [isEnabledIndSave, setIsEnabledIndSave] = useState(false);
-  //const toggleSwitchIndSave = () => setIsEnabledIndSave(previousState => !previousState);
-  const [isEnabledFilters, setIsEnabledFilters] = useState(false);
-  const toggleSwitchFilters = () => setIsEnabledFilters(previousState => !previousState);
 
-  //Data
-  const [workoutsarr, setWorkoutArr] = useState();
-  const [userid, setUserID] = useState(undefined);
-
-  const [workout, setWorkout] = useState(undefined);
+  const [userid, setUserID] = useState(route?.params?.userid);
   const [isLoading, setIsLoading] = useState(true);
-  const [workoutid, setWorkoutID] = useState(undefined);
-  const [workoutresults, setWorkoutResults] = useState(undefined);
-  const [workoutresults_lookup, setWorkoutResultsLookup] = useState(undefined);
-  const [subworkouts, setSubWorkouts] = useState(undefined);
-  const [subworkout_archive, setSubWorkoutArchive] = useState(undefined);
-  const [savedworkouts, setSavedWorkouts] = useState(undefined)
-  const [workoutnotes, setWorkoutNotes] = useState(undefined)
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
-
+  
   const [date, setNewDate] = useState(new Date());
-
-  //Search Filtering
-  const [search, setSearch] = useState('');
-  const [filteredDataSource, setFilteredDataSource] = useState([]);
-  const [masterDataSource, setMasterDataSource] = useState([]);
 
   //Workout Sub Workouts Refresh and re-open tab
   const [refresh, setRefresh] = useState(false);
   const [savecategory, setSaveCategory] = useState('');
   const [modalsisiblesave, setModalVisibleSave] = useState(false);
-  //const [units, setUnits] = useState('lbs');
 
   //Theme
   const theme = useContext(ThemeContext)
@@ -99,17 +83,9 @@ export default function WorkoutDetails( {navigation} )  {
     */
     useEffect(() => {
 
-      getUser();
-
       const unsubscribe = navigation.addListener('focus', () => {
-        
-        //setWorkoutCategory(route?.params?.value)
-
-        //console.log(route?.params?.value)
 
         if (workoutcategory === 'myworkouts'){
-          //Set the my workouts toggle to be true
-          setIsEnabledFilters(true)
           //Apply the filters and go to search Screen
           setShowSearch(true)
         }
@@ -122,6 +98,7 @@ export default function WorkoutDetails( {navigation} )  {
 
     useEffect(() => {
 
+      getUser();
 
       const workoutsub = DataStore.observeQuery(Workouts).subscribe(() => getWorkoutInfo().then(() => {
         setIsLoading(false); 
@@ -138,8 +115,6 @@ export default function WorkoutDetails( {navigation} )  {
 
     async function getWorkoutInfo() {
 
-      console.log('Here is the selected workout ID to load in: ' + selectedworkoutid)
-
       const allworkouts = (await DataStore.query(Workouts)).filter(
         pe => pe.workout_type === workoutcategory
       )
@@ -152,7 +127,6 @@ export default function WorkoutDetails( {navigation} )  {
         return dateB - dateA;
       });
 
-      console.log(allworkouts)
       setWorkouts(allworkouts)
 
       let selectedWorkoutIndex;
@@ -169,6 +143,8 @@ export default function WorkoutDetails( {navigation} )  {
         setWorkout(curr_workout)
         setWorkoutID(curr_workout.id)
         getWorkoutDetails(curr_workout)
+
+        
       }
 
         
@@ -177,8 +153,33 @@ export default function WorkoutDetails( {navigation} )  {
 
     async function getWorkoutDetails(currworkout) {
 
-      console.log('workoout details: ' + workoutid)
+      //Notes for the workout
+      const notes = (await DataStore.query(WorkoutNotes)).filter(
+        pe => pe.workoutsID === currworkout.id && pe.userID === userid.toString()
+      )
 
+      if (notes.length > 0) {
+        setWorkoutNotes(notes[0].note);
+      } else {
+        setWorkoutNotes(undefined);
+      }
+
+      //Check if the user saved the workout
+      //const savedWorkouts = await DataStore.query(SavedWorkouts, (s) =>
+         //s.workoutsID.eq(currworkout.id) && s.userID.eq(userid)
+        //);
+        const savedWorkouts = (await DataStore.query(SavedWorkouts)).filter(
+          pe => pe.workoutsID === currworkout.id && pe.userID === userid.toString()
+        )
+
+
+        
+      if (savedWorkouts.length === 1){
+          setIsEnabledIndSave(true)
+      } else {
+          setIsEnabledIndSave(false)
+      }
+    
         // Find the subworkouts associated with the workout
         const subWorkouts = await DataStore.query(SubWorkouts, (s) =>
           s.workoutsID.eq(currworkout.id)
@@ -198,18 +199,13 @@ export default function WorkoutDetails( {navigation} )  {
     
       const subWorkoutsWithResults = subWorkouts.map(subWorkout => {
         // Get the workout result for this sub workout from the results table
-        //const workoutResult = workoutResults_filtered.find(result => result.subworkoutsID === subWorkout.id);
         const workoutResult = workoutResults_filtered.filter(result => result.subworkoutsID === subWorkout.id);
   
-        // console.log(subWorkout.id)
-        //console.log('workout Results: ' + JSON.stringify(workoutResult))
-      
         // If there is no workout result for this sub workout, return the sub workout object as is
         if (!workoutResult) {
           return subWorkout;
         }
-  
-      
+
         // If there is a workout result for this sub workout, add it as a property of the sub workout object
         
         return {
@@ -234,17 +230,13 @@ export default function WorkoutDetails( {navigation} )  {
         date: currworkout.date,
         type: currworkout.type,
       }
-  
-  
-      //console.log('this this this: ' + JSON.stringify(subWorkoutsWithResults))
       
       // Add the subWorkoutsWithResults array to the dt object
       const dtWithResults = {
         ...dt,
         subWorkouts: subWorkoutsWithResults
       };
-  
-      console.log('Here is the value: ' + JSON.stringify(dtWithResults))
+
       setWorkoutResults(dtWithResults)
   
       if (dtWithResults.subWorkouts) {
@@ -253,236 +245,12 @@ export default function WorkoutDetails( {navigation} )  {
 
     }
   
-    /*
-    useEffect(() => {
-
-
-      const workoutsub = DataStore.observeQuery(Workouts).subscribe(() => getWorkoutAndSubWorkouts());
-
-
-      return () => {
-        workoutsub.unsubscribe();
-      };
-
-
-    }, [date, refresh, userid, selectedworkoutid]);
-
-    useEffect(() => {
-
-      const subs = DataStore.observeQuery(Workouts).subscribe((snapshot) => {
-        //isSynced can be used to show a loading spinner when the list is being loaded. 
-        const { items, isSynced } = snapshot;
-
-        //console.log(items)
-
-        setWorkouts(items)
-
-        //setFilteredDataSource(items);
-        //setMasterDataSource(items);
-        
-      });
-
-
-      return () => {
-        subs.unsubscribe();
-      };
-
-    }, []);
-    */
-
-    function formatDate(dateString, formatString) {
-      const date = new Date(dateString);
-      return format(date, formatString);
-    }
-
-    const searchFilterFunction = (text) => {
-      console.log(text)
-      // Check if searched text is not blank
-      if (text) {
-        // Inserted text is not blank
-        // Filter the masterDataSource and update FilteredDataSource
-
-        //console.log(masterDataSource)
-
-        const newData = masterDataSource.filter(function (item) {
-
-          //console.log(item)
-
-          // Applying filter for the inserted text in search bar
-          const titleData = item.title
-            ? item.title.toUpperCase()
-            : ''.toUpperCase();
-
-          const descData = item.desc
-            ? item.desc.toUpperCase()
-            : ''.toUpperCase();
-
-          const dateData = item.date
-            ? item.date.toUpperCase()
-            : ''.toUpperCase();
-
-          const combinedData = titleData + descData + dateData;
-
-          const textData = text.toUpperCase();
-
-          console.log('made it here ' + item.date + ' ' + textData)
-
-          const dateFormats = [
-            'MM/dd/yyyy',
-            'dd/MM/yyyy',
-            'yyyy-MM-dd'
-          ];
-
-          let dateMatch = false;
-
-          try {
-            dateFormats.forEach(format => {
-              if (formatDate(item.date, format).toUpperCase().indexOf(textData) > -1) {
-                dateMatch = true;
-              }
-            });
-          } catch (e) {
-            console.log(e.message)
-          }
-          
-
-
-
-          return combinedData.indexOf(textData) > -1 || dateMatch;
-
-          //return combinedData.indexOf(textData) > -1;
-
-          //console.log('here we are: ' + JSON.stringify(itemData))
-
-          //const textData = text.toUpperCase();
-
-
-          //return itemData.indexOf(textData || '%prep%') > -1;
-        });
-
-        setFilteredDataSource(newData);
-        setSearch(text);
-
-      } else {
-
-        // Inserted text is blank
-        // Update FilteredDataSource with masterDataSource
-        setFilteredDataSource(masterDataSource);
-        setSearch(text);
-
-      }
-
-      
-    };
-
-    const ItemView = ({ item }) => {
-
-      //console.log('item: ' + JSON.stringify(item))
-
-      const goToWorkoutPress = () => {
-
-        //Get the current workout
-        //getTodaysWorkout();
-
-        console.log(item.workout_type)
-
-        //Setting the Category
-        setWorkoutCategory(item.workout_type)
-
-        //Hide the search page
-        setShowSearch(!showSearch)
-
-        //console.log(item.date)
-        
-        try {
-          if (item.date) {
-            //const parsedDate = parse(item.date, 'MM/dd/yyyy', new Date());
-            //setNewDate(format(parsedDate, 'MM/dd/yyyy').toString());
-
-            //const dateString = item.date;
-            //const dateParts = dateString.split('/');
-            //const dateObject = new Date(`${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`);
-            //const formattedDate = dateObject.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' });
-            //console.log(formattedDate); // Output: Tue Apr 23 1996 12:00:00 AM GMT-0400
-            //console.log('what: ' + item.date)
-
-            /*
-            const dateString = item.date;
-            const dateParts = dateString.split('/');
-            const dateObject = new Date(`${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`);
-            const isoDate = dateObject.toISOString();
-            */
-
-            /*
-            const dateString = item.date;
-            const dateParts = dateString.split('/');
-            
-            const dateObject = new Date(`${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`);
-            console.log(dateObject)
-
-            const isoDate = dateObject.toISOString(); // convert to ISO format
-            console.log(isoDate)
-            
-            const localIsoDate = new Date(isoDate).toLocaleString(); // convert to local timezone
-            console.log(localIsoDate)
-
-            const formattedDate = localIsoDate.substring(0, 9); // remove time part
-            
-            */
-            
-            
-            //let result = new Date(isoDate)
-            setNewDate(item.date);
-
-            
-            //setNewDate(isoDate)
-          }
-        } catch (e) {
-          console.log(e)
-        }
-
-       
-          
-    }
-
-      return (
-
-        <Pressable onPress={goToWorkoutPress}>
-          <View style={[styles.resultsItemContainer, {backgroundColor: activeColors.primary_bg}]}>
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10}}>
-              <Text style={{fontSize: 20, color: activeColors.primary_text}}>{item.title}</Text>
-              <Text style={{fontSize: 15, color: activeColors.primary_text}}>{item.date}</Text>
-            </View>
-            
-            <Text style={{fontSize: 14, marginBottom: 10, fontWeight: '300', color: activeColors.primary_text}}>{item.desc.slice(0,75)}...</Text>
-            <Text style={{fontSize: 12, justifyContent: 'flex-end', color: activeColors.accent_text}}>View Workout</Text>
-          </View>
-        </Pressable>
-
-      );
-    };
-  
-    const ItemSeparatorView = () => {
-      return (
-        // Flat List Item Separator
-        <View
-          style={{
-            height: 0.5,
-            width: '100%',
-            backgroundColor: '#C8C8C8',
-          }}
-        />
-      );
-    };
-
     const textDisplay = (item) => {
 
-      //console.log(item)
       if (item) {
         var str = item;
         var result = str.split("\\n"); 
 
-        //console.log(result)
         return result.map((i, key) => <Text key={key}>{i + "\n"}</Text>);
       }
 
@@ -490,24 +258,13 @@ export default function WorkoutDetails( {navigation} )  {
 
     
     }
-
-    /*
-      Get the User and Todays workout based on date
-    */
     
     const groupAndAdd = (arr) => {
         const res = [];
-    
-        //console.log('Starting group and add')
-    
-        //console.log(arr.id)
 
         let currworkoutid = arr.id
     
         arr.subWorkouts.forEach(el => {
-
-            console.log(el)
-
             
             let curr_result_val, curr_order
             if (el.workoutresults[0]) {
@@ -545,271 +302,30 @@ export default function WorkoutDetails( {navigation} )  {
           
           
         }, {});
-    
-        console.log('Here she is: ' + JSON.stringify(res))
+
 
         res.sort();
     
         setSubWorkouts(res);
     
-        //return(res)
-    
     
       }
       
-
-    async function getWorkoutAndSubWorkouts() {
-
-        //('running now')  
-        //console.log(date)
-
-        function isValidDate(dateString) {
-          const pattern = /^\d{2}\/\d{2}\/\d{4}$/; // pattern for MM/dd/yyyy
-
-          if (!pattern.test(dateString)) {
-            //console.log(dateString)
-            return format(new Date(dateString), 'MM/dd/yyyy').toString();
-          }
-
-          return dateString;
-          //const date = new Date(dateString);
-          //return !isNaN(date);
-
-        }
-
-        const formatted_date = isValidDate(date)
-
-        console.log(workoutcategory)
-        //console.log('here we are: ' + currworkout.length + ' ' + userid )
-
-        let currworkout;
-
-        if (selectedworkoutid) {
-          // Query the workout based on the provided workoutId
-          const workoutId = selectedworkoutid; // Assuming selectedWorkout is the workoutId
-
-          currworkout = (await DataStore.query(Workouts)).filter(
-            pe => pe.id === workoutId
-          )
-
-          console.log(currworkout)
-          setSelectedWorkoutID(null)
-
-        } else if (changedDate) {
-          console.log('here we are: ')
-          // Query the workout based on the changed date and workoutcategory
-          const filteredWorkouts = (await DataStore.query(Workouts)).filter(
-            pe => pe.workout_type === workoutcategory.toString() && pe.date === formatted_date
-          );
-
-          console.log(filteredWorkouts)
-
-          currworkout = filteredWorkouts
-          setChangedDate(false)
-
-        } else {
-          // Query the latest workout for the provided workoutcategory
-          // Find today's workout
-          currworkout = (await DataStore.query(Workouts)).filter(
-            pe => pe.workout_type === workoutcategory.toString()
-          )
-
-          currworkout.sort((a, b) => {
-            const [monthA, dayA, yearA] = a.date.split('/');
-            const [monthB, dayB, yearB] = b.date.split('/');
-            const dateA = new Date(yearA, monthA - 1, dayA);
-            const dateB = new Date(yearB, monthB - 1, dayB);
-            return dateB - dateA;
-          });
-
-        
-
-
-        }
-
-       
-        if (currworkout.length > 0 && userid) {
-          const workoutId = currworkout[0].id;
-
-          setWorkout(currworkout[0])
-          setNewDate(currworkout[0].date)
-
-          console.log(workoutId)
-  
-          
-          const notes = (await DataStore.query(WorkoutNotes)).filter(
-            pe => pe.workoutsID === workoutId && pe.userID === userid.toString()
-          )
-  
-          /*
-          const notes = await DataStore.query(WorkoutNotes, c =>
-            c
-              .where(pe => pe.workoutsID.eq(workoutId))
-              .where(pe => pe.userID.eq(userid))
-          );
-          */
-        
-          console.log('notes:', notes);
-        
-          if (notes.length > 0) {
-            setWorkoutNotes(notes[0].note);
-          } else {
-            setWorkoutNotes(undefined);
-          }
-
-        } else {
-          setWorkoutNotes(undefined)
-        }
-  
-
-        if (currworkout.length === 0) {
-            //console.log('No workout found on this date');
-            setWorkout(undefined)
-            setWorkoutID(undefined)
-            setIsEnabledIndSave(false)
-            setSubWorkouts(undefined)
-
-            return null;
-        }
-
-        //console.log('userid: ' + userid)
-        //console.log(currworkout[0].id)
-        //query saved workouts
-        const savedWorkouts = await DataStore.query(SavedWorkouts, (s) =>
-          s.workoutsID.eq(currworkout[0].id) && s.userID.eq(userid)
-        );
-        
-        //console.log(savedWorkouts[0])
-        //console.log(currworkout[0].id)
-
-        if (savedWorkouts.length === 1){
-
-            setSavedWorkouts(savedWorkouts[0])
-
-            setIsEnabledIndSave(true)
-        } else {
-            setIsEnabledIndSave(false)
-        }
-        
-
-        //console.log('Saved Workouts: ' + JSON.stringify(savedWorkouts))
-        
-    
-        // Find the subworkouts associated with the workout
-        const subWorkouts = await DataStore.query(SubWorkouts, (s) =>
-          s.workoutsID.eq(currworkout[0].id)
-        );
-
-        console.log('here are the subworkouts: ' + JSON.stringify(subWorkouts))
-
-        setSubWorkoutArchive(subWorkouts)
-
-        // Get all the subworkoutIds
-        const subWorkoutIds = subWorkouts.map((sw) => sw.id);
-
-
-        //Query all WorkoutResults
-        const workoutResults = await DataStore.query(WorkoutResults, (s) =>
-            s.userID.eq(userid)
-        );
-
-        setWorkoutResultsLookup(workoutResults)
-
-    
-        //console.log('here are the workoutResults: ' + JSON.stringify(workoutResults))
-    
-        //var arr = workoutResults.filter(item => subWorkoutIds.indexOf(item.subworkoutsID) == 1);
-        const workoutResults_filtered = workoutResults.filter(({subworkoutsID}) => subWorkoutIds.includes(subworkoutsID));
-    
-        const subWorkoutsWithResults = subWorkouts.map(subWorkout => {
-          // Get the workout result for this sub workout from the results table
-          //const workoutResult = workoutResults_filtered.find(result => result.subworkoutsID === subWorkout.id);
-          const workoutResult = workoutResults_filtered.filter(result => result.subworkoutsID === subWorkout.id);
-    
-         // console.log(subWorkout.id)
-          //console.log('workout Results: ' + JSON.stringify(workoutResult))
-        
-          // If there is no workout result for this sub workout, return the sub workout object as is
-          if (!workoutResult) {
-            return subWorkout;
-          }
-    
-        
-          // If there is a workout result for this sub workout, add it as a property of the sub workout object
-          
-          return {
-            ...subWorkout,
-            workoutresults: workoutResult.map(result => ({
-              id: result.id,
-              subworkoutsID: result.subworkoutsID,
-              value: result.value,
-              userID: result.userID
-            })) 
-          };
-    
-    
-        });
-
-        //console.log('Here is what we want: ' + JSON.stringify(subWorkoutsWithResults))
-    
-        const currentWorkout = currworkout[0]
-    
-
-        //Defining starting data structer for top level workouts
-        const dt = {
-          id: currentWorkout.id,
-          title: currentWorkout.title,
-          desc: currentWorkout.desc,
-          date: currentWorkout.date,
-          type: currentWorkout.type,
-        }
-    
-    
-        //console.log('this this this: ' + JSON.stringify(subWorkoutsWithResults))
-        
-        // Add the subWorkoutsWithResults array to the dt object
-        const dtWithResults = {
-          ...dt,
-          subWorkouts: subWorkoutsWithResults
-        };
-    
-        console.log('Here is the value: ' + JSON.stringify(dtWithResults))
-        setWorkoutResults(dtWithResults)
-    
-        if (dtWithResults.subWorkouts) {
-          groupAndAdd(dtWithResults)
-        }
-
-        //console.log(currworkout[0])
-
-        setWorkout(currworkout[0]);
-    
-        //Set the current workout ID
-        setWorkoutID(currworkout[0].id)
-    
-      }
 
     async function getUser(){
 
         try {
           const authUser = await Auth.currentAuthenticatedUser({bypassCache: true});
-          //console.log(authUser.attributes.sub)
-          //setAuthSub(authUser.attributes.sub)
-  
-         
+
           //Get local User Id for Query
           const user = await DataStore.query(User, sw =>
             sw.sub.eq(authUser.attributes.sub)
           )
 
-          //Query Matrix Table to find list of ids  
           if (user[0]) {
-            //Set state variable
             setUserID(user[0].id)
-            //setUnits(user[0].units.toLowerCase())
-            //console.log(user[0])
             setWorkoutsLog(user[0].workout_logs)
-  
+
           }
         } catch (e) {
           console.log('Error: ' + e)
@@ -817,25 +333,6 @@ export default function WorkoutDetails( {navigation} )  {
   
       }
 
-    /*
-        Header and Button Functions
-    */
-
-    const goBackPress = async () => {
-        navigation.navigate('FitnessScreen')
-        //console.log('Go to Profile Screen')
-    }
-
-    const onSearchPress = async () => {
-        //console.log('Search button pressed')
-        setShowSearch(true)
-    };
-
-    const onCancelPress = async () => {
-        //console.log('Cancel button pressed')
-        setShowSearch(false)
-        setShowFilter(false)
-    };
 
     const FilterSection = () => {
       const [modalVisible, setModalVisible] = useState(false);
@@ -857,90 +354,11 @@ export default function WorkoutDetails( {navigation} )  {
       );
     };
 
-    const onFilterPress = async () => {
-        //console.log('Filter button pressed')  
-        setShowFilter(!showfilter)
-        setShowSearch(true)
-    };
-
-    const FilterModal = () => {
-
-        return(
-          <Modal
-              animationType="fade" //slide or none
-              transparent={true}
-              visible={modalVisible}
-              onRequestClose={() => {
-                Alert.alert("Modal has been closed.");
-                setModalVisible(!modalVisible);
-              }}
-            >
-              <View style={styles.centeredView}>
-                  <View style={styles.modalHeader}>
-                    <Pressable
-                      style={{justifyContent: 'center', paddingLeft: 10, paddingRight: 5}}
-                      onPress={() => setModalVisible(!modalVisible)}
-                    >
-                      <Ionicons name='add-outline' color='#363636' style={{fontSize: 32, transform: [{rotate: '45deg'}]}}/>
-                    </Pressable>
-                    <View style={{justifyContent: 'center'}}>
-                      <Text style={{color: '#363636', fontSize: 18, fontWeight: '700'}}>Filters</Text>
-                    </View>
-                    <View style={{justifyContent: 'center', paddingRight: 10, paddingLeft: 5}}>
-                      <Text style={{color: '#363636'}}>Reset</Text>
-                    </View>
-                  </View>
-                  <View style={styles.modalBody}>
-                    <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                      <Text style={{marginRight: 10, fontWeight: '500'}}>Only Show Saved Workouts</Text>
-                      <Switch
-                        //363636
-                        trackColor={{ false: "#767577", true: "#363636" }}
-                        thumbColor={isEnabledFilters ? "#F8BE13" : "#f4f3f4"}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleSwitchFilters}
-                        value={isEnabledFilters}
-                      />
-                    </View>
-  
-                  </View>
-                  <View style={styles.modalFooter}>
-                  <Bubble_Button 
-                    text='APPLY FILTERS'
-                    onPress={onApplyFiltersPress}
-                    bgColor='#ACACAC'
-                    fgColor='#fff'
-                    cstyle={{width: '95%'}}
-                    tstyle={{fontWeight: '900'}}
-                  />
-                  </View>
-              </View>
-            </Modal>
-        );
-      
-      }
-
-
-    /*
-      Add Workout Notes and MOdal
-    */
     const onAddNotesPress = async () => {
       setModalVisibleNotes(!modalVisibleNotes)
-      //console.log('Add Notes')
     }
 
-    const onApplyFiltersPress = async () => {
-      //console.log('Apply Filters Pressed')  
-      setShowSearch(false)
-      setModalVisible(!modalVisible)
-    };
-
     const onSaveNotesPress = async (text) => {
-
-      //Save Workout Notes
-      console.log('Notes have been Saved: ' + text) 
-      console.log('Workoutid: ' + workoutid) 
-      console.log('userid: ' + userid) 
 
       try {
         // Check if the record exists
@@ -948,20 +366,16 @@ export default function WorkoutDetails( {navigation} )  {
         const existingNotes = (await DataStore.query(WorkoutNotes)).filter(
           pe => pe.workoutsID === workoutid && pe.userID === userid
         )
-
-        console.log(existingNotes)
     
         if (existingNotes.length > 0) {
           // Update the existing record
           const existingNote = existingNotes[0];
           existingNote.note = text;
           await DataStore.save(existingNote);
-          console.log('Updated workout notes:', existingNote);
         } else {
           // Create a new record
           const newNote = new WorkoutNotes({ note: text, workoutsID: workoutid, userID: userid });
           await DataStore.save(newNote);
-          console.log('Created workout notes:', newNote);
         }
       } catch (error) {
         console.error('Error saving workout notes:', error);
@@ -971,15 +385,9 @@ export default function WorkoutDetails( {navigation} )  {
       setModalVisibleNotes(!modalVisibleNotes)
     };
 
-
-    /*
-        Save Workout Logic
-    */
-
     const toggleSwitchIndSave = (previousState) => {
 
         setIsEnabledIndSave(previousState => !previousState)
-        console.log(previousState)
         //Get local User Id for Query
         if (previousState) {
             saveNewWorkout(workoutid, userid)
@@ -988,26 +396,20 @@ export default function WorkoutDetails( {navigation} )  {
 
             deleteSavedWorkout(workoutid, userid)
         }
-    
-        //setFormData({ ...formData, [e.target.name]: e.target.value });
+  
     };
           
     async function saveNewWorkout(workoutid, userid) {
 
       try {
 
-                //console.log(userid)
-                //console.log(workoutid)
-                // then you save the mode that links a post with an editor
-                const saved_workout =  await DataStore.save(
-                    new SavedWorkouts({
-                        userID: userid,
-                        workoutsID: workoutid
-                    })
-                );
-
-                setSavedWorkouts(saved_workout)
-
+          // then you save the mode that links a post with an editor
+          const saved_workout =  await DataStore.save(
+              new SavedWorkouts({
+                  userID: userid,
+                  workoutsID: workoutid
+              })
+          );
         } catch (error) {
             console.log("Error Saving workout", error);
         }
@@ -1015,16 +417,12 @@ export default function WorkoutDetails( {navigation} )  {
       
     async function deleteSavedWorkout(workoutid, userid) {
 
-        //console.log(savedworkouts)
-        //console.log(userid)
-
       try{
 
         const savedworkouts = await DataStore.query(SavedWorkouts, c =>
             c.userID.eq(userid) && c.workoutsID.eq(workoutid)
           );
 
-          //console.log(workout)
 
           DataStore.delete(savedworkouts[0]);
           
@@ -1036,222 +434,39 @@ export default function WorkoutDetails( {navigation} )  {
 
     }
 
-
-    /*
-        Workout Display
-    */
-
-        const DatePickerArrows_test = () => {
-
-          const navigateForward = () => {
-            console.log(selectedWorkoutIndex)
-
-            if (selectedWorkoutIndex < workouts.length - 1) {
-              setSelectedWorkoutIndex(selectedWorkoutIndex + 1);
-              setWorkout(workouts[selectedWorkoutIndex + 1]);
-              getWorkoutDetails(workouts[selectedWorkoutIndex + 1]);
-            }
-          };
-          
-          const navigateBackward = () => {
-
-            console.log(selectedWorkoutIndex)
-
-            if (selectedWorkoutIndex > 0) {
-              setSelectedWorkoutIndex(selectedWorkoutIndex - 1);
-              setWorkout(workouts[selectedWorkoutIndex - 1]);
-              getWorkoutDetails(workouts[selectedWorkoutIndex - 1]);
-            }
-          };
-    
-          return (
-            <View style={[styles.datePickerArrowsContainer]}>
-              <Pressable style={{padding: 10, paddingHorizontal: 15}} onPress={navigateForward}>
-                <Ionicons name='caret-back-outline' style={{fontSize: 25 , color: activeColors.primary_text}}/>
-              </Pressable>
-              <Pressable style={{padding: 10, paddingHorizontal: 15,}} onPress={navigateBackward}>
-                <Ionicons  name='caret-forward-outline' style={{fontSize: 25, color: activeColors.primary_text}}/>
-              </Pressable>
-            </View>
-          )
-
-        
-        }
-
     const DatePickerArrows = () => {
 
-      //Date Picker Info
+      const navigateForward = () => {
 
-      function isValidDate(dateString) {
-        const pattern = /^\d{2}\/\d{2}\/\d{4}$/; // pattern for MM/dd/yyyy
-  
-        if (!pattern.test(dateString)) {
-          return false;
+        if (selectedWorkoutIndex < workouts.length - 1) {
+          setSelectedWorkoutIndex(selectedWorkoutIndex + 1);
+          setWorkout(workouts[selectedWorkoutIndex + 1]);
+          getWorkoutDetails(workouts[selectedWorkoutIndex + 1]);
         }
-  
-        return true;
-        //const date = new Date(dateString);
-        //return !isNaN(date);
-  
-      }
-  
-      const addADay = () => {
-        console.log('here: ' + date)
-  
-          let isoDateString = ''
-  
-          if (isValidDate(date)) {
-            const dateComponents = date.split('/');
-            const year = dateComponents[2];
-            const month = dateComponents[0];
-            const day = dateComponents[1];
-            isoDateString = `${year}-${month}-${day}`;
-          } else {
-            isoDateString = date
-          }
-  
-          console.log(isoDateString)
-          
-          let result = new Date(isoDateString)
-  
-          console.log('res: ' +result)
-          //console.log('res formatted: ' + result.setDate(result.getDate() + 1 ))
-          setChangedDate(true)
-          setNewDate(result.setDate(result.getDate() + 1 ));
-        };
-      
-      const subADay = () => {
-  
-        let isoDateString = ''
-  
-        if (isValidDate(date)) {
-          const dateComponents = date.split('/');
-          const year = dateComponents[2];
-          const month = dateComponents[0];
-          const day = dateComponents[1];
-          isoDateString = `${year}-${month}-${day}`;
-        } else {
-          isoDateString = date
-        }
-  
-        let result = new Date(isoDateString)
-  
-        console.log('res: ' +result)
-        //console.log('res formatted: ' + result.setDate(result.getDate() + 1 ))
-        setChangedDate(true)
-        setNewDate(result.setDate(result.getDate() - 1 ));
       };
       
-      let date_final = ''
+      const navigateBackward = () => {
 
-      if (isValidDate(date)) {
-        date_final = date.toString()
-      } else {
-        date_final = format(new Date(date), 'MM/dd/yyyy')
-      }
-
-      
-
-      //console.log(date_final)
+        if (selectedWorkoutIndex > 0) {
+          setSelectedWorkoutIndex(selectedWorkoutIndex - 1);
+          setWorkout(workouts[selectedWorkoutIndex - 1]);
+          getWorkoutDetails(workouts[selectedWorkoutIndex - 1]);
+        }
+      };
 
       return (
         <View style={[styles.datePickerArrowsContainer]}>
-          <Pressable style={{padding: 10, paddingHorizontal: 15}} onPress={subADay}>
+          <Pressable style={{padding: 10, paddingHorizontal: 15}} onPress={navigateForward}>
             <Ionicons name='caret-back-outline' style={{fontSize: 25 , color: activeColors.primary_text}}/>
           </Pressable>
-          <Pressable style={{padding: 10, paddingHorizontal: 15,}} onPress={addADay}>
+          <Pressable style={{padding: 10, paddingHorizontal: 15,}} onPress={navigateBackward}>
             <Ionicons  name='caret-forward-outline' style={{fontSize: 25, color: activeColors.primary_text}}/>
           </Pressable>
         </View>
       )
-    
-      return(
-        <View style={styles.datePickerArrowsContainer}>
-          <Pressable style={{padding: 5, paddingRight: 10, paddingLeft: 10}} onPress={subADay}>
-            <Ionicons name='caret-back-outline' style={{fontSize: 25 , color: activeColors.primary_text}}/>
-          </Pressable>
-          <Pressable  style={{alignItems: 'center', justifyContent: 'center', marginRight: 20, marginLeft: 20}}>
-            <Text style={{fontSize: 25, fontWeight: '300', color: activeColors.primary_text}}>
-                {/*{format(date, 'EEEE, MMM do yyyy')}*/}
-                {/*format(new Date(date), 'MM/dd/yyyy')*/}
-                {date_final}
-               {/*{moment.(date).format('dddd, MMM Do YYYY')}*/}
-            </Text>
-          </Pressable>
-          <Pressable style={{padding: 5, paddingRight: 10, paddingLeft: 10}} onPress={addADay}>
-            <Ionicons  name='caret-forward-outline' style={{fontSize: 25, color: activeColors.primary_text}}/>
-          </Pressable>
-          {/*<Text>selected: {date.toLocaleString()}</Text>*/}
-          {/*moment(date).format('dddd, MMM Do YYYY')*/}
-        </View>
-      )
-      
+
     
     }
-
-    const TimeInput = (props) => {
-      const [hours, setHours] = useState('');
-      const [minutes, setMinutes] = useState('');
-      const [seconds, setSeconds] = useState('');
-    
-      useEffect(() => {
-        // Split the initial value into hours, minutes, and seconds
-        if (props.value.includes(':')) {
-          const [hour, minute, second] = props.value.split(':');
-          setHours(hour);
-          setMinutes(minute);
-          setSeconds(second);
-        }
-      }, []);
-    
-      const handleHoursChange = (text) => {
-        const formattedValue = text.padStart(2, '0');
-        setHours(formattedValue);
-        props.onChange(`${formattedValue}:${minutes}:${seconds}`);
-      };
-    
-      const handleMinutesChange = (text) => {
-        const formattedValue = text.padStart(2, '0');
-        setMinutes(formattedValue);
-        props.onChange(`${hours}:${formattedValue}:${seconds}`);
-      };
-    
-      const handleSecondsChange = (text) => {
-        const formattedValue = text.padStart(2, '0');
-        setSeconds(formattedValue);
-        props.onChange(`${hours}:${minutes}:${formattedValue}`);
-      };
-    
-      return (
-        <View style={{ flexDirection: 'row' }}>
-          <TextInput
-            style={{ flex: 1 }}
-            placeholder="HH"
-            keyboardType="numeric"
-            maxLength={2}
-            value={hours}
-            onChangeText={handleHoursChange}
-          />
-          <TextInput
-            style={{ flex: 1 }}
-            placeholder="MM"
-            keyboardType="numeric"
-            maxLength={2}
-            value={minutes}
-            onChangeText={handleMinutesChange}
-          />
-          <TextInput
-            style={{ flex: 1 }}
-            placeholder="SS"
-            keyboardType="numeric"
-            maxLength={2}
-            value={seconds}
-            onChangeText={handleSecondsChange}
-          />
-        </View>
-      );
-    };
-    
 
     const WorkoutItemInput = (props) => {
 
@@ -1428,21 +643,12 @@ export default function WorkoutDetails( {navigation} )  {
       const onSavePress = async () => {
 
         //setting the current save index so we know which tab to keep open
-        //console.log(subworkouts[category].group)
         setSaveCategory(subworkouts[category].group)
-        
-        
-        //DataStore.save(updatedUser)
-        //console.log(subworkouts[category].info)
-        //console.log('This is the result: ' + subworkouts[category].info[2].id)
 
         //loop over sub workouts subWorkoutWorkoutRresults table
         var arrayLength = subworkouts[category].info.length;
 
-        //console.log('length: ' + arrayLength)
-
         for (var i = 0; i < arrayLength; i++) {
-            //console.log('current subworkout id: ' + subworkouts[category].info[i].id);
             
             let curr_subworkoutid = subworkouts[category].info[i].id
             let curr_workoutid = workoutresults.id
@@ -1450,8 +656,6 @@ export default function WorkoutDetails( {navigation} )  {
             let res_category = subworkouts[category].info[i].resultcat
 
             if (res_category === 'TIME'){
-
-              //const [hour, min, sec] = curr_value.includes(':')
 
               let [hour, min, sec] = [null, null, null];
 
@@ -1476,8 +680,6 @@ export default function WorkoutDetails( {navigation} )  {
                 }
               }
 
-              //console.log(min)
-
               let temp_hour = (hour === '') ? '00' : hour.padStart(2, '0')
               let temp_min = (min === '') ? '00' : min.padStart(2, '0')
               let temp_sec = (sec === '') ? '00' : sec.padStart(2, '0')
@@ -1493,30 +695,20 @@ export default function WorkoutDetails( {navigation} )  {
                 const workout_result = workoutresults_lookup.filter(
                     pe => pe.userID === userid && pe.subworkoutsID === curr_subworkoutid
                 )
-    
-                //console.log('new: ' + JSON.stringify(workout_result))
                 
                 if (workout_result.length === 1){
-                  //console.log('Update');
     
                   let curr_result_obj = workout_result[0];
-                  //console.log(curr_result_obj)
-                  
-
-                  console.log('updating with this value: ' + curr_value)
     
                   //Update the row
                   const updatedWorkoutResult = WorkoutResults.copyOf(curr_result_obj, updated => {
                     updated.value = curr_value;
                   })
-    
-                  //console.log(updatedWorkoutResult)
           
                   DataStore.save(updatedWorkoutResult)
                   
     
                 } else {
-                  //console.log('Insert')
     
                   try {
     
@@ -1529,7 +721,6 @@ export default function WorkoutDetails( {navigation} )  {
                       })
                     );
     
-                    //console.log("Post saved successfully!");
                   } catch (error) {
                     console.log("Error saving post", error);
                   }
@@ -1542,10 +733,6 @@ export default function WorkoutDetails( {navigation} )  {
             
 
         }
-
-      
-
-        //console.log('Results have been saved')
 
         //Open Alert Modal
         setModalVisibleSave(true);
@@ -1563,8 +750,6 @@ export default function WorkoutDetails( {navigation} )  {
         
       };
 
-      //console.log('this is it: ' + JSON.stringify(subworkouts[category].info))
-
       const expandRow = async () => {
 
         //Clear out saveCategory
@@ -1574,8 +759,6 @@ export default function WorkoutDetails( {navigation} )  {
         setExpand(!expand)
         
       };
-
-      //console.log('WHat is this? ' + JSON.stringify(subworkouts[category].info))
 
       return (
 
@@ -1598,9 +781,6 @@ export default function WorkoutDetails( {navigation} )  {
 
                   function handleChange(newValue, name) {
 
-                    console.log('changed to: ' + newValue)
-                    console.log('id ' + name)
-
                     let newArr = [...values]; 
 
                     const inputValue = newArr[index].value;
@@ -1613,8 +793,6 @@ export default function WorkoutDetails( {navigation} )  {
                       if (inputValue.includes('-')) {
                         // Splitting the input value into two parts
                         const [part1, part2] = inputValue.split('-');
-                        console.log(part1); // Output: 12
-                        console.log(part2); // Output: 34
 
                         if ( name === 'setsreps1' ) {
                           joinedValue = `${newValue}-${part2}`;
@@ -1634,28 +812,10 @@ export default function WorkoutDetails( {navigation} )  {
 
                    }
 
-                   /*
-                   if ( name === 'hour' || name == 'min' || 'sec' ) {
-                      if (name === 'hour' ) {
-                        finalresult = text + ':' + temp_min + ':' + temp_sec
-                      } else if (name === 'min') {
-                        finalresult = temp_hour + ':' + text + ':' + temp_sec
-                      } else if (name === 'sec') {
-                        finalresult = temp_hour + ':' + temp_min + ':' + text
-                    }
-
-                   }
-                   */
-
 
                     // Joining the two parts back together
                     
-                    console.log(finalresult); // Output: 12-34
-
                     newArr[index].value = finalresult; // replace e.target.value with whatever you want to change it to
-                    
-                    console.log(newArr)
-
                     setValues(newArr);
                   }
 
@@ -1748,7 +908,7 @@ export default function WorkoutDetails( {navigation} )  {
                           
                       </View>
                       <View style={{paddingRight: 10}}>
-                        <DatePickerArrows_test />
+                        <DatePickerArrows />
                       </View>
                     </View>
           
@@ -1983,87 +1143,6 @@ export default function WorkoutDetails( {navigation} )  {
       </SafeAreaView>
     )
 
-    return(
-      <View style={[styles.container, Platform.OS === 'ios' && styles.marginTop, {backgroundColor: activeColors.primary_bg}]}>
-
-          {/* Modals */}
-          <NotesModal value={workoutnotes} onPress={(text) => onSaveNotesPress(text)}/>
-          <Modal
-            animationType='slide'
-            transparent={true}
-            visible={modalsisiblesave}
-            onRequestClose={() => {
-              Alert.alert("Modal has been closed.");
-              setModalVisibleSave(!modalsisiblesave);
-            }}
-          >
-            <View style={styles.centeredViewSave}>
-              <View style={styles.modalViewSave}>
-                <Text style={styles.modalTextSave}>Workout Results Saved!</Text>
-                <Pressable
-                  style={[styles.buttonCloseSave]}
-                  onPress={() => setModalVisibleSave(!modalsisiblesave)}
-                >
-                  <Ionicons name='add-outline' style={{fontSize: 40, transform: [{ rotateZ: "45deg" }]}}/>
-                </Pressable>
-              </View>
-            </View>
-          </Modal>
-
-          
-          {showSearch ? (
-
-            <View style={[styles.header, {backgroundColor: activeColors.primary_bg}]}>
-              <TextInput
-                style={[styles.searchBar, { backgroundColor: activeColors.inverted_bg_alt}]}
-                onChangeText={(text) => searchFilterFunction(text)}
-                value={search}
-                underlineColorAndroid="transparent"
-                placeholder="Search Here"
-              />
-              <Pressable onPress={onCancelPress} style={{marginRight: 5}}>
-                <Text style={{fontSize: 14, color: activeColors.primary_text}}>Cancel</Text>
-              </Pressable>
-            </View>
-              
-
-            ) : (
-              <Header />
-          )}  
-
-          {showfilter ? (
-              <FilterSection />
-          ) : (
-            <>
-            </>
-          )}
-        
-          
-          {showSearch ? (
-              <>
-                <FlatList
-                  data={filteredDataSource}
-                  keyExtractor={(item, index) => index.toString()}
-                  ItemSeparatorComponent={ItemSeparatorView}
-                  renderItem={ItemView}
-                />
-              </>     
-                
-            ) : (
-              
-
-                <ScrollView style={{marginBottom: -50}}>
-                  <View style={styles.datePicker}>
-                    <DatePickerArrows />
-                  </View>
-                  
-                    <WorkoutInfoView />
-                  
-                </ScrollView>
-              )}
-              
-      </View>
-    );
   }
 
 const statusBarHeight = Constants.statusBarHeight
@@ -2072,71 +1151,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    //marginTop: statusBarHeight,
-    backgroundColor: '#EFEFEF',
-    //alignItems: 'center'
   },
   marginTop: {
     marginTop: statusBarHeight,
   },
-  //Search
-  itemStyle: {
-    padding: 10,
-  },
-  textInputStyle: {
-    height: 40,
-    borderWidth: 1,
-    paddingLeft: 20,
-    margin: 5,
-    borderColor: '#009688',
-    backgroundColor: '#FFFFFF',
-  },
-
-  //header
-  header: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    paddingTop: 15,
-    paddingBottom: 15,
-    backgroundColor: 'white',
-    borderBottomColor: '#c9c9c9', 
-    borderBottomWidth: 1
-  },
-  header_icon_container: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 10
-    //marginRight: 10
-  },
-  header_text: {
-    fontSize: 18,
-    fontWeight: '500',
-    marginLeft: 10,
-    color:'#363636',
-    //backgroundColor: 'blue'
-  },
-  header_icons: {
-    height: 27,
-    width: 27,
-    //marginLeft: 10
-  },
-  header_icons_filter: {
-    height: 23,
-    width: 23,
-    //marginLeft:20
-  },
-  searchBar: {
-    flex: 1,
-    height: 30,
-    marginLeft: 0,
-    marginRight: 10,
-    borderRadius: 0,
-    backgroundColor: '#E7E7E7',
-    paddingLeft: 10
-  },
-
   datePicker: {
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -2147,31 +1165,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  header_icon_container: {
-    flexDirection: 'row',
-    marginTop: 12
-    //backgroundColor: 'blue',
-  },
-  header_icons: {
-    height: 27,
-    width: 27,
-    marginBottom: 0,
-    //backgroundColor: 'green',
-    marginTop: 1,
-    marginRight: 10
-  },
-  header_icons_filter: {
-    height: 23,
-    width: 23,
-    marginTop: 3
-  },
   //Modal
   centeredView: {
     flex: 1,
     justifyContent: "center",
-    //alignItems: "center",
     flexDirection: 'column',
-    //backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -2194,48 +1192,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     width: '95%', // Adjust the width as needed
   },
-  modalInputBoxRegular: {
-    padding: 0, 
-    alignItems: 'center', 
-    paddingRight: 5, 
-    paddingBottom: 4, 
-    marginRight: 10, 
-    borderRadius: 0
-  },
-  modalInputBoxTime: {
-    padding: 0, 
-    alignItems: 'center', 
-    //paddingRight: 5, 
-    paddingBottom: 4, 
-    //marginRight: 10, 
-    borderRadius: 0
-  },
-  searchBar: {
-    flex: 1,
-    height: 30,
-    marginLeft: 0,
-    marginRight: 10,
-    borderRadius: 0,
-    backgroundColor: '#E7E7E7',
-    paddingLeft: 10
-  },
-  searchFilterResultsContainer: {
-
-  },
   infoViewContainer: {
     flex: 1
-    
   },
-
-  //Search Results
-  resultsItemContainer: {
-    padding: 10,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E6E6E6',
-    
-  },
-
   //Sub Workout
   subWorkoutblock: {
     padding: 15, 
@@ -2244,8 +1203,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
-
-
   //Model Save
   centeredViewSave: {
     flex: 1,
@@ -2270,31 +1227,15 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5
   },
-  buttonSave: {
-    //borderRadius: 20,
-    //padding: 10,
-    //elevation: 2
-  },
-  buttonOpenSave: {
-    backgroundColor: "#F194FF",
-  },
   buttonCloseSave: {
-    //backgroundColor: "white",
     padding: 5,
-  },
-  textStyleSave: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
   },
   modalTextSave: {
     marginLeft: 20,
     textAlign: "center",
     fontSize: 18
   },
-
   switchOutsideContainer: {
-
     justifyContent: 'space-between',
     alignItems: 'center',
   },
@@ -2318,14 +1259,6 @@ const styles = StyleSheet.create({
     textAlign: 'center', 
     borderWidth: 1
   },
-  floatingButton: {
-    position: 'absolute',
-    bottom: 20, // Adjust the desired distance from the bottom
-    right: 20, // Adjust the desired distance from the right
-    margin: 0,
-    padding: 10,
-    flexDirection: 'row',
-    borderRadius: 5,
-  },
+
   
 });
