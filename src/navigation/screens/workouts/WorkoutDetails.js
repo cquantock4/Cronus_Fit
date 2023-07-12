@@ -170,6 +170,7 @@ export default function WorkoutDetails( {navigation} )  {
         setSelectedWorkoutIndex(selectedWorkoutIndex);
         let curr_workout = allworkouts[selectedWorkoutIndex]
         setWorkout(curr_workout)
+        setWorkoutID(curr_workout.id)
         getWorkoutDetails(curr_workout)
       }
 
@@ -981,7 +982,7 @@ export default function WorkoutDetails( {navigation} )  {
     const toggleSwitchIndSave = (previousState) => {
 
         setIsEnabledIndSave(previousState => !previousState)
-    
+        console.log(previousState)
         //Get local User Id for Query
         if (previousState) {
             saveNewWorkout(workoutid, userid)
@@ -1488,22 +1489,6 @@ export default function WorkoutDetails( {navigation} )  {
 
             }
 
-            //Query subworkouts for workoutid on insert
-            
-            const curr_sub_workout = subworkout_archive.filter(
-              pe => pe.id === curr_subworkoutid
-            )
-            
-            //console.log(curr_subworkoutid)
-            //console.log('originial: ' + JSON.stringify(workoutresults.subWorkouts))
-
-            //Query by the subworkout ID: subworkouts[category].info[2].id
-            
-            /*
-            const filteredResults = workoutresults.subWorkouts.filter(
-              pe => pe.workoutresults[0].userID === userid && pe.id === curr_subworkoutid
-            )
-            */
             
             try {
 
@@ -1769,7 +1754,7 @@ export default function WorkoutDetails( {navigation} )  {
                         <DatePickerArrows_test />
                       </View>
                     </View>
-                    
+          
                     <ScrollView >
                         {workout ? (
 
@@ -1777,10 +1762,33 @@ export default function WorkoutDetails( {navigation} )  {
                           <View>
                             <Text style={{ fontWeight: '400', lineHeight: 25, textAlign: 'left', color: activeColors.primary_text }}>{textDisplay(workout.desc)}</Text>
                           </View>
+                        </View>
+                          
+                        ) : (
+                          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 200}}>
+                            <Text style={{fontWeight: '400', lineHeight: 25, color: activeColors.primary_text}}>No workout posted today</Text>
+                          </View>
+                        )}
 
-                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginTop: 10, paddingHorizontal: 10 }}>
+                        <View style={{paddingBottom: 75}}>
+                          {subworkouts ? (
+                              subworkouts.map((category, index) => {
+                                return(
+                                    <WorkoutItem key={subworkouts[category].group} category={category} />
+                                )
+
+                              })
+                            ) : (
+                              <></>
+                            )
+                          }
+                        </View>
+
+                        
+                    </ScrollView>
+                    <View style={{position: 'absolute', bottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginTop: 10, paddingHorizontal: 10 }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                              <Text style={{ fontWeight: '500', color: activeColors.primary_text, marginRight: 5 }}>Save</Text>
+                              <Text style={{ fontWeight: '600', color: activeColors.accent_text, marginRight: 5 }}>Save</Text>
                               <Switch
                                 trackColor={{ false: "#767577", true: "#363636" }}
                                 thumbColor={isEnabledIndSave ? "#F8BE13" : "#f4f3f4"}
@@ -1801,28 +1809,7 @@ export default function WorkoutDetails( {navigation} )  {
 
                             
                           </View>
-                        </View>
-                          
-                        ) : (
-                          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 200}}>
-                            <Text style={{fontWeight: '400', lineHeight: 25, color: activeColors.primary_text}}>No workout posted today</Text>
-                          </View>
-                        )}
 
-                        <View style={{paddingBottom: 75}}>
-                        {subworkouts ? (
-                            subworkouts.map((category, index) => {
-                              return(
-                                  <WorkoutItem key={subworkouts[category].group} category={category} />
-                              )
-
-                            })
-                          ) : (
-                            <></>
-                          )
-                        }
-                        </View>
-                    </ScrollView>
                   </>
                 )}
                     
@@ -1872,23 +1859,21 @@ export default function WorkoutDetails( {navigation} )  {
             transparent={true}
             visible={modalVisibleNotes}
             onRequestClose={() => {
-              Alert.alert("Modal has been closed.");
               setModalVisibleNotes(!modalVisibleNotes);
             }}
           >
             <View style={[styles.centeredView, ]}>
-              <View style={{backgroundColor: activeColors.secondary_bg, padding: 15}}>
-                <View style={[styles.modalHeader, {marginBottom: 10}]}>
+              <View style={{backgroundColor: activeColors.secondary_bg, padding: 10}}>
+              <View style={{flexDirection: 'row'}}>
                   <Pressable
                     style={{justifyContent: 'flex-start', paddingRight: 5}}
                     onPress={() => setModalVisibleNotes(!modalVisibleNotes)}
                   >
                     <Ionicons name='add-outline' color={activeColors.primary_text} style={{fontSize: 32, transform: [{rotate: '45deg'}]}}/>
                   </Pressable>
-                  <View style={{justifyContent: 'center',  marginRight: 90}}>
-                    <Text style={{color: activeColors.primary_text, fontSize: 25, fontWeight: '700'}}>Workout Notes</Text>
-                  </View>
-                  
+                </View>
+                <View style={[styles.modalHeader, {marginBottom: 15,justifyContent: 'center'}]}>
+                    <Text style={{color: activeColors.primary_text, fontSize: 23, fontWeight: '600'}}>Workout Notes</Text>
                 </View>
 
                 <View style={[styles.modalBody, { backgroundColor: activeColors.secondary_bg }]}>
@@ -2173,9 +2158,6 @@ const styles = StyleSheet.create({
   },
   modalHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopEndRadius: 5,
-    borderTopStartRadius: 5
   },
   modalBody: {
     backgroundColor: '#E3E3E3',
